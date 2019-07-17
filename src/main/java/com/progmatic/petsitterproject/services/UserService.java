@@ -5,10 +5,23 @@
  */
 package com.progmatic.petsitterproject.services;
 
+import com.progmatic.petsitterproject.repositories.UserRepo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 /**
  *
  * @author progmatic
  */
+@Service
 public class UserService {
+    
+    private UserRepo ur;
+
+    @Autowired
+    public UserService(UserRepo ur) {
+        this.ur = ur;
+    }
+    
     
 }
