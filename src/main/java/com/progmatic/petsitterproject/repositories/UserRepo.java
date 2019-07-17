@@ -5,6 +5,7 @@
  */
 package com.progmatic.petsitterproject.repositories;
 
+import com.progmatic.petsitterproject.entities.*;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +34,42 @@ public class UserRepo implements UserDetailsService{
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return (User)em.createQuery("select u from User where u.name =: nm")
+                .setParameter("nm", username).getSingleResult();
     }
+    
+    public void newService(){
+        
+    }
+    
+    public void newPet(){
+        
+    }
+    
+    public void newOwner(){
+        
+    }
+    
+    public void newSitter(){
+        
+    }
+    
+    private Address newAddress(){
+        return new Address();
+    }
+    
+    public void newUser(){
+        
+    }
+    
+    
+    public User findUserAsSitter(String username){
+        return (User) em.createQuery("select u from User join fetch u.sitter where u.sitter. =: nm")
+                .setParameter("nm", username).getSingleResult();
+    }
+    
+    
+    
     
     
 }
