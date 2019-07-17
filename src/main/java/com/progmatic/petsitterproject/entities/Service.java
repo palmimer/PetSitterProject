@@ -20,8 +20,7 @@ public class Service implements Serializable {
     public Service() {
     }
 
-    public Service(int id, PlaceOfService place, TypeOfService type, int pricePerHour, int pricePerDay) {
-        this.id = id;
+    public Service(PlaceOfService place, TypeOfService type, int pricePerHour, int pricePerDay) {
         this.place = place;
         this.type = type;
         this.pricePerHour = pricePerHour;

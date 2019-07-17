@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -24,7 +25,7 @@ public class User implements Serializable, UserDetails {
     private String password;
     @OneToOne
     private Owner owner;
-    @OneToOne
+    @OneToOne(FetchType.EAGER)
     private Sitter sitter;
     @ManyToMany
     private Set<Authority> authorities = new HashSet<>();

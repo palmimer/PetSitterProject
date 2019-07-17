@@ -19,8 +19,7 @@ public class WorkingDay implements Serializable {
     public WorkingDay() {
     }
 
-    public WorkingDay(int id, LocalDate wDay, Availability availability) {
-        this.id = id;
+    public WorkingDay(LocalDate wDay, Availability availability) {
         this.wDay = wDay;
         this.availability = availability;
     }
