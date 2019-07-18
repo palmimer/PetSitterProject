@@ -37,12 +37,12 @@ public class UserRepo implements UserDetailsService{
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return (UserDetails)em.createQuery("select u from User where u.username =: nm")
+        return (UserDetails)em.createQuery("select u from User u where u.username =: nm")
                 .setParameter("nm", username).getSingleResult();
     }
     
     public boolean userAlreadyExists(String email){
-        return !em.createQuery("select u from User where u.email := e")
+        return !em.createQuery("select u from User u where u.email = : e")
                 .setParameter("e", email).getResultList().isEmpty();
     }
     
@@ -91,18 +91,41 @@ public class UserRepo implements UserDetailsService{
         em.persist(new User(name, email, pwd.encode(password)));
     }
     
+    public void newAdmin(String name, String email, String password){
+        em.persist(new User(name, email, pwd.encode(password), "ROLE_ADMIN"));
+    }
+    
+    public void deleteUser(int id){
+        em.remove(findUser(id));
+    }
+    
+    public void deletePet(int id){
+        em.remove(findPet(id));
+    }
+    
+    public void deleteSitterService(int id){
+        em.remove(findSitterService(id));
+    }
     
     public User findUser(int id){
        return em.find(User.class, id);
     }
     
+    public Pet findPet(int id){
+        return em.find(Pet.class, id);
+    }
+    
+    public SitterService findSitterService(int id){
+        return em.find(SitterService.class, id);
+    }
+    
     public List<User> getAllSitters(){
-        return em.createQuery("select u from User where u.sitter != null")
+        return em.createQuery("select u from User u where u.sitter != null")
                 .getResultList();
     }
     
     public List<User> getAllUsers(){
-        return em.createQuery("select u from User").getResultList();
+        return em.createQuery("select u from User u").getResultList();
     }
     
     public WorkingDay newDay(LocalDate date){
@@ -113,6 +136,11 @@ public class UserRepo implements UserDetailsService{
     
     public WorkingDay findDay(int dayId){
         return em.find(WorkingDay.class, dayId);
+    }
+    
+    public Authority findAuthority(String authority){
+        return (Authority) em.createQuery("select a from Authority a where a.name = : au")
+                .setParameter("au", authority).getSingleResult();
     }
     
     
