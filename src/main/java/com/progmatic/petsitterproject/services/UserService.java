@@ -5,7 +5,11 @@
  */
 package com.progmatic.petsitterproject.services;
 
+import com.progmatic.petsitterproject.dtos.SearchCriteriaDTO;
+import com.progmatic.petsitterproject.dtos.SitterDTO;
+import com.progmatic.petsitterproject.entities.User;
 import com.progmatic.petsitterproject.repositories.UserRepo;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,5 +27,13 @@ public class UserService {
         this.ur = ur;
     }
     
+    public User getUser(int userId){
+        return ur.findUser(userId);
+    }
     
+    public List<SitterDTO> filterSitters(SearchCriteriaDTO criteria){
+        List<User> sitterUsers = ur.getAllSitters();
+        List<Sitter> petsitters = ur;
+        return petsitters;
+    }
 }

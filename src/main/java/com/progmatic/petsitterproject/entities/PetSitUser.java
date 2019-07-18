@@ -15,7 +15,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Entity
-public class User implements Serializable, UserDetails {
+public class PetSitUser implements Serializable, UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,10 +30,10 @@ public class User implements Serializable, UserDetails {
     @ManyToMany
     private Set<Authority> authorities = new HashSet<>();
 
-    public User() {
+    public PetSitUser() {
     }
    
-    public User(String name, String email, String password) {
+    public PetSitUser(String name, String email, String password) {
         this.name = name;
         this.email = email;
         this.password = password;
