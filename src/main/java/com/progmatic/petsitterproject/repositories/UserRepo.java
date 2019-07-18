@@ -41,6 +41,11 @@ public class UserRepo implements UserDetailsService{
                 .setParameter("nm", username).getSingleResult();
     }
     
+    public boolean userAlreadyExists(String email){
+        return !em.createQuery("select u from User where u.email := e")
+                .setParameter("e", email).getResultList().isEmpty();
+    }
+    
     public void newService(int userId, PlaceOfService place, PetType type, int pricePerHour, int pricePerDay){
         SitterService srv = new SitterService(place, type, pricePerHour, pricePerDay);
         em.persist(srv);

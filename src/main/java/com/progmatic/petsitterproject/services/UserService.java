@@ -14,6 +14,8 @@ import com.progmatic.petsitterproject.repositories.UserRepo;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -88,13 +90,50 @@ public class UserService {
     
     
     public List<SitterDTO> filterSitters(SearchCriteriaDTO criteria){
-        List<User> sitterUsers = ur.getAllSitters();
+        List<User> sitterUsers = searchResults(criteria.getName(), PetType.CAT, PlaceOfService.OWNERS_HOME, 0);
         List<SitterDTO> petSitters = new ArrayList<>();
         for (User sitterUser : sitterUsers) {
             SitterDTO sitter = convertToDTO(sitterUser, sitterUser.getSitter());
             petSitters.add(sitter);
         }
         return petSitters;
+    }
+    
+    private List<User> searchResults(String name, PetType pet, PlaceOfService pl, int postal){
+        List<User> sitters = ur.getAllSitters();
+        if(!name.isEmpty()){
+            sitters = filterByName(name, sitters);
+        }
+        if (pet != null){
+            sitters = filterByPetType(pet, sitters);
+        }
+        if (pl != null){
+            sitters = filterByPlace(pl, sitters);
+        }
+        if (postal != 0){
+            sitters = filterByPostal(postal, sitters);
+        }
+        return sitters;
+    }
+    
+    private List<User> filterByName(String name, List<User> list){
+        return list.stream().filter(u -> u.getName().contains(name))
+                .collect(Collectors.toList());
+    }
+    
+    private List<User> filterByPetType(PetType p, List<User> list){
+        return list.stream().filter(u -> u.getSitter().getPetTypes()
+                .contains(p)).collect(Collectors.toList());
+    }
+    
+    private List<User> filterByPlace(PlaceOfService p, List<User> list){
+        return list.stream().filter(u -> u.getSitter().getServices().stream()
+                .anyMatch(s -> s.getPlace()==p)).collect(Collectors.toList());
+    }
+    
+    private List<User> filterByPostal(int postal, List<User> list){
+        return list.stream().filter(u -> u.getSitter().getAddress()
+                .getPostalCode()==postal).collect(Collectors.toList());
     }
     
     private SitterDTO convertToDTO(User user, Sitter sitter) {
@@ -109,3 +148,5 @@ public class UserService {
         return response;
     }
 }
+
+
