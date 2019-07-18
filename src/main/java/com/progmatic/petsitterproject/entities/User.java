@@ -85,8 +85,8 @@ public class User implements Serializable, UserDetails {
         this.sitter = sitter;
     }
 
-    public void setAuthorities(Set<Authority> authorities) {
-        this.authorities = authorities;
+    public void setAuthorities(Authority authority) {
+        this.authorities.add(authority);
     }
 
     @Override

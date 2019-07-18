@@ -10,6 +10,7 @@ import com.progmatic.petsitterproject.dtos.RegistrationDTO;
 import com.progmatic.petsitterproject.dtos.SearchCriteriaDTO;
 import com.progmatic.petsitterproject.dtos.SitterDTO;
 import com.progmatic.petsitterproject.entities.Address;
+import com.progmatic.petsitterproject.entities.Authority;
 import com.progmatic.petsitterproject.entities.Availability;
 import com.progmatic.petsitterproject.entities.PetType;
 import com.progmatic.petsitterproject.entities.PlaceOfService;
@@ -116,7 +117,8 @@ public class UserService {
             throw new AlreadyExistsException("Ilyen e-mailcím már létezik az adatbázisban!");
         }
         Authority auth = ur.findAuthority("ROLE_USER");
-        User newUser = new User(registration.getUsername(), registration.getEmail(), pwd.encode(registration.getPassword(), auth));
+        User newUser = new User(registration.getUsername(), registration.getEmail(), pwd.encode(registration.getPassword()));
+        newUser.setAuthorities(auth);
         ur.newUser(newUser);
     }
     
