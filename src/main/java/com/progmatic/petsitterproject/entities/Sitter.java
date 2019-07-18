@@ -3,7 +3,9 @@ package com.progmatic.petsitterproject.entities;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,11 +23,13 @@ public class Sitter implements Serializable {
     @OneToOne
     private Address address;
     private String intro;
-    @OneToMany
+    
+    @ElementCollection(targetClass = PetType.class)
+    @Enumerated
     private List<PetType> petTypes;
-    @OneToMany
+    @OneToMany(mappedBy = "sitter")
     private List<SitterService> services;
-    @OneToMany
+    @OneToMany(mappedBy = "sitter")
     private List<WorkingDay> availabilities;
 
     public Sitter() {

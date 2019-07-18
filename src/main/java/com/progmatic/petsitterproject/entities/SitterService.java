@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class SitterService implements Serializable {
@@ -16,6 +17,9 @@ public class SitterService implements Serializable {
     private PetType petType;
     private int pricePerHour;
     private int pricePerDay;
+    
+    @ManyToOne
+    private Sitter sitter;
 
     public SitterService() {
     }

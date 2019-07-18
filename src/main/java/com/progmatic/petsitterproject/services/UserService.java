@@ -6,6 +6,10 @@
 package com.progmatic.petsitterproject.services;
 
 import com.progmatic.petsitterproject.entities.*;
+import com.progmatic.petsitterproject.dtos.SearchCriteriaDTO;
+import com.progmatic.petsitterproject.dtos.SitterDTO;
+import com.progmatic.petsitterproject.entities.Sitter;
+import com.progmatic.petsitterproject.entities.User;
 import com.progmatic.petsitterproject.repositories.UserRepo;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -34,6 +38,9 @@ public class UserService {
             ur.newOwner(userId);
         }
         ur.newPet(userId, petType, name);
+    }
+    public User getUser(int userId){
+        return ur.findUser(userId);
     }
     
     @Transactional
@@ -80,4 +87,25 @@ public class UserService {
     }
     
     
+    public List<SitterDTO> filterSitters(SearchCriteriaDTO criteria){
+        List<User> sitterUsers = ur.getAllSitters();
+        List<SitterDTO> petSitters = new ArrayList<>();
+        for (User sitterUser : sitterUsers) {
+            SitterDTO sitter = convertToDTO(sitterUser, sitterUser.getSitter());
+            petSitters.add(sitter);
+        }
+        return petSitters;
+    }
+    
+    private SitterDTO convertToDTO(User user, Sitter sitter) {
+        SitterDTO response = new SitterDTO(
+                sitter.getProfilePhoto(),
+                sitter.getAddress(),
+                sitter.getIntro(),
+                sitter.getPetTypes(),
+                sitter.getServices(),
+                sitter.getAvailabilities()
+        );
+        return response;
+    }
 }

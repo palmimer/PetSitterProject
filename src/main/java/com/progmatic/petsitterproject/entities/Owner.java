@@ -14,7 +14,7 @@ public class Owner implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @OneToMany(mappedBy = "pet")
+    @OneToMany(mappedBy = "owner")
     private List<Pet> pets;
 
     public Owner() {
