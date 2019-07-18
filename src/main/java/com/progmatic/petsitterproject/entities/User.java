@@ -25,10 +25,10 @@ public class User implements Serializable, UserDetails {
     private String password;
     @OneToOne
     private Owner owner;
-    @OneToOne(FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER)
     private Sitter sitter;
     @ManyToMany
-    private Set<Authority> authorities = new HashSet<>();
+    private Set<Authority> authorities;
 
     public User() {
     }

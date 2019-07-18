@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class WorkingDay implements Serializable {
@@ -15,6 +16,19 @@ public class WorkingDay implements Serializable {
     private int id;
     private LocalDate wDay;
     private Availability availability;
+    
+    @ManyToOne
+    private Sitter sitter; 
+
+    public Sitter getSitter() {
+        return sitter;
+    }
+
+    public void setSitter(Sitter sitter) {
+        this.sitter = sitter;
+    }
+    
+    
 
     public WorkingDay() {
     }

@@ -42,24 +42,24 @@ public class LoginController {
         return "register";
     }
     
-    @PostMapping("petsitter/newregistration")
-    public String register(
-            @Valid
-            @ModelAttribute("registration") RegistrationDTO registration, BindingResult bindingResult){
-        
-        if ( bindingResult.hasErrors() & !isRegistrationValid(registration, bindingResult)) {
-            return "register";
-        }
-
-        try {
-            
-            userService.createUser(registration);
-            
-        } catch (AlreadyExistsException ex) {
-            bindingResult.rejectValue("registration.email", "Már van ilyen felhasználó! Válasszon másik nevet!");
-            return "register";
-        }
-        return "redirect:/petsitter/login";
-    }
+//    @PostMapping("petsitter/newregistration")
+//    public String register(
+//            @Valid
+//            @ModelAttribute("registration") RegistrationDTO registration, BindingResult bindingResult){
+//        
+//        if ( bindingResult.hasErrors() & !isRegistrationValid(registration, bindingResult)) {
+//            return "register";
+//        }
+//
+//        try {
+//            
+//            userService.createUser(registration);
+//            
+//        } catch (AlreadyExistsException ex) {
+//            bindingResult.rejectValue("registration.email", "Már van ilyen felhasználó! Válasszon másik nevet!");
+//            return "register";
+//        }
+//        return "redirect:/petsitter/login";
+//    }
     
 }

@@ -3,7 +3,9 @@ package com.progmatic.petsitterproject.entities;
 import java.io.Serializable;
 import java.util.List;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -21,17 +23,19 @@ public class Sitter implements Serializable {
     @OneToOne
     private Address address;
     private String intro;
-    @OneToMany
+    
+    @ElementCollection(targetClass = PetType.class)
+    @Enumerated
     private List<PetType> petTypes;
-    @OneToMany
-    private List<Service> services;
-    @OneToMany
+    @OneToMany(mappedBy = "sitter")
+    private List<SitterService> services;
+    @OneToMany(mappedBy = "sitter")
     private List<WorkingDay> availabilities;
 
     public Sitter() {
     }
 
-    public Sitter(Byte[] profilePhoto, Address address, String intro, List<PetType> petTypes, List<Service> services, List<WorkingDay> availabilities) {
+    public Sitter(Byte[] profilePhoto, Address address, String intro, List<PetType> petTypes, List<SitterService> services, List<WorkingDay> availabilities) {
         this.profilePhoto = profilePhoto;
         this.address = address;
         this.intro = intro;
@@ -60,7 +64,7 @@ public class Sitter implements Serializable {
         return petTypes;
     }
 
-    public List<Service> getServices() {
+    public List<SitterService> getServices() {
         return services;
     }
 
@@ -88,7 +92,7 @@ public class Sitter implements Serializable {
         this.petTypes = petTypes;
     }
 
-    public void setServices(List<Service> services) {
+    public void setServices(List<SitterService> services) {
         this.services = services;
     }
 

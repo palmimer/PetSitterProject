@@ -7,7 +7,7 @@ package com.progmatic.petsitterproject.dtos;
 
 import com.progmatic.petsitterproject.entities.Address;
 import com.progmatic.petsitterproject.entities.PetType;
-import com.progmatic.petsitterproject.entities.Service;
+import com.progmatic.petsitterproject.entities.SitterService;
 
 /**
  *
@@ -16,9 +16,9 @@ import com.progmatic.petsitterproject.entities.Service;
 public class SearchCriteriaDTO {
     
     private int postCode;
-    private Service service;
+    private SitterService service;
 
-    public SearchCriteriaDTO(int postCode, Service service) {
+    public SearchCriteriaDTO(int postCode, SitterService service) {
         this.postCode = postCode;
         this.service = service;
     }
@@ -31,11 +31,11 @@ public class SearchCriteriaDTO {
         this.postCode = postCode;
     }
 
-    public Service getService() {
+    public SitterService getService() {
         return service;
     }
 
-    public void setService(Service service) {
+    public void setService(SitterService service) {
         this.service = service;
     }
 

@@ -12,7 +12,7 @@ import com.progmatic.petsitterproject.entities.PetType;
 import com.progmatic.petsitterproject.entities.Sitter;
 import com.progmatic.petsitterproject.entities.User;
 import com.progmatic.petsitterproject.entities.PlaceOfService;
-import com.progmatic.petsitterproject.entities.Service;
+import com.progmatic.petsitterproject.entities.SitterService;
 import com.progmatic.petsitterproject.services.UserService;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,27 +37,27 @@ public class UserController {
         this.us = us;
     }
     
-    @GetMapping(value = "/petsitter/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/petsitter/{userId}")
     public SitterDTO singleSitter( @PathVariable("userId") int userId ){
         User user = us.getUser(userId);
         Sitter sitter = user.getSitter();
         SitterDTO response = convertToDTO(user, sitter);
         return response;
     }
-    
-    @GetMapping(value = "/petsitter/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<SitterDTO> listSitters(
-                @RequestParam(value = "serviceType", defaultValue = "all") String serviceType,
-                @RequestParam(value = "petType", defaultValue = "dog") String petType,
-                @RequestParam(value = "postCode", defaultValue = "") int postCode
-                
-    ){
-//        Service service = createService(serviceType, petType);
-//        SearchCriteriaDTO criteria = new SearchCriteriaDTO(postCode, service);
-        List<SitterDTO> selectedSitters = new ArrayList<>();
-//                us.filterSitters(criteria);
-        return selectedSitters;
-    }
+//    
+//    @GetMapping(value = "/petsitter/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+//    public List<SitterDTO> listSitters(
+//                @RequestParam(value = "serviceType", defaultValue = "all") String serviceType,
+//                @RequestParam(value = "petType", defaultValue = "dog") String petType,
+//                @RequestParam(value = "postCode", defaultValue = "") int postCode
+//                
+//    ){
+////        Service service = createService(serviceType, petType);
+////        SearchCriteriaDTO criteria = new SearchCriteriaDTO(postCode, service);
+//        List<SitterDTO> selectedSitters = new ArrayList<>();
+////                us.filterSitters(criteria);
+//        return selectedSitters;
+//    }
     
     private SitterDTO convertToDTO(User user, Sitter sitter) {
         SitterDTO response = new SitterDTO(

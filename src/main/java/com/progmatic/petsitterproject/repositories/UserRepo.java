@@ -41,8 +41,8 @@ public class UserRepo implements UserDetailsService{
                 .setParameter("nm", username).getSingleResult();
     }
     
-    public void newService(int userId, PlaceOfService place, TypeOfService type, int pricePerHour, int pricePerDay){
-        Service srv = new Service(place, type, pricePerHour, pricePerDay);
+    public void newService(int userId, PlaceOfService place, PetType petType, int pricePerHour, int pricePerDay){
+        SitterService srv = new SitterService(place, petType, pricePerHour, pricePerDay);
         em.persist(srv);
         findUser(userId).getSitter().getServices().add(srv);
     }
@@ -53,7 +53,7 @@ public class UserRepo implements UserDetailsService{
             newOwner(u);
         }
         Pet p = new Pet(petType,name);
-        em.persist(p)
+        em.persist(p);
         u.getOwner().setPets(p);
     }
     
@@ -64,9 +64,9 @@ public class UserRepo implements UserDetailsService{
     }
     
     public void newSitter(int userId, Byte[] profilePhoto, Address address
-            , String intro, List<PetType> petTypes, List<Service> services
+            , String intro, List<PetType> petTypes, List<SitterService> services
             , List<WorkingDay> availabilities){
-        Sitter s = new Sitter(profilePhoto, address, intro, petTypes, services);
+        Sitter s = new Sitter(profilePhoto, address, intro, petTypes, services, availabilities);
         em.persist(s);
         findUser(userId).setSitter(s);
         
@@ -100,10 +100,10 @@ public class UserRepo implements UserDetailsService{
         
     }
     
-    public WorkingDay newDay(LocalDate date){
-        
-    }
-    
+//    public WorkingDay newDay(LocalDate date){
+//        
+//    }
+//    
     
     
     

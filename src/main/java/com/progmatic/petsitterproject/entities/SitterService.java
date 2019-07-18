@@ -5,9 +5,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Entity
-public class Service implements Serializable {
+public class SitterService implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,11 +17,14 @@ public class Service implements Serializable {
     private PetType petType;
     private int pricePerHour;
     private int pricePerDay;
+    
+    @ManyToOne
+    private Sitter sitter;
 
-    public Service() {
+    public SitterService() {
     }
 
-    public Service(PlaceOfService place, PetType petType, int pricePerHour, int pricePerDay) {
+    public SitterService(PlaceOfService place, PetType petType, int pricePerHour, int pricePerDay) {
         this.place = place;
         this.petType = petType;
         this.pricePerHour = pricePerHour;

@@ -15,7 +15,7 @@ import javax.validation.constraints.Size;
  */
 
 
-class RegistrationDTO {
+public class RegistrationDTO {
     
     @NotNull
     @NotEmpty
