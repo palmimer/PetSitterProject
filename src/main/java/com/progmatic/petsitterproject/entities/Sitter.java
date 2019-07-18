@@ -2,6 +2,7 @@ package com.progmatic.petsitterproject.entities;
 
 import java.io.Serializable;
 import java.util.List;
+import static javax.persistence.CascadeType.REMOVE;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -20,7 +21,7 @@ public class Sitter implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private Byte[] profilePhoto;
-    @OneToOne
+    @OneToOne(cascade = REMOVE)
     private Address address;
     private String intro;
     
