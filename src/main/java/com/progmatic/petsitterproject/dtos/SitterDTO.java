@@ -5,8 +5,6 @@ import com.progmatic.petsitterproject.entities.PetType;
 import com.progmatic.petsitterproject.entities.Service;
 import com.progmatic.petsitterproject.entities.WorkingDay;
 import java.util.List;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
 public class SitterDTO {

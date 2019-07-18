@@ -13,16 +13,16 @@ public class Service implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private PlaceOfService place;
-    private TypeOfService type;
+    private PetType petType;
     private int pricePerHour;
     private int pricePerDay;
 
     public Service() {
     }
 
-    public Service(PlaceOfService place, TypeOfService type, int pricePerHour, int pricePerDay) {
+    public Service(PlaceOfService place, PetType petType, int pricePerHour, int pricePerDay) {
         this.place = place;
-        this.type = type;
+        this.petType = petType;
         this.pricePerHour = pricePerHour;
         this.pricePerDay = pricePerDay;
     }
@@ -35,8 +35,8 @@ public class Service implements Serializable {
         return place;
     }
 
-    public TypeOfService getType() {
-        return type;
+    public PetType getPetType() {
+        return petType;
     }
 
     public int getPricePerHour() {
@@ -55,8 +55,8 @@ public class Service implements Serializable {
         this.place = place;
     }
 
-    public void setType(TypeOfService type) {
-        this.type = type;
+    public void setPetType(PetType petType) {
+        this.petType = petType;
     }
 
     public void setPricePerHour(int pricePerHour) {
