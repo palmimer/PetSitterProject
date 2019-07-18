@@ -1,17 +1,12 @@
 package com.progmatic.petsitterproject.entities;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.MapKey;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
@@ -36,8 +31,7 @@ public class Sitter implements Serializable {
     public Sitter() {
     }
 
-    public Sitter(int id, Byte[] profilePhoto, Address address, String intro, List<PetType> petTypes, List<Service> services, List<WorkingDay> availabilities) {
-        this.id = id;
+    public Sitter(Byte[] profilePhoto, Address address, String intro, List<PetType> petTypes, List<Service> services, List<WorkingDay> availabilities) {
         this.profilePhoto = profilePhoto;
         this.address = address;
         this.intro = intro;

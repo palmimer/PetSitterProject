@@ -18,8 +18,7 @@ public class Pet implements Serializable {
     public Pet() {
     }
 
-    public Pet(int id, PetType petType, String name) {
-        this.id = id;
+    public Pet(PetType petType, String name) {
         this.petType = petType;
         this.name = name;
     }

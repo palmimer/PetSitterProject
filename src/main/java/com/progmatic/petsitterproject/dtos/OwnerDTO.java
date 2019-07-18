@@ -1,14 +1,18 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.progmatic.petsitterproject.dtos;
 
-/**
- *
- * @author progmatic
- */
+import com.progmatic.petsitterproject.entities.Pet;
+import java.util.List;
+import javax.validation.constraints.NotBlank;
+
 public class OwnerDTO {
-    
+
+    private List<Pet> pets;
+
+    public OwnerDTO(List<Pet> pets) {
+        this.pets = pets;
+    }
+
+    public void setPets(List<Pet> pets) {
+        this.pets = pets;
+    }
 }

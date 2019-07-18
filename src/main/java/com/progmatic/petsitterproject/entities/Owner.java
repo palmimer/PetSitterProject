@@ -24,11 +24,6 @@ public class Owner implements Serializable {
         this.pets = pets;
     }
 
-    public Owner(int id, List<Pet> pets) {
-        this.id = id;
-        this.pets = pets;
-    }
-
     public int getId() {
         return id;
     }
