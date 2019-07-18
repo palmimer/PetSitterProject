@@ -2,7 +2,6 @@ package com.progmatic.petsitterproject.dtos;
 
 import com.progmatic.petsitterproject.entities.Pet;
 import java.util.List;
-import javax.validation.constraints.NotBlank;
 
 public class OwnerDTO {
 
