@@ -26,7 +26,7 @@ public class WebSecConfig extends WebSecurityConfigurerAdapter{
     @Override
     protected void configure(HttpSecurity http) throws Exception{
         http.csrf().disable().formLogin().loginPage("/signin").permitAll().defaultSuccessUrl("/petsitter", true).and().logout()
-                .and().authorizeRequests().antMatchers("/petsitter", "/signin", "/register").permitAll().anyRequest().authenticated();
+                .and().authorizeRequests().antMatchers("/petsitter", "/signin", "/register", "/petsitter/newregistration").permitAll().anyRequest().authenticated();
     }
     
     @Bean

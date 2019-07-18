@@ -28,7 +28,7 @@ public class User implements Serializable, UserDetails {
     private Owner owner;
     @OneToOne(cascade = REMOVE, fetch = FetchType.EAGER)
     private Sitter sitter;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     private Set<Authority> authorities;
 
     public User() {
@@ -38,6 +38,7 @@ public class User implements Serializable, UserDetails {
         this.name = name;
         this.email = email;
         this.password = password;
+        this.authorities = new HashSet<>();
     }
 
     public int getId() {

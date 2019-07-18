@@ -5,11 +5,19 @@
  */
 package com.progmatic.petsitterproject.services;
 
-import com.progmatic.petsitterproject.entities.*;
+import com.progmatic.petsitterproject.controllers.AlreadyExistsException;
+import com.progmatic.petsitterproject.dtos.RegistrationDTO;
 import com.progmatic.petsitterproject.dtos.SearchCriteriaDTO;
 import com.progmatic.petsitterproject.dtos.SitterDTO;
+import com.progmatic.petsitterproject.entities.Address;
+import com.progmatic.petsitterproject.entities.Availability;
+import com.progmatic.petsitterproject.entities.PetType;
+import com.progmatic.petsitterproject.entities.PlaceOfService;
 import com.progmatic.petsitterproject.entities.Sitter;
+import com.progmatic.petsitterproject.entities.SitterService;
 import com.progmatic.petsitterproject.entities.User;
+import static com.progmatic.petsitterproject.entities.User_.password;
+import com.progmatic.petsitterproject.entities.WorkingDay;
 import com.progmatic.petsitterproject.repositories.UserRepo;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -18,6 +26,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 /**
@@ -28,10 +37,13 @@ import org.springframework.stereotype.Service;
 public class UserService {
     
     private UserRepo ur;
+    private PasswordEncoder pwd;
 
     @Autowired
-    public UserService(UserRepo ur) {
+    public UserService(UserRepo ur, PasswordEncoder pwd) {
         this.ur = ur;
+        this.pwd = pwd;
+        
     }
     
     @Transactional
@@ -90,7 +102,7 @@ public class UserService {
     
     
     public List<SitterDTO> filterSitters(SearchCriteriaDTO criteria){
-        List<User> sitterUsers = searchResults(criteria.getName(), PetType.CAT, PlaceOfService.OWNERS_HOME, 0);
+        List<User> sitterUsers = searchResults(criteria.getName(), criteria.getPetType(), criteria.getPlaceOfService(), criteria.getPostCode());
         List<SitterDTO> petSitters = new ArrayList<>();
         for (User sitterUser : sitterUsers) {
             SitterDTO sitter = convertToDTO(sitterUser, sitterUser.getSitter());
@@ -98,6 +110,19 @@ public class UserService {
         }
         return petSitters;
     }
+    @Transactional
+    public void createUser(RegistrationDTO registration) throws AlreadyExistsException {
+        if (ur.userAlreadyExists(registration.getEmail())) {
+            throw new AlreadyExistsException("Ilyen e-mailcím már létezik az adatbázisban!");
+        }
+        Authority auth = ur.findAuthority("ROLE_USER");
+        User newUser = new User(registration.getUsername(), registration.getEmail(), pwd.encode(registration.getPassword(), auth));
+        ur.newUser(newUser);
+    }
+    
+    private SitterService createServiceWithoutPrice(PlaceOfService place, PetType petType) {
+        return new SitterService(place, petType);
+        }
     
     private List<User> searchResults(String name, PetType pet, PlaceOfService pl, int postal){
         List<User> sitters = ur.getAllSitters();

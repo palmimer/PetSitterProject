@@ -31,6 +31,13 @@ public class SitterService implements Serializable {
         this.pricePerDay = pricePerDay;
     }
 
+    public SitterService(PlaceOfService place, PetType petType) {
+        this.place = place;
+        this.petType = petType;
+    }
+    
+    
+
     public int getId() {
         return id;
     }
@@ -70,4 +77,14 @@ public class SitterService implements Serializable {
     public void setPricePerDay(int pricePerDay) {
         this.pricePerDay = pricePerDay;
     }
+
+    public Sitter getSitter() {
+        return sitter;
+    }
+
+    public void setSitter(Sitter sitter) {
+        this.sitter = sitter;
+    }
+    
+    
 }

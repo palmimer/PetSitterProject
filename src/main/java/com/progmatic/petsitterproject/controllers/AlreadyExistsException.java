@@ -9,7 +9,7 @@ package com.progmatic.petsitterproject.controllers;
  *
  * @author progmatic
  */
-class AlreadyExistsException extends Exception {
+public class AlreadyExistsException extends Exception {
 
     public AlreadyExistsException(String message) {
         super(message);

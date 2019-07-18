@@ -7,6 +7,7 @@ package com.progmatic.petsitterproject.dtos;
 
 import com.progmatic.petsitterproject.entities.Address;
 import com.progmatic.petsitterproject.entities.PetType;
+import com.progmatic.petsitterproject.entities.PlaceOfService;
 import com.progmatic.petsitterproject.entities.SitterService;
 
 /**
@@ -14,13 +15,16 @@ import com.progmatic.petsitterproject.entities.SitterService;
  * @author progmatic
  */
 public class SearchCriteriaDTO {
-    
+    private String name;
     private int postCode;
-    private SitterService service;
+    private PlaceOfService placeOfService;
+    private PetType petType;
 
-    public SearchCriteriaDTO(int postCode, SitterService service) {
+    public SearchCriteriaDTO(String name, int postCode, PlaceOfService placeOfService, PetType petType) {
+        this.name = name;
         this.postCode = postCode;
-        this.service = service;
+        this.placeOfService = placeOfService;
+        this.petType = petType;
     }
 
     public int getPostCode() {
@@ -31,14 +35,31 @@ public class SearchCriteriaDTO {
         this.postCode = postCode;
     }
 
-    public SitterService getService() {
-        return service;
+    public String getName() {
+        return name;
     }
 
-    public void setService(SitterService service) {
-        this.service = service;
+    public void setName(String name) {
+        this.name = name;
     }
 
+    public PlaceOfService getPlaceOfService() {
+        return placeOfService;
+    }
+
+    public void setPlaceOfService(PlaceOfService placeOfService) {
+        this.placeOfService = placeOfService;
+    }
+
+    public PetType getPetType() {
+        return petType;
+    }
+
+    public void setPetType(PetType petType) {
+        this.petType = petType;
+    }
+
+    
     
      
     

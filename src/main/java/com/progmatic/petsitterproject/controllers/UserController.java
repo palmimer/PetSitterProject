@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,6 +38,21 @@ public class UserController {
         this.us = us;
     }
     
+    @GetMapping(value = "/petsitter")
+    public String showHomePage(){
+        return "homepage";
+    }
+    
+    @GetMapping(value = "/petsitter/becomeasitter")
+    public String showSitterRegistrationForm(){
+        return "sitterform";
+    }
+    
+    @PostMapping(value = "/petsitter/newsitter")
+    public void registerNewSitter(){
+        
+    }
+    
     @GetMapping(value = "/petsitter/{userId}")
     public SitterDTO singleSitter( @PathVariable("userId") int userId ){
         User user = us.getUser(userId);
@@ -45,19 +61,20 @@ public class UserController {
         return response;
     }
 //    
-//    @GetMapping(value = "/petsitter/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
-//    public List<SitterDTO> listSitters(
-//                @RequestParam(value = "serviceType", defaultValue = "all") String serviceType,
-//                @RequestParam(value = "petType", defaultValue = "dog") String petType,
-//                @RequestParam(value = "postCode", defaultValue = "") int postCode
-//                
-//    ){
-////        Service service = createService(serviceType, petType);
-////        SearchCriteriaDTO criteria = new SearchCriteriaDTO(postCode, service);
-//        List<SitterDTO> selectedSitters = new ArrayList<>();
-////                us.filterSitters(criteria);
-//        return selectedSitters;
-//    }
+    @GetMapping(value = "/petsitter/search")
+    public List<SitterDTO> listSitters(
+                @RequestParam(value = "name", defaultValue = "") String sitterName,
+                @RequestParam(value = "PlaceOfService", defaultValue = "null") PlaceOfService placeOfService,
+                @RequestParam(value = "petType", defaultValue = "null") PetType petType,
+                @RequestParam(value = "postCode", defaultValue = "0") int postCode
+                
+    ){
+        SearchCriteriaDTO criteria = new SearchCriteriaDTO(sitterName, postCode, placeOfService, petType);
+        List<SitterDTO> selectedSitters =  us.filterSitters(criteria);
+        return selectedSitters;
+    }
+    
+    
     
     private SitterDTO convertToDTO(User user, Sitter sitter) {
         SitterDTO response = new SitterDTO(
@@ -71,30 +88,7 @@ public class UserController {
         return response;
     }
     
-//    private Service createService(String serviceType, String petType) {
-//        Service service = new Service();
-//        if (serviceType.equals("owners_home")) {
-//            service.setPlace(PlaceOfService.OWNERS_HOME);
-//        } else {
-//            service.setPlace(PlaceOfService.SITTERS_HOME);
-//        }
-//        switch(petType){
-//            case ("dog"):
-//                service.setPetType(PetType.DOG);
-//                return service;
-//            case ("cat"):
-//                service.setPetType(PetType.CAT);
-//                return service;
-//            case ("bird"):
-//                service.setPetType(PetType.BIRD);
-//                return service;
-//            case ("rodent"):
-//                service.setPetType(PetType.RODENT);
-//                return service;
-//            case ("reptile"):
-//                service.setPetType(PetType.REPTILE);
-//                return service;
-//        }
+//    
 //        
 //    }
     

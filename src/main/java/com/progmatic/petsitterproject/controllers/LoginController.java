@@ -9,18 +9,19 @@ import com.progmatic.petsitterproject.dtos.RegistrationDTO;
 import com.progmatic.petsitterproject.services.UserService;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  *
  * @author progmatic
  */
 
-@Controller
+@RestController
 public class LoginController {
     
     private UserService userService;
@@ -35,6 +36,8 @@ public class LoginController {
         return "login";
     }
     
+    //milyen oldalt mutat, amikor beléptünk? (azt, amit eddig)
+    
     
     @GetMapping("petsitter/register")
     public String showRegisterPage(
@@ -42,24 +45,15 @@ public class LoginController {
         return "register";
     }
     
-//    @PostMapping("petsitter/newregistration")
-//    public String register(
-//            @Valid
-//            @ModelAttribute("registration") RegistrationDTO registration, BindingResult bindingResult){
-//        
-//        if ( bindingResult.hasErrors() & !isRegistrationValid(registration, bindingResult)) {
-//            return "register";
-//        }
-//
-//        try {
-//            
-//            userService.createUser(registration);
-//            
-//        } catch (AlreadyExistsException ex) {
-//            bindingResult.rejectValue("registration.email", "Már van ilyen felhasználó! Válasszon másik nevet!");
-//            return "register";
-//        }
-//        return "redirect:/petsitter/login";
-//    }
+    @PostMapping("/petsitter/newregistration")
+    public void register(
+            @Valid
+            @RequestBody RegistrationDTO registration) throws AlreadyExistsException{
+        
+  
+            
+            userService.createUser(registration);
+         
+    }
     
 }

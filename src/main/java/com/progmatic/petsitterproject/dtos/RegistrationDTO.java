@@ -20,35 +20,38 @@ public class RegistrationDTO {
     @NotNull
     @NotEmpty
     @Size(min = 4, message=("Legalább 4 karaktert írj!"))
-    private String userName;
+    private String username;
     @NotNull
 //    @Pattern(regexp = "^\\S+@\\S+$")
     private String email;
     @NotNull
     @Size(min = 4, message=("Legalább 4 karaktert írj!"))
     private String password;
+
+    public RegistrationDTO() {
+    }
     
     
     public RegistrationDTO(String userName, String email, String password1) {
-        this.userName = userName;
+        this.username = userName;
         this.password = password1;
         this.email = email;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getUsername() {
+        return username;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public String getPassword1() {
+    public String getPassword() {
         return password;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     

@@ -28,13 +28,6 @@ public class UserRepo implements UserDetailsService{
     @PersistenceContext
     EntityManager em;
     
-    private PasswordEncoder pwd;
-
-    @Autowired
-    public UserRepo(PasswordEncoder pwd) {
-        this.pwd = pwd;
-    }
-
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return (UserDetails)em.createQuery("select u from User u where u.username =: nm")
@@ -87,8 +80,8 @@ public class UserRepo implements UserDetailsService{
         return a;
     }
     
-    public void newUser(String name, String email, String password){
-        em.persist(new User(name, email, pwd.encode(password)));
+    public void newUser(User u){
+        em.persist(u);
     }
     
     public void newAdmin(String name, String email, String password){
