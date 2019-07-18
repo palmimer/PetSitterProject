@@ -7,7 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class Service implements Serializable {
+public class SitterService implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,10 +17,10 @@ public class Service implements Serializable {
     private int pricePerHour;
     private int pricePerDay;
 
-    public Service() {
+    public SitterService() {
     }
 
-    public Service(PlaceOfService place, PetType petType, int pricePerHour, int pricePerDay) {
+    public SitterService(PlaceOfService place, PetType petType, int pricePerHour, int pricePerDay) {
         this.place = place;
         this.petType = petType;
         this.pricePerHour = pricePerHour;

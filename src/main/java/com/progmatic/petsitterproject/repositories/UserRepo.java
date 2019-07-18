@@ -41,45 +41,49 @@ public class UserRepo implements UserDetailsService{
                 .setParameter("nm", username).getSingleResult();
     }
     
-    public void newService(int userId, PlaceOfService place, TypeOfService type, int pricePerHour, int pricePerDay){
-        Service srv = new Service(place, type, pricePerHour, pricePerDay);
+    public void newService(int userId, PlaceOfService place, PetType type, int pricePerHour, int pricePerDay){
+        SitterService srv = new SitterService(place, type, pricePerHour, pricePerDay);
         em.persist(srv);
         findUser(userId).getSitter().getServices().add(srv);
     }
     
     public void newPet(int userId, PetType petType, String name){
-        User u = findUser(userId);
-        if(u.getOwner()==null){
-            newOwner(u);
-        }
         Pet p = new Pet(petType,name);
-        em.persist(p)
-        u.getOwner().setPets(p);
+        em.persist(p);
+        findUser(userId).getOwner().setPets(p);
     }
     
-    private Owner newOwner(User u){
+    public boolean isOwner(int userId){
+        return findUser(userId).getOwner() != null;
+    }
+    
+    public void newOwner(int userId){
         Owner o = new Owner();
         em.persist(o);
-        return o;
+        findUser(userId).setOwner(o);
+    }
+    
+    public boolean isSitter(int userId){
+        return findUser(userId).getSitter() != null;
     }
     
     public void newSitter(int userId, Byte[] profilePhoto, Address address
-            , String intro, List<PetType> petTypes, List<Service> services
+            , String intro, List<PetType> petTypes, List<SitterService> services
             , List<WorkingDay> availabilities){
-        Sitter s = new Sitter(profilePhoto, address, intro, petTypes, services);
+        Sitter s = new Sitter(profilePhoto, address, intro, petTypes, services, availabilities);
         em.persist(s);
         findUser(userId).setSitter(s);
         
     }
     
-    private Address newAddress(String city, String address, int postalCode){
+    public Address newAddress(String city, String address, int postalCode){
         Address a = new Address(city, address, postalCode);
         em.persist(a);
         return a;
     }
     
-    public void newUser(){
-        
+    public void newUser(String name, String email, String password){
+        em.persist(new User(name, email, pwd.encode(password)));
     }
     
     
@@ -88,7 +92,7 @@ public class UserRepo implements UserDetailsService{
     }
     
     public List<User> getAllSitters(){
-        return em.createQuery("select u from User join fetch u.sitter != null")
+        return em.createQuery("select u from User where u.sitter != null")
                 .getResultList();
     }
     
@@ -96,12 +100,14 @@ public class UserRepo implements UserDetailsService{
         return em.createQuery("select u from User").getResultList();
     }
     
-    public void setDate(int id, LocalDate date){
-        
+    public WorkingDay newDay(LocalDate date){
+        WorkingDay w = new WorkingDay(date, Availability.FREE);
+        em.persist(w);
+        return w;
     }
     
-    public WorkingDay newDay(LocalDate date){
-        
+    public WorkingDay findDay(int dayId){
+        return em.find(WorkingDay.class, dayId);
     }
     
     

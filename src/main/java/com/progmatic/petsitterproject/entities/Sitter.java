@@ -24,14 +24,14 @@ public class Sitter implements Serializable {
     @OneToMany
     private List<PetType> petTypes;
     @OneToMany
-    private List<Service> services;
+    private List<SitterService> services;
     @OneToMany
     private List<WorkingDay> availabilities;
 
     public Sitter() {
     }
 
-    public Sitter(Byte[] profilePhoto, Address address, String intro, List<PetType> petTypes, List<Service> services, List<WorkingDay> availabilities) {
+    public Sitter(Byte[] profilePhoto, Address address, String intro, List<PetType> petTypes, List<SitterService> services, List<WorkingDay> availabilities) {
         this.profilePhoto = profilePhoto;
         this.address = address;
         this.intro = intro;
@@ -60,7 +60,7 @@ public class Sitter implements Serializable {
         return petTypes;
     }
 
-    public List<Service> getServices() {
+    public List<SitterService> getServices() {
         return services;
     }
 
@@ -88,7 +88,7 @@ public class Sitter implements Serializable {
         this.petTypes = petTypes;
     }
 
-    public void setServices(List<Service> services) {
+    public void setServices(List<SitterService> services) {
         this.services = services;
     }
 
