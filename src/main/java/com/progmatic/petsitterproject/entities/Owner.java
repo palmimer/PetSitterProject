@@ -2,6 +2,7 @@ package com.progmatic.petsitterproject.entities;
 
 import java.io.Serializable;
 import java.util.List;
+import static javax.persistence.CascadeType.REMOVE;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,7 +15,7 @@ public class Owner implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @OneToMany(mappedBy = "owner")
+    @OneToMany(cascade = REMOVE, mappedBy = "owner")
     private List<Pet> pets;
 
     public Owner() {

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import static javax.persistence.CascadeType.REMOVE;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -23,9 +24,9 @@ public class User implements Serializable, UserDetails {
     private String name;
     private String email;
     private String password;
-    @OneToOne
+    @OneToOne(cascade = REMOVE)
     private Owner owner;
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(cascade = REMOVE, fetch = FetchType.EAGER)
     private Sitter sitter;
     @ManyToMany
     private Set<Authority> authorities;
