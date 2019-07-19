@@ -6,8 +6,9 @@
 package com.progmatic.petsitterproject.controllers;
 
 import com.progmatic.petsitterproject.dtos.OwnerDTO;
+import com.progmatic.petsitterproject.dtos.PetDTO;
 import com.progmatic.petsitterproject.dtos.SearchCriteriaDTO;
-import com.progmatic.petsitterproject.dtos.SitterDTO;
+import com.progmatic.petsitterproject.dtos.SitterRegistrationDTO;
 import com.progmatic.petsitterproject.entities.PetType;
 import com.progmatic.petsitterproject.entities.Sitter;
 import com.progmatic.petsitterproject.entities.User;
@@ -36,29 +37,29 @@ public class UserController {
     }
     
     @PostMapping(value = "/newsitter")
-    public void registerNewSitter(SitterDTO sitterData){
+    public void registerNewSitter(SitterRegistrationDTO sitterData){
         
         us.registerNewSitter(sitterData);
         //valami visszajelzést arról, hogy megtörtént a regisztráció
     }
     
     @PostMapping(value = "/newowner")
-    public void registerNewOwner(OwnerDTO ownerData){
+    public void registerNewOwner(PetDTO petData){
         
-        us.registerNewOwner(ownerData);
+        us.registerNewOwner(petData.getPetType(), petData.getName());
         //valami visszajelzést arról, hogy megtörtént a regisztráció
     }
     
     @GetMapping(value = "/{userId}")
-    public SitterDTO singleSitter( @PathVariable("userId") int userId ){
+    public SitterRegistrationDTO singleSitter( @PathVariable("userId") int userId ){
         User user = us.getUser(userId);
         Sitter sitter = user.getSitter();
-        SitterDTO response = convertToDTO(user, sitter);
+        SitterRegistrationDTO response = convertToDTO(user, sitter);
         return response;
     }
 //    
     @GetMapping(value = "/search/sitters")
-    public List<SitterDTO> listSitters(
+    public List<SitterRegistrationDTO> listSitters(
                 @RequestParam(value = "name", defaultValue = "") String sitterName,
                 @RequestParam(value = "PlaceOfService", defaultValue = "null") PlaceOfService placeOfService,
                 @RequestParam(value = "petType", defaultValue = "null") PetType petType,
@@ -66,25 +67,25 @@ public class UserController {
                 
     ){
         SearchCriteriaDTO criteria = new SearchCriteriaDTO(sitterName, postCode, placeOfService, petType);
-        List<SitterDTO> selectedSitters =  us.filterSitters(criteria);
+        List<SitterRegistrationDTO> selectedSitters =  us.filterSitters(criteria);
         return selectedSitters;
     }
     
     
     
-    private SitterDTO convertToDTO(User user, Sitter sitter) {
-        SitterDTO response = new SitterDTO(
-                sitter.getProfilePhoto(),
-                sitter.getAddress().getCity(),
-                sitter.getAddress().getAddress(),
-                sitter.getAddress().getPostalCode(),
-                sitter.getIntro(),
-                sitter.getPetTypes(),
-                sitter.getServices(),
-                sitter.getAvailabilities()
-        );
-        return response;
-    }
+//    private SitterDTO convertToDTO(User user, Sitter sitter) {
+//        SitterDTO response = new SitterDTO(
+//                sitter.getProfilePhoto(),
+//                sitter.getAddress().getCity(),
+//                sitter.getAddress().getAddress(),
+//                sitter.getAddress().getPostalCode(),
+//                sitter.getIntro(),
+//                sitter.getPetTypes(),
+//                sitter.getServices(),
+//                sitter.getAvailabilities()
+//        );
+//        return response;
+//    }
     
 //    
 //        

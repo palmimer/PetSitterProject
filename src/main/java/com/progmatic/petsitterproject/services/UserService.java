@@ -8,7 +8,7 @@ package com.progmatic.petsitterproject.services;
 import com.progmatic.petsitterproject.controllers.AlreadyExistsException;
 import com.progmatic.petsitterproject.dtos.RegistrationDTO;
 import com.progmatic.petsitterproject.dtos.SearchCriteriaDTO;
-import com.progmatic.petsitterproject.dtos.SitterDTO;
+import com.progmatic.petsitterproject.dtos.SitterRegistrationDTO;
 import com.progmatic.petsitterproject.entities.*;
 import com.progmatic.petsitterproject.repositories.UserRepo;
 import java.time.LocalDate;
@@ -39,9 +39,9 @@ public class UserService {
     }
     
     @Transactional
-    public void newPet(PetType petType, String name){
+    public void registerNewOwner(PetType petType, String name){
         User u = getCurrentUser();
-        if(u.getOwner()==null){
+        if(u.getOwner()== null){
             Owner o = new Owner();
             ur.newOwner(o);
             u.setOwner(o);
@@ -56,13 +56,15 @@ public class UserService {
     }
     
     @Transactional
-    public void newSitter(SitterDTO sd){
-        Sitter s =new Sitter(sd.getProfilePhoto(), createAddress(sd.getCity()
+    public void registerNewSitter(SitterRegistrationDTO sd){
+        Sitter s = new Sitter(sd.getProfilePhoto(), createAddress(sd.getCity()
                 , sd.getAddress(), sd.getPostalCode()), sd.getIntro()
                 , sd.getPetTypes(), sd.getServices(), newCalendar());
         getCurrentUser().setSitter(s);
         ur.newSitter(s);
     }
+    
+    
     
     @Transactional
     public Address createAddress(String city, String address, int postalCode){
@@ -108,11 +110,11 @@ public class UserService {
     }
     
     
-    public List<SitterDTO> filterSitters(SearchCriteriaDTO criteria){
+    public List<SitterRegistrationDTO> filterSitters(SearchCriteriaDTO criteria){
         List<User> sitterUsers = searchResults(criteria.getName(), criteria.getPetType(), criteria.getPlaceOfService(), criteria.getPostCode());
-        List<SitterDTO> petSitters = new ArrayList<>();
+        List<SitterRegistrationDTO> petSitters = new ArrayList<>();
         for (User sitterUser : sitterUsers) {
-            SitterDTO sitter = convertToDTO(sitterUser, sitterUser.getSitter());
+            SitterRegistrationDTO sitter = convertToDTO(sitterUser, sitterUser.getSitter());
             petSitters.add(sitter);
         }
         return petSitters;
@@ -169,8 +171,8 @@ public class UserService {
                 .getPostalCode()==postal).collect(Collectors.toList());
     }
     
-    private SitterDTO convertToDTO(User user, Sitter sitter) {
-        SitterDTO response = new SitterDTO(
+    private SitterRegistrationDTO convertToDTO(User user, Sitter sitter) {
+        SitterRegistrationDTO response = new SitterRegistrationDTO(
                 sitter.getProfilePhoto(),
                 sitter.getAddress().getCity(),
                 sitter.getAddress().getAddress(),
