@@ -67,7 +67,7 @@ public class UserService {
     private List<SitterService> registerNewServiceList(List<SitterServiceDTO> ssrv){
         List<SitterService> listOfServices = new ArrayList<>();
         for (SitterServiceDTO s : ssrv) {
-            SitterService ss = new SitterService(s.getPlace(),s.getPetType()
+            SitterService ss = new SitterService(s.getPlace(), s.getPetType()
                 ,s.getPricePerHour(), s.getPricePerDay());
             ur.newService(ss);
             listOfServices.add(ss);
