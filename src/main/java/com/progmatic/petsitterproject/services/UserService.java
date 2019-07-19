@@ -6,9 +6,7 @@
 package com.progmatic.petsitterproject.services;
 
 import com.progmatic.petsitterproject.controllers.AlreadyExistsException;
-import com.progmatic.petsitterproject.dtos.RegistrationDTO;
-import com.progmatic.petsitterproject.dtos.SearchCriteriaDTO;
-import com.progmatic.petsitterproject.dtos.SitterRegistrationDTO;
+import com.progmatic.petsitterproject.dtos.*;
 import com.progmatic.petsitterproject.entities.*;
 import com.progmatic.petsitterproject.repositories.UserRepo;
 import java.time.LocalDate;
@@ -30,11 +28,13 @@ public class UserService {
     
     private UserRepo ur;
     private PasswordEncoder pwd;
+    private ConversionService conv;
 
     @Autowired
-    public UserService(UserRepo ur, PasswordEncoder pwd) {
+    public UserService(UserRepo ur, PasswordEncoder pwd, ConversionService conv) {
         this.ur = ur;
         this.pwd = pwd;
+        this.conv = conv;
         
     }
     
@@ -59,12 +59,29 @@ public class UserService {
     public void registerNewSitter(SitterRegistrationDTO sd){
         Sitter s = new Sitter(sd.getProfilePhoto(), createAddress(sd.getCity()
                 , sd.getAddress(), sd.getPostalCode()), sd.getIntro()
-                , sd.getPetTypes(), sd.getServices(), newCalendar());
+                , sd.getPetTypes(), registerNewServiceList(sd.getServices()), newCalendar());
         getCurrentUser().setSitter(s);
         ur.newSitter(s);
     }
     
+    private List<SitterService> registerNewServiceList(List<SitterServiceDTO> ssrv){
+        List<SitterService> listOfServices = new ArrayList<>();
+        for (SitterServiceDTO s : ssrv) {
+            SitterService ss = new SitterService(s.getPlace(),s.getPetType()
+                ,s.getPricePerHour(), s.getPricePerDay());
+            ur.newService(ss);
+            listOfServices.add(ss);
+        }
+        return listOfServices;
+    }
     
+    @Transactional
+    public void registerNewService(SitterServiceDTO ssrv){
+        SitterService ss = new SitterService(ssrv.getPlace(),ssrv.getPetType()
+                ,ssrv.getPricePerHour(), ssrv.getPricePerDay());
+        ur.newService(ss);
+        getCurrentUser().getSitter().getServices().add(ss);
+    }
     
     @Transactional
     public Address createAddress(String city, String address, int postalCode){
@@ -110,11 +127,11 @@ public class UserService {
     }
     
     
-    public List<SitterRegistrationDTO> filterSitters(SearchCriteriaDTO criteria){
+    public List<SitterViewDTO> filterSitters(SearchCriteriaDTO criteria){
         List<User> sitterUsers = searchResults(criteria.getName(), criteria.getPetType(), criteria.getPlaceOfService(), criteria.getPostCode());
-        List<SitterRegistrationDTO> petSitters = new ArrayList<>();
+        List<SitterViewDTO> petSitters = new ArrayList<>();
         for (User sitterUser : sitterUsers) {
-            SitterRegistrationDTO sitter = convertToDTO(sitterUser, sitterUser.getSitter());
+            SitterViewDTO sitter = conv.convertToSitterViewDTO(sitterUser, sitterUser.getSitter());
             petSitters.add(sitter);
         }
         return petSitters;
@@ -169,20 +186,6 @@ public class UserService {
     private List<User> filterByPostal(int postal, List<User> list){
         return list.stream().filter(u -> u.getSitter().getAddress()
                 .getPostalCode()==postal).collect(Collectors.toList());
-    }
-    
-    private SitterRegistrationDTO convertToDTO(User user, Sitter sitter) {
-        SitterRegistrationDTO response = new SitterRegistrationDTO(
-                sitter.getProfilePhoto(),
-                sitter.getAddress().getCity(),
-                sitter.getAddress().getAddress(),
-                sitter.getAddress().getPostalCode(),
-                sitter.getIntro(),
-                sitter.getPetTypes(),
-                sitter.getServices(),
-                sitter.getAvailabilities()
-        );
-        return response;
     }
     
     private User getCurrentUser(){

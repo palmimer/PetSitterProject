@@ -10,12 +10,9 @@ import java.time.LocalDate;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -39,10 +36,8 @@ public class UserRepo implements UserDetailsService{
                 .setParameter("e", email).getResultList().isEmpty();
     }
     
-    public void newService(int userId, PlaceOfService place, PetType type, int pricePerHour, int pricePerDay){
-        SitterService srv = new SitterService(place, type, pricePerHour, pricePerDay);
+    public void newService(SitterService srv){
         em.persist(srv);
-        findUser(userId).getSitter().getServices().add(srv);
     }
     
     public void newPet(Pet p){
@@ -67,6 +62,10 @@ public class UserRepo implements UserDetailsService{
     
     public void newAddress(Address a){
         em.persist(a);
+    }
+    
+    public void newSitterService(SitterService ss){
+        em.persist(ss);
     }
     
     public void newUser(User u){
