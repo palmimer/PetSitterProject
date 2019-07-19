@@ -9,6 +9,7 @@ import com.progmatic.petsitterproject.dtos.OwnerDTO;
 import com.progmatic.petsitterproject.dtos.PetDTO;
 import com.progmatic.petsitterproject.dtos.SearchCriteriaDTO;
 import com.progmatic.petsitterproject.dtos.SitterRegistrationDTO;
+import com.progmatic.petsitterproject.dtos.SitterViewDTO;
 import com.progmatic.petsitterproject.entities.PetType;
 import com.progmatic.petsitterproject.entities.Sitter;
 import com.progmatic.petsitterproject.entities.User;
@@ -37,24 +38,26 @@ public class UserController {
     }
     
     @PostMapping(value = "/newsitter")
-    public void registerNewSitter(SitterRegistrationDTO sitterData){
+    public String registerNewSitter(SitterRegistrationDTO sitterData){
         
         us.registerNewSitter(sitterData);
         //valami visszajelzést arról, hogy megtörtént a regisztráció
+        return "Sikeresen regisztráltál, mint KiVi!";
     }
     
     @PostMapping(value = "/newowner")
-    public void registerNewOwner(PetDTO petData){
+    public String registerNewOwner(PetDTO petData){
         
         us.registerNewOwner(petData.getPetType(), petData.getName());
         //valami visszajelzést arról, hogy megtörtént a regisztráció
+        return "Sikeresen regisztráltál, mint állattulajdonos!";
     }
     
     @GetMapping(value = "/{userId}")
-    public SitterRegistrationDTO singleSitter( @PathVariable("userId") int userId ){
+    public SitterViewDTO singleSitter( @PathVariable("userId") int userId ){
         User user = us.getUser(userId);
         Sitter sitter = user.getSitter();
-        SitterRegistrationDTO response = convertToDTO(user, sitter);
+        SitterViewDTO response = convertToDTO(user, sitter);
         return response;
     }
 //    
@@ -73,19 +76,20 @@ public class UserController {
     
     
     
-//    private SitterDTO convertToDTO(User user, Sitter sitter) {
-//        SitterDTO response = new SitterDTO(
-//                sitter.getProfilePhoto(),
-//                sitter.getAddress().getCity(),
-//                sitter.getAddress().getAddress(),
-//                sitter.getAddress().getPostalCode(),
-//                sitter.getIntro(),
-//                sitter.getPetTypes(),
-//                sitter.getServices(),
-//                sitter.getAvailabilities()
-//        );
-//        return response;
-//    }
+    private SitterViewDTO convertToDTO(User user, Sitter sitter) {
+        SitterViewDTO response = new SitterViewDTO();
+        response.setProfilePhoto(sitter.getProfilePhoto());
+        response.setUserName(user.getName());
+        response.setCity(sitter.getAddress().getCity());
+        response.setAddress(sitter.getAddress().getAddress());
+        response.setPostalCode(sitter.getAddress().getPostalCode());
+        response.setIntro(sitter.getIntro());
+        response.setPetTypes(sitter.getPetTypes());
+        response.setServices(sitter.getServices());
+        response.setAvailabilities(sitter.getAvailabilities());
+        
+        return response;
+    }
     
 //    
 //        
