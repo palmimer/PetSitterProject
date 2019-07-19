@@ -79,7 +79,9 @@ public class UserController {
     private SitterDTO convertToDTO(User user, Sitter sitter) {
         SitterDTO response = new SitterDTO(
                 sitter.getProfilePhoto(),
-                sitter.getAddress(),
+                sitter.getAddress().getCity(),
+                sitter.getAddress().getAddress(),
+                sitter.getAddress().getPostalCode(),
                 sitter.getIntro(),
                 sitter.getPetTypes(),
                 sitter.getServices(),

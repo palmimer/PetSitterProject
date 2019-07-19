@@ -9,24 +9,15 @@ import com.progmatic.petsitterproject.controllers.AlreadyExistsException;
 import com.progmatic.petsitterproject.dtos.RegistrationDTO;
 import com.progmatic.petsitterproject.dtos.SearchCriteriaDTO;
 import com.progmatic.petsitterproject.dtos.SitterDTO;
-import com.progmatic.petsitterproject.entities.Address;
-import com.progmatic.petsitterproject.entities.Authority;
-import com.progmatic.petsitterproject.entities.Availability;
-import com.progmatic.petsitterproject.entities.PetType;
-import com.progmatic.petsitterproject.entities.PlaceOfService;
-import com.progmatic.petsitterproject.entities.Sitter;
-import com.progmatic.petsitterproject.entities.SitterService;
-import com.progmatic.petsitterproject.entities.User;
-import static com.progmatic.petsitterproject.entities.User_.password;
-import com.progmatic.petsitterproject.entities.WorkingDay;
+import com.progmatic.petsitterproject.entities.*;
 import com.progmatic.petsitterproject.repositories.UserRepo;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -48,21 +39,36 @@ public class UserService {
     }
     
     @Transactional
-    public void newPet(int userId, PetType petType, String name){
-        if(!ur.isOwner(userId)){
-            ur.newOwner(userId);
+    public void newPet(PetType petType, String name){
+        User u = getCurrentUser();
+        if(u.getOwner()==null){
+            Owner o = new Owner();
+            ur.newOwner(o);
+            u.setOwner(o);
         }
-        ur.newPet(userId, petType, name);
+        Pet p = new Pet(petType,name);
+        ur.newPet(p);
+        u.getOwner().setPets(p);
     }
+    
     public User getUser(int userId){
         return ur.findUser(userId);
     }
     
     @Transactional
-    public void newSitter(int userId, Byte[] profilePhoto, Address address
-            , String intro, List<PetType> petTypes, List<SitterService> services){
-            
-        ur.newSitter(userId, profilePhoto, address, intro, petTypes, services, newCalendar());
+    public void newSitter(SitterDTO sd){
+        Sitter s =new Sitter(sd.getProfilePhoto(), createAddress(sd.getCity()
+                , sd.getAddress(), sd.getPostalCode()), sd.getIntro()
+                , sd.getPetTypes(), sd.getServices(), newCalendar());
+        getCurrentUser().setSitter(s);
+        ur.newSitter(s);
+    }
+    
+    @Transactional
+    public Address createAddress(String city, String address, int postalCode){
+        Address a = new Address(city, address, postalCode);
+        ur.newAddress(a);
+        return a;
     }
     
     @Transactional
@@ -166,13 +172,19 @@ public class UserService {
     private SitterDTO convertToDTO(User user, Sitter sitter) {
         SitterDTO response = new SitterDTO(
                 sitter.getProfilePhoto(),
-                sitter.getAddress(),
+                sitter.getAddress().getCity(),
+                sitter.getAddress().getAddress(),
+                sitter.getAddress().getPostalCode(),
                 sitter.getIntro(),
                 sitter.getPetTypes(),
                 sitter.getServices(),
                 sitter.getAvailabilities()
         );
         return response;
+    }
+    
+    private User getCurrentUser(){
+        return (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 }
 

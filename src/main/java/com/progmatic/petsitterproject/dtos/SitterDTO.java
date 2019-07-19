@@ -5,12 +5,17 @@ import com.progmatic.petsitterproject.entities.PetType;
 import com.progmatic.petsitterproject.entities.SitterService;
 import com.progmatic.petsitterproject.entities.WorkingDay;
 import java.util.List;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 public class SitterDTO {
     private Byte[] profilePhoto;
     @NotNull
-    private Address address;
+    private String city;
+    @NotNull
+    private String address;
+    @Min(1)
+    private int postalCode;
     @NotNull
     private String intro;
     @NotNull
@@ -19,9 +24,11 @@ public class SitterDTO {
     private List<SitterService> services;
     private List<WorkingDay> availabilities;
 
-    public SitterDTO(Byte[] profilePhoto, Address address, String intro, List<PetType> petTypes, List<SitterService> services, List<WorkingDay> availabilities) {
+    public SitterDTO(Byte[] profilePhoto, String city, String address, int postalCode, String intro, List<PetType> petTypes, List<SitterService> services, List<WorkingDay> availabilities) {
         this.profilePhoto = profilePhoto;
+        this.city = city;
         this.address = address;
+        this.postalCode = postalCode;
         this.intro = intro;
         this.petTypes = petTypes;
         this.services = services;
@@ -32,7 +39,15 @@ public class SitterDTO {
         return profilePhoto;
     }
 
-    public Address getAddress() {
+    public String getCity() {
+        return city;
+    }
+
+    public int getPostalCode() {
+        return postalCode;
+    }
+    
+    public String getAddress() {
         return address;
     }
 
@@ -56,8 +71,16 @@ public class SitterDTO {
         this.profilePhoto = profilePhoto;
     }
 
-    public void setAddress(Address address) {
+    public void setAddress(String address) {
         this.address = address;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public void setPostalCode(int postalCode) {
+        this.postalCode = postalCode;
     }
 
     public void setIntro(String intro) {

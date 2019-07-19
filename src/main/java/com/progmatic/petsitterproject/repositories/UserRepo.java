@@ -45,47 +45,32 @@ public class UserRepo implements UserDetailsService{
         findUser(userId).getSitter().getServices().add(srv);
     }
     
-    public void newPet(int userId, PetType petType, String name){
-        Pet p = new Pet(petType,name);
+    public void newPet(Pet p){
         em.persist(p);
-        findUser(userId).getOwner().setPets(p);
     }
     
     public boolean isOwner(int userId){
         return findUser(userId).getOwner() != null;
     }
     
-    public void newOwner(int userId){
-        Owner o = new Owner();
+    public void newOwner(Owner o){
         em.persist(o);
-        findUser(userId).setOwner(o);
     }
     
     public boolean isSitter(int userId){
         return findUser(userId).getSitter() != null;
     }
     
-    public void newSitter(int userId, Byte[] profilePhoto, Address address
-            , String intro, List<PetType> petTypes, List<SitterService> services
-            , List<WorkingDay> availabilities){
-        Sitter s = new Sitter(profilePhoto, address, intro, petTypes, services, availabilities);
+    public void newSitter(Sitter s){
         em.persist(s);
-        findUser(userId).setSitter(s);
-        
-    }
+        }
     
-    public Address newAddress(String city, String address, int postalCode){
-        Address a = new Address(city, address, postalCode);
+    public void newAddress(Address a){
         em.persist(a);
-        return a;
     }
     
     public void newUser(User u){
         em.persist(u);
-    }
-    
-    public void newAdmin(String name, String email, String password){
-        em.persist(new User(name, email, pwd.encode(password), "ROLE_ADMIN"));
     }
     
     public void deleteUser(int id){
