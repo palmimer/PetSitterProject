@@ -59,19 +59,18 @@ public class UserService {
     public void registerNewSitter(SitterRegistrationDTO sd){
         Sitter s = new Sitter(sd.getProfilePhoto(), createAddress(sd.getCity()
                 , sd.getAddress(), sd.getPostalCode()), sd.getIntro()
-                , sd.getPetTypes(), , newCalendar());
+                , sd.getPetTypes(), newServiceList(sd.getPlace(),sd.getPetType()
+                        ,sd.getPricePerHour(), sd.getPricePerDay()), newCalendar());
         getCurrentUser().setSitter(s);
         ur.newSitter(s);
     }
     
-    private List<SitterService> registerNewServiceList(List<SitterServiceDTO> ssrv){
+    private List<SitterService> newServiceList(PlaceOfService place, PetType petType
+            , int pricePerHour, int pricePerDay){
         List<SitterService> listOfServices = new ArrayList<>();
-        for (SitterServiceDTO s : ssrv) {
-            SitterService ss = new SitterService(s.getPlace(), s.getPetType()
-                ,s.getPricePerHour(), s.getPricePerDay());
-            ur.newService(ss);
-            listOfServices.add(ss);
-        }
+        SitterService ss = new SitterService(place,petType,pricePerHour, pricePerDay);
+        ur.newService(ss);
+        listOfServices.add(ss);
         return listOfServices;
     }
     
