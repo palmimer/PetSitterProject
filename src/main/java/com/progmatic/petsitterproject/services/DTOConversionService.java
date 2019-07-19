@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
  * @author imaginifer
  */
 @Service
-public class ConversionService {
+public class DTOConversionService {
     
     public SitterViewDTO convertToSitterViewDTO(User user, Sitter sitter) {
         SitterViewDTO response = new SitterViewDTO();

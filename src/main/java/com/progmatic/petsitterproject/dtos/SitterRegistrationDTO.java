@@ -1,8 +1,7 @@
 package com.progmatic.petsitterproject.dtos;
 
-import com.progmatic.petsitterproject.entities.Address;
 import com.progmatic.petsitterproject.entities.PetType;
-import com.progmatic.petsitterproject.entities.SitterService;
+import com.progmatic.petsitterproject.entities.PlaceOfService;
 import com.progmatic.petsitterproject.entities.WorkingDay;
 import java.util.List;
 import javax.validation.constraints.Min;
@@ -19,22 +18,19 @@ public class SitterRegistrationDTO {
     @NotNull
     private String intro;
     @NotNull
-    private List<PetType> petTypes;
+//    private List<PetType> petTypes;
+//    @NotNull
+    private PlaceOfService place;
     @NotNull
-    private List<SitterServiceDTO> services;
+    private PetType petType;
+    private int pricePerHour;
+    private int pricePerDay;
+    
     private List<WorkingDay> availabilities;
 
-    public SitterRegistrationDTO(Byte[] profilePhoto, String city, String address, int postalCode, String intro, List<PetType> petTypes, List<SitterServiceDTO> services, List<WorkingDay> availabilities) {
-        this.profilePhoto = profilePhoto;
-        this.city = city;
-        this.address = address;
-        this.postalCode = postalCode;
-        this.intro = intro;
-        this.petTypes = petTypes;
-        this.services = services;
-        this.availabilities = availabilities;
+    public SitterRegistrationDTO() {
     }
-
+    
     public Byte[] getProfilePhoto() {
         return profilePhoto;
     }
@@ -55,13 +51,9 @@ public class SitterRegistrationDTO {
         return intro;
     }
 
-    public List<PetType> getPetTypes() {
-        return petTypes;
-    }
-
-    public List<SitterServiceDTO> getServices() {
-        return services;
-    }
+//    public List<PetType> getPetTypes() {
+//        return petTypes;
+//    }
 
     public List<WorkingDay> getAvailabilities() {
         return availabilities;
@@ -87,13 +79,43 @@ public class SitterRegistrationDTO {
         this.intro = intro;
     }
 
-    public void setPetTypes(List<PetType> petTypes) {
-        this.petTypes = petTypes;
+//    public void setPetTypes(List<PetType> petTypes) {
+//        this.petTypes = petTypes;
+//    }
+
+    public PlaceOfService getPlace() {
+        return place;
     }
 
-    public void setServices(List<SitterServiceDTO> services) {
-        this.services = services;
+    public void setPlace(PlaceOfService place) {
+        this.place = place;
     }
+
+    public PetType getPetType() {
+        return petType;
+    }
+
+    public void setPetType(PetType petType) {
+        this.petType = petType;
+    }
+
+    public int getPricePerHour() {
+        return pricePerHour;
+    }
+
+    public void setPricePerHour(int pricePerHour) {
+        this.pricePerHour = pricePerHour;
+    }
+
+    public int getPricePerDay() {
+        return pricePerDay;
+    }
+
+    public void setPricePerDay(int pricePerDay) {
+        this.pricePerDay = pricePerDay;
+    }
+
+    
 
     public void setAvailabilities(List<WorkingDay> availabilities) {
         this.availabilities = availabilities;

@@ -25,9 +25,9 @@ public class Sitter implements Serializable {
     private Address address;
     private String intro;
     
-    @ElementCollection(targetClass = PetType.class)
-    @Enumerated
-    private List<PetType> petTypes;
+//    @ElementCollection(targetClass = PetType.class)
+//    @Enumerated
+//    private List<PetType> petTypes;
     @OneToMany(mappedBy = "sitter")
     private List<SitterService> services;
     @OneToMany(mappedBy = "sitter")
@@ -89,9 +89,9 @@ public class Sitter implements Serializable {
         this.intro = intro;
     }
 
-    public void setPetTypes(List<PetType> petTypes) {
-        this.petTypes = petTypes;
-    }
+//    public void setPetTypes(List<PetType> petTypes) {
+//        this.petTypes = petTypes;
+//    }
 
     public void setServices(List<SitterService> services) {
         this.services = services;

@@ -29,8 +29,8 @@ public class SitterViewDTO {
     private int postalCode;
     @NotNull
     private String intro;
-    @NotNull
-    private List<PetType> petTypes;
+//    @NotNull
+//    private List<PetType> petTypes;
     @NotNull
     private List<SitterService> services;
     private List<WorkingDay> availabilities;
@@ -78,13 +78,13 @@ public class SitterViewDTO {
         this.intro = intro;
     }
 
-    public List<PetType> getPetTypes() {
-        return petTypes;
-    }
-
-    public void setPetTypes(List<PetType> petTypes) {
-        this.petTypes = petTypes;
-    }
+//    public List<PetType> getPetTypes() {
+//        return petTypes;
+//    }
+//
+//    public void setPetTypes(List<PetType> petTypes) {
+//        this.petTypes = petTypes;
+//    }
 
     public List<SitterService> getServices() {
         return services;

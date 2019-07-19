@@ -28,10 +28,10 @@ public class UserService {
     
     private UserRepo ur;
     private PasswordEncoder pwd;
-    private ConversionService conv;
+    private DTOConversionService conv;
 
     @Autowired
-    public UserService(UserRepo ur, PasswordEncoder pwd, ConversionService conv) {
+    public UserService(UserRepo ur, PasswordEncoder pwd, DTOConversionService conv) {
         this.ur = ur;
         this.pwd = pwd;
         this.conv = conv;
@@ -59,7 +59,7 @@ public class UserService {
     public void registerNewSitter(SitterRegistrationDTO sd){
         Sitter s = new Sitter(sd.getProfilePhoto(), createAddress(sd.getCity()
                 , sd.getAddress(), sd.getPostalCode()), sd.getIntro()
-                , sd.getPetTypes(), registerNewServiceList(sd.getServices()), newCalendar());
+                , sd.getPetTypes(), , newCalendar());
         getCurrentUser().setSitter(s);
         ur.newSitter(s);
     }
