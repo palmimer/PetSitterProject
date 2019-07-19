@@ -59,10 +59,23 @@ public class UserService {
     }
     
     @Transactional
-    public void newSitter(int userId, Byte[] profilePhoto, Address address
-            , String intro, List<PetType> petTypes, List<SitterService> services){
-            
-        ur.newSitter(userId, profilePhoto, address, intro, petTypes, services, newCalendar());
+    public void registerNewSitter(SitterDTO sitterData){
+//        int userId = user.getId();
+//        Byte[] profilePhoto = sitterData.getProfilePhoto();
+//        Address address = sitterData.getAddress();
+//        String intro = sitterData.getIntro();
+//        List<PetType> petTypes = sitterData.getPetTypes(); 
+//        List<SitterService> services = sitterData.getServices();
+////        List<WorkingDay> availabilities = sitterData.getAvailabilities();
+//        ur.newSitter(userId, profilePhoto, address, intro, petTypes, services, newCalendar());
+    }
+    
+    @Transactional
+    public void registerNewOwner(OwnerDTO ownerData){
+        int userId = user.getId();
+        
+//        List<WorkingDay> availabilities = sitterData.getAvailabilities();
+        ur.newOwner(userId);
     }
     
     @Transactional
@@ -71,7 +84,7 @@ public class UserService {
         List<WorkingDay> cal = new ArrayList<>();
         for (int i = 0; i < 30; i++) {
             cal.add(ur.newDay(d));
-            d=d.plusDays(1);
+            d = d.plusDays(1);
         }
         return cal;
     }

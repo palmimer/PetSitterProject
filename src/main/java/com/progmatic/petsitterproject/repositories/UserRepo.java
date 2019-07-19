@@ -65,9 +65,9 @@ public class UserRepo implements UserDetailsService{
         return findUser(userId).getSitter() != null;
     }
     
-    public void newSitter(int userId, Byte[] profilePhoto, Address address
-            , String intro, List<PetType> petTypes, List<SitterService> services
-            , List<WorkingDay> availabilities){
+    public void newSitter(int userId, Byte[] profilePhoto, Address address,
+            String intro, List<PetType> petTypes, List<SitterService> services, 
+            List<WorkingDay> availabilities){
         Sitter s = new Sitter(profilePhoto, address, intro, petTypes, services, availabilities);
         em.persist(s);
         findUser(userId).setSitter(s);

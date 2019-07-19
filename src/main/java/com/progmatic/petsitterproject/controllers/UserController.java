@@ -5,19 +5,16 @@
  */
 package com.progmatic.petsitterproject.controllers;
 
+import com.progmatic.petsitterproject.dtos.OwnerDTO;
 import com.progmatic.petsitterproject.dtos.SearchCriteriaDTO;
 import com.progmatic.petsitterproject.dtos.SitterDTO;
-import com.progmatic.petsitterproject.entities.Address;
 import com.progmatic.petsitterproject.entities.PetType;
 import com.progmatic.petsitterproject.entities.Sitter;
 import com.progmatic.petsitterproject.entities.User;
 import com.progmatic.petsitterproject.entities.PlaceOfService;
-import com.progmatic.petsitterproject.entities.SitterService;
 import com.progmatic.petsitterproject.services.UserService;
-import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,22 +35,21 @@ public class UserController {
         this.us = us;
     }
     
-    @GetMapping(value = "/petsitter")
-    public String showHomePage(){
-        return "homepage";
-    }
-    
-    @GetMapping(value = "/petsitter/becomeasitter")
-    public String showSitterRegistrationForm(){
-        return "sitterform";
-    }
-    
-    @PostMapping(value = "/petsitter/newsitter")
-    public void registerNewSitter(){
+    @PostMapping(value = "/newsitter")
+    public void registerNewSitter(SitterDTO sitterData){
         
+        us.registerNewSitter(sitterData);
+        //valami visszajelzést arról, hogy megtörtént a regisztráció
     }
     
-    @GetMapping(value = "/petsitter/{userId}")
+    @PostMapping(value = "/newowner")
+    public void registerNewOwner(OwnerDTO ownerData){
+        
+        us.registerNewOwner(ownerData);
+        //valami visszajelzést arról, hogy megtörtént a regisztráció
+    }
+    
+    @GetMapping(value = "/{userId}")
     public SitterDTO singleSitter( @PathVariable("userId") int userId ){
         User user = us.getUser(userId);
         Sitter sitter = user.getSitter();
@@ -61,7 +57,7 @@ public class UserController {
         return response;
     }
 //    
-    @GetMapping(value = "/petsitter/search")
+    @GetMapping(value = "/search/sitters")
     public List<SitterDTO> listSitters(
                 @RequestParam(value = "name", defaultValue = "") String sitterName,
                 @RequestParam(value = "PlaceOfService", defaultValue = "null") PlaceOfService placeOfService,

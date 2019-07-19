@@ -16,6 +16,9 @@ public class Authority implements GrantedAuthority {
     @Column(unique = true)
     private String name;
 
+    public Authority() {
+    }
+    
     public Authority(String name) {
         this.name = name;
     }

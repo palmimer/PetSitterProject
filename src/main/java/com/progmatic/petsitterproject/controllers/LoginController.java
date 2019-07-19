@@ -31,29 +31,21 @@ public class LoginController {
         this.userService = userService;
     }
     
-    @GetMapping("petsitter/signin")
-    public String showLoginPage(){
-        return "login";
+    @GetMapping("/signin")
+    public String loginUser(String email, String password){
+        
+        return "Sikeres bejelentkezés!";
     }
     
     //milyen oldalt mutat, amikor beléptünk? (azt, amit eddig)
     
-    
-    @GetMapping("petsitter/register")
-    public String showRegisterPage(
-        @ModelAttribute("registration") RegistrationDTO registration){
-        return "register";
-    }
-    
-    @PostMapping("/petsitter/newregistration")
-    public void register(
+    @PostMapping("/newregistration")
+    public String registerNewUser(
             @Valid
             @RequestBody RegistrationDTO registration) throws AlreadyExistsException{
-        
-  
-            
-            userService.createUser(registration);
-         
+    
+        userService.createUser(registration);
+        return "Sikeres regisztráció!";
     }
     
 }
