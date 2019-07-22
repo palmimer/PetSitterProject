@@ -17,7 +17,6 @@ public class SitterService implements Serializable {
     private PetType petType;
     private int pricePerHour;
     private int pricePerDay;
-    
     @ManyToOne
     private Sitter sitter;
 

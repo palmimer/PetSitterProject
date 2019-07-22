@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,13 +29,24 @@ public class UserService {
     
     private UserRepo ur;
     private PasswordEncoder pwd;
-    private DTOConversionService conv;
-
+    private CalendarUpdater cu;
+    
     @Autowired
-    public UserService(UserRepo ur, PasswordEncoder pwd, DTOConversionService conv) {
+    public UserService(UserRepo ur, PasswordEncoder pwd, CalendarUpdater cu) {
         this.ur = ur;
         this.pwd = pwd;
-        this.conv = conv;
+        this.cu = cu;
+        startBackGroundTasks();
+    }
+    
+    private void startBackGroundTasks(){
+        cu.start();
+    }
+    
+    @Transactional
+    public void fixDatabase(){
+        makeAuthorities();
+        makeDefaultAdmin();
         
     }
     
@@ -68,20 +80,21 @@ public class UserService {
     
     @Transactional
     public void registerNewSitter(SitterRegistrationDTO sd){
-        Sitter s = new Sitter(sd.getProfilePhoto(), createAddress(sd.getCity(),
-                sd.getAddress(), sd.getPostalCode()), sd.getIntro(), /*sd.getPetTypes(),*/ 
-                newServiceList( sd.getPlace(),sd.getPetType(),sd.getPricePerHour(), sd.getPricePerDay() ),
-                newCalendar());
-        User user = getCurrentUser();
-        s.setUser(user);
-        user.setSitter(s);
+        User u = getCurrentUser();
+        Sitter s = new Sitter(/*sd.getProfilePhoto(),*/ sd.getIntro()
+                , sd.getPetTypes(), u);
+        s.setAddress(createAddress(sd.getCity(), sd.getAddress(), sd.getPostalCode(), s));
+        s.setServices(newServiceList(sd.getPlace(),sd.getPetType(),sd.getPricePerHour(), sd.getPricePerDay(), s));
+        s.setAvailabilities(newCalendar(s));
+        u.setSitter(s);
         ur.newSitter(s);
     }
     
     private List<SitterService> newServiceList(PlaceOfService place, PetType petType
-            , int pricePerHour, int pricePerDay){
+            , int pricePerHour, int pricePerDay, Sitter s){
         List<SitterService> listOfServices = new ArrayList<>();
         SitterService ss = new SitterService(place,petType,pricePerHour, pricePerDay);
+        ss.setSitter(s);
         ur.newService(ss);
         listOfServices.add(ss);
         return listOfServices;
@@ -89,61 +102,83 @@ public class UserService {
     
     @Transactional
     public void registerNewService(SitterServiceDTO ssrv){
+        Sitter current = getCurrentUser().getSitter();
         SitterService ss = new SitterService(ssrv.getPlace(),ssrv.getPetType()
                 ,ssrv.getPricePerHour(), ssrv.getPricePerDay());
+        ss.setSitter(current);
+        //current.getServices().add(ss);
         ur.newService(ss);
-        getCurrentUser().getSitter().getServices().add(ss);
     }
     
     @Transactional
-    public Address createAddress(String city, String address, int postalCode){
-        Address a = new Address(city, address, postalCode);
+    public Address createAddress(String city, String address, int postalCode, Sitter s){
+        Address a = new Address(city, address, postalCode, s);
         ur.newAddress(a);
         return a;
     }
     
     @Transactional
-    private List<WorkingDay> newCalendar(){
+    private List<WorkingDay> newCalendar(Sitter s){
         LocalDate d = LocalDate.now();
         List<WorkingDay> cal = new ArrayList<>();
         for (int i = 0; i < 30; i++) {
-            cal.add(ur.newDay(d));
+            WorkingDay w = new WorkingDay(d, Availability.FREE);
+            w.setSitter(s);
+            cal.add(w);
+            ur.newDay(w);
             d = d.plusDays(1);
         }
         return cal;
     }
     
+    
     @Transactional
-    public void updateCalendars(){
-        List<User> users = ur.getAllSitters();
-        for (User user : users) {
-            rollCalendar(user.getSitter().getAvailabilities());
+    private void makeAuthorities(){
+        if(ur.absentAuthority("ROLE_USER")){
+            ur.newAuthority(new Authority("ROLE_USER"));
+        }
+        if(ur.absentAuthority("ROLE_ADMIN")){
+            ur.newAuthority(new Authority("ROLE_ADMIN"));
         }
     }
     
-    private List<WorkingDay> rollCalendar(List<WorkingDay> cal){
-        LocalDate last = findLast(cal);
-        LocalDate now = LocalDate.now();
-        for (WorkingDay w : cal) {
-            if(w.getwDay().isBefore(now)){
-                last=last.plusDays(1);
-                w.setwDay(last);
-                w.setAvailability(Availability.FREE);
+    @Transactional
+    private void makeDefaultAdmin(){
+        if(noAdmin()){
+            User u = new User("admin", "adress@email.com", "super secret admin password");
+            u.setAuthorities(ur.findAuthority("ROLE_ADMIN"));
+            ur.newUser(u);
+        }
+    }
+    
+    private boolean noAdmin(){
+        List<User> users = ur.getAllUsers();
+        for (User user : users) {
+            for (GrantedAuthority authority : user.getAuthorities()) {
+                if(authority.getAuthority().equals("ROLE_ADMIN")){
+                    return false;
+                }
             }
         }
-        return cal;
+        return true;
     }
     
-    private LocalDate findLast(List<WorkingDay> cal){
-        return cal.stream().map(d -> d.getwDay()).max((d1, d2) -> d1.compareTo(d2)).get();
+    @Transactional
+    public void setWorkingDay(LocalDate day, Availability avail){
+        Sitter s = getCurrentUser().getSitter();
+        for (WorkingDay w : s.getAvailabilities()) {
+            if(w.getwDay().isEqual(day)){
+                ur.findDay(w.getId()).setAvailability(avail);
+                break;
+            }
+        }
     }
-    
     
     public List<SitterViewDTO> filterSitters(SearchCriteriaDTO criteria){
         List<User> sitterUsers = searchResults(criteria.getName(), criteria.getPetType(), criteria.getPlaceOfService(), criteria.getPostCode());
         List<SitterViewDTO> petSitters = new ArrayList<>();
         for (User sitterUser : sitterUsers) {
-            SitterViewDTO sitter = conv.convertToSitterViewDTO(sitterUser, sitterUser.getSitter());
+            SitterViewDTO sitter = DTOConversion.convertToSitterViewDTO(sitterUser, sitterUser.getSitter());
             petSitters.add(sitter);
         }
         return petSitters;

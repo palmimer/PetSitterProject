@@ -22,31 +22,27 @@ public class Sitter implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private Byte[] profilePhoto;
-    @OneToOne
+    @OneToOne(cascade = REMOVE, mappedBy = "sitter")
     private Address address;
     private String intro;
-    
-//    @ElementCollection(targetClass = PetType.class)
-//    @Enumerated
-//    private List<PetType> petTypes;
+    @ElementCollection(targetClass = PetType.class)
+    @Enumerated
+    private List<PetType> petTypes;
     @OneToMany(mappedBy = "sitter")
     private List<SitterService> services;
     @OneToMany(mappedBy = "sitter")
     private List<WorkingDay> availabilities;
-    
     @OneToOne
     private User user;
 
     public Sitter() {
     }
 
-    public Sitter(Byte[] profilePhoto, Address address, String intro, /*List<PetType> petTypes,*/ List<SitterService> services, List<WorkingDay> availabilities) {
-        this.profilePhoto = profilePhoto;
-        this.address = address;
+    public Sitter(/*Byte[] profilePhoto,*/ String intro, List<PetType> petTypes, User user) {
+        //this.profilePhoto = profilePhoto;
         this.intro = intro;
-        /*this.petTypes = petTypes;*/
-        this.services = services;
-        this.availabilities = availabilities;
+        this.petTypes = petTypes;
+        this.user = user;
     }
 
     public int getId() {
@@ -112,6 +108,5 @@ public class Sitter implements Serializable {
     public void setUser(User user) {
         this.user = user;
     }
-    
     
 }

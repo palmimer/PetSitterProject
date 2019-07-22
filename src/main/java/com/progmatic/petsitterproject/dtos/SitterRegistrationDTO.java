@@ -26,8 +26,6 @@ public class SitterRegistrationDTO {
     private PetType petType;
     private int pricePerHour;
     private int pricePerDay;
-    
-    private List<WorkingDay> availabilities;
 
     public SitterRegistrationDTO() {
     }
@@ -56,10 +54,6 @@ public class SitterRegistrationDTO {
         List<PetType> petTypes = new ArrayList<>();
         petTypes.add(petType);
         return petTypes;
-    }
-
-    public List<WorkingDay> getAvailabilities() {
-        return availabilities;
     }
 
     public void setProfilePhoto(Byte[] profilePhoto) {
@@ -120,7 +114,4 @@ public class SitterRegistrationDTO {
 
     
 
-    public void setAvailabilities(List<WorkingDay> availabilities) {
-        this.availabilities = availabilities;
-    }
 }

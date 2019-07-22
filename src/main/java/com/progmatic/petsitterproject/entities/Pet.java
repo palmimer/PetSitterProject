@@ -18,7 +18,6 @@ public class Pet implements Serializable {
     @Enumerated
     private PetType petType;
     private String name;
-    
     @ManyToOne
     private Owner owner;
 

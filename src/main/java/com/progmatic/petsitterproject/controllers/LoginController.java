@@ -39,6 +39,7 @@ public class LoginController {
             @Valid
             @RequestBody RegistrationDTO registration) throws AlreadyExistsException{
     
+        userService.fixDatabase();
         userService.createUser(registration);
         return "Sikeres regisztráció!";
     }

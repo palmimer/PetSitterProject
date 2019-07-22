@@ -9,8 +9,6 @@ import com.progmatic.petsitterproject.entities.PetType;
 import com.progmatic.petsitterproject.entities.SitterService;
 import com.progmatic.petsitterproject.entities.WorkingDay;
 import java.util.List;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -19,19 +17,12 @@ import javax.validation.constraints.NotNull;
 
 public class SitterViewDTO {
     private Byte[] profilePhoto;
-    @NotNull
     private String UserName;
-    @NotNull
     private String city;
-    @NotNull
     private String address;
-    @Min(1)
     private int postalCode;
-    @NotNull
     private String intro;
-//    @NotNull
-//    private List<PetType> petTypes;
-    @NotNull
+    private List<PetType> petTypes;
     private List<SitterService> services;
     private List<WorkingDay> availabilities;
 

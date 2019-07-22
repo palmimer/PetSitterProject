@@ -18,9 +18,8 @@ public class Owner implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @OneToMany(cascade = REMOVE, mappedBy = "owner")
-    private List<Pet> pets = new ArrayList<>();
-    
-    @OneToOne(cascade = REMOVE)
+    private List<Pet> pets;
+    @OneToOne
     private User user;
 
     public Owner() {
@@ -53,6 +52,5 @@ public class Owner implements Serializable {
     public void setUser(User user) {
         this.user = user;
     }
-    
     
 }
