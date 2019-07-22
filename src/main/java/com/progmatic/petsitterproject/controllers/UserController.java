@@ -32,8 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
     
     private UserService us;
-    private DTOConversionService cs;
-
+    
     @Autowired
     public UserController(UserService us) {
         this.us = us;
@@ -55,7 +54,7 @@ public class UserController {
         return "Sikeresen regisztráltál, mint állattulajdonos!";
     }
     
-    @GetMapping(value = "/{userId}")
+    @GetMapping(value = "/user/{userId}")
     public SitterViewDTO singleSitter( @PathVariable("userId") int userId ){
         User user = us.getUser(userId);
         Sitter sitter = user.getSitter();

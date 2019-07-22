@@ -23,7 +23,6 @@ public class SitterRegistrationDTO {
 //    @NotNull
     private PlaceOfService place;
     @NotNull
-    private PlaceOfService place;
     private PetType petType;
     private int pricePerHour;
     private int pricePerDay;

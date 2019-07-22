@@ -105,7 +105,7 @@ public class UserRepo implements UserDetailsService{
     }
     
     public List<User> getAllSitters(){
-        return em.createQuery("select u from User u where u.sitter != null")
+        return em.createQuery("select u from User u where u.sitter is not null")
                 .getResultList();
     }
     
