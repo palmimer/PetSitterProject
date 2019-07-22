@@ -38,8 +38,8 @@ public class Sitter implements Serializable {
     public Sitter() {
     }
 
-    public Sitter(Byte[] profilePhoto, String intro, List<PetType> petTypes, User user) {
-        this.profilePhoto = profilePhoto;
+    public Sitter(/*Byte[] profilePhoto,*/ String intro, List<PetType> petTypes, User user) {
+        //this.profilePhoto = profilePhoto;
         this.intro = intro;
         this.petTypes = petTypes;
         this.user = user;

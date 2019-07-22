@@ -8,8 +8,10 @@ package com.progmatic.petsitterproject.repositories;
 import com.progmatic.petsitterproject.entities.*;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.*;
 import javax.transaction.Transactional;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -105,8 +107,17 @@ public class UserRepo implements UserDetailsService{
     }
     
     public List<User> getAllSitters(){
-        return em.createQuery("select u from User u where u.sitter is not null")
-                .getResultList();
+        /*CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<User> cq = cb.createQuery(User.class);
+        Root<User> u = cq.from(User.class);
+        //Join<User, Sitter> sitters = u.join(User_.sitter);
+        cq.select(u).where(cb.isNotNull(u.get(User_.sitter)));
+        List<User> results = em.createQuery(cq).getResultList();
+        return results;*/
+        /*return em.createQuery("select u from User u join fetch Sitter where u.sitter is not null")
+                .getResultList();*/
+        List<User> all = getAllUsers();
+        return all.stream().filter(u -> u.getSitter() != null).collect(Collectors.toList());
     }
     
     public List<User> getAllUsers(){

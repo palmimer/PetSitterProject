@@ -82,7 +82,7 @@ public class UserService {
     @Transactional
     public void registerNewSitter(SitterRegistrationDTO sd){
         User u = getCurrentUser();
-        Sitter s = new Sitter(sd.getProfilePhoto(), sd.getIntro()
+        Sitter s = new Sitter(/*sd.getProfilePhoto(),*/ sd.getIntro()
                 , sd.getPetTypes(), u);
         s.setAddress(createAddress(sd.getCity(), sd.getAddress(), sd.getPostalCode(), s));
         s.setServices(newServiceList(sd.getPlace(),sd.getPetType(),sd.getPricePerHour(), sd.getPricePerDay(), s));
@@ -107,7 +107,7 @@ public class UserService {
         SitterService ss = new SitterService(ssrv.getPlace(),ssrv.getPetType()
                 ,ssrv.getPricePerHour(), ssrv.getPricePerDay());
         ss.setSitter(current);
-        current.getServices().add(ss);
+        //current.getServices().add(ss);
         ur.newService(ss);
     }
     
@@ -148,6 +148,7 @@ public class UserService {
         if(noAdmin()){
             User u = new User("admin", "adress@email.com", "super secret admin password");
             u.setAuthorities(ur.findAuthority("ROLE_ADMIN"));
+            ur.newUser(u);
         }
     }
     

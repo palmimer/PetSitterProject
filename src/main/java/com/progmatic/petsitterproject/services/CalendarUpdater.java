@@ -47,6 +47,7 @@ public class CalendarUpdater extends Thread{
     private void updateCalendars(LocalDate date){
         List<User> users = ur.getAllSitters();
         if (!users.isEmpty()){
+            System.out.println(users.size());
             for (User user : users) {
                 rollCalendar(user.getSitter().getAvailabilities(), date);
             }
