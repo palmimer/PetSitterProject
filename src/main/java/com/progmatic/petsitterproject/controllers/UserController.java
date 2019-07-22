@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -51,8 +53,15 @@ public class UserController {
     public String registerNewOwner(@RequestBody PetDTO petData){
         
         us.registerNewOwner(petData.getPetType(), petData.getName());
-        //valami visszajelzést arról, hogy megtörtént a regisztráció
+        
+        // visszajelzés arról, hogy megtörtént a regisztráció
         return "Sikeresen regisztráltál, mint állattulajdonos!";
+    }
+    
+    @RequestMapping(value = "/owner", method = RequestMethod.PUT)
+    public String addNewPetToOwner(@RequestBody PetDTO petData){
+        us.registerNewOwner(petData.getPetType(), petData.getName());
+        return "Sikeresen hozzáadtad újabb állatodat!";
     }
     
     @GetMapping(value = "/{userId}")
@@ -62,7 +71,7 @@ public class UserController {
         SitterViewDTO response = cs.convertToSitterViewDTO(user, sitter);
         return response;
     }
-//    
+    
     @GetMapping(value = "/search/sitters")
     public List<SitterViewDTO> listSitters(
                 @RequestParam(value = "name", defaultValue = "") String sitterName,

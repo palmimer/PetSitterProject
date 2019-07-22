@@ -27,10 +27,14 @@ public class UserRepo implements UserDetailsService{
     EntityManager em;
     
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return em.createQuery("select u from User u where u.name =:nm", User.class)
-                .setParameter("nm", username).getSingleResult();
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+//        return em.createQuery("select u from User u where u.name =:nm", User.class)
+//                .setParameter("nm", username).getSingleResult();
+        return em.createQuery("select u from User u where u.email =:nm", User.class)
+                .setParameter("nm", email).getSingleResult();
     }
+    
+   
     
     public boolean userAlreadyExists(String email){
         return !em.createQuery("select u from User u where u.email = : e")
