@@ -14,6 +14,7 @@ import com.progmatic.petsitterproject.entities.PetType;
 import com.progmatic.petsitterproject.entities.Sitter;
 import com.progmatic.petsitterproject.entities.User;
 import com.progmatic.petsitterproject.entities.PlaceOfService;
+import com.progmatic.petsitterproject.services.DTOConversion;
 import com.progmatic.petsitterproject.services.UserService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +58,7 @@ public class UserController {
     public SitterViewDTO singleSitter( @PathVariable("userId") int userId ){
         User user = us.getUser(userId);
         Sitter sitter = user.getSitter();
-        SitterViewDTO response = convertToDTO(user, sitter);
+        SitterViewDTO response = DTOConversion.convertToSitterViewDTO(user, sitter);
         return response;
     }
 //    

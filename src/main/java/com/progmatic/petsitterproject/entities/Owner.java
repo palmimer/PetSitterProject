@@ -8,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 @Entity
 public class Owner implements Serializable {
@@ -17,6 +18,8 @@ public class Owner implements Serializable {
     private int id;
     @OneToMany(cascade = REMOVE, mappedBy = "owner")
     private List<Pet> pets;
+    @OneToOne
+    private User user;
 
     public Owner() {
     }
@@ -40,4 +43,13 @@ public class Owner implements Serializable {
     public void setPets(Pet p) {
         pets.add(p);
     }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+    
 }

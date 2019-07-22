@@ -27,7 +27,7 @@ public class UserRepo implements UserDetailsService{
     
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return (UserDetails)em.createQuery("select u from User u where u.username =: nm")
+        return (User)em.createQuery("select u from User u where u.name =: nm")
                 .setParameter("nm", username).getSingleResult();
     }
     
@@ -105,10 +105,8 @@ public class UserRepo implements UserDetailsService{
         return em.createQuery("select u from User u").getResultList();
     }
     
-    public WorkingDay newDay(LocalDate date){
-        WorkingDay w = new WorkingDay(date, Availability.FREE);
+    public void newDay(WorkingDay w){
         em.persist(w);
-        return w;
     }
     
     public WorkingDay findDay(int dayId){
@@ -118,6 +116,15 @@ public class UserRepo implements UserDetailsService{
     public Authority findAuthority(String authority){
         return (Authority) em.createQuery("select a from Authority a where a.name = : au")
                 .setParameter("au", authority).getSingleResult();
+    }
+    
+    public boolean absentAuthority(String authority){
+        return em.createQuery("select a from Authority a where a.name = : au")
+                .setParameter("au", authority).getResultList().isEmpty();
+    }
+    
+    public void newAuthority(Authority a){
+        em.persist(a);
     }
     
     

@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 @Entity
 public class Address implements Serializable {
@@ -15,14 +16,17 @@ public class Address implements Serializable {
     private String city;
     private String address;
     private int postalCode;
+    @OneToOne
+    private Sitter sitter;
 
     public Address() {
     }
 
-    public Address(String city, String address, int postalCode) {
+    public Address(String city, String address, int postalCode, Sitter sitter) {
         this.city = city;
         this.address = address;
         this.postalCode = postalCode;
+        this.sitter = sitter;
     }
 
     public int getId() {
@@ -56,4 +60,13 @@ public class Address implements Serializable {
     public void setPostalCode(int postalCode) {
         this.postalCode = postalCode;
     }
+
+    public Sitter getSitter() {
+        return sitter;
+    }
+
+    public void setSitter(Sitter sitter) {
+        this.sitter = sitter;
+    }
+    
 }

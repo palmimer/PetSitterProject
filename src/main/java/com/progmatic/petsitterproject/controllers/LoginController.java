@@ -31,11 +31,11 @@ public class LoginController {
         this.userService = userService;
     }
     
-    @GetMapping("/signin")
+    /*@GetMapping("/signin")
     public String loginUser(String email, String password){
         
         return "Sikeres bejelentkezés!";
-    }
+    }*/
     
     //milyen oldalt mutat, amikor beléptünk? (azt, amit eddig)
     
@@ -44,6 +44,7 @@ public class LoginController {
             @Valid
             @RequestBody RegistrationDTO registration) throws AlreadyExistsException{
     
+        userService.fixDatabase();
         userService.createUser(registration);
         return "Sikeres regisztráció!";
     }
