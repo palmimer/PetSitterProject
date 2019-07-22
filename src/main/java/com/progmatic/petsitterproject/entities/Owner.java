@@ -1,6 +1,7 @@
 package com.progmatic.petsitterproject.entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import static javax.persistence.CascadeType.REMOVE;
 import javax.persistence.Entity;

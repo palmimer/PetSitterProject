@@ -2,6 +2,7 @@ package com.progmatic.petsitterproject.entities;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.stream.Collectors;
 import static javax.persistence.CascadeType.REMOVE;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -61,7 +62,7 @@ public class Sitter implements Serializable {
     }
 
     public List<PetType> getPetTypes() {
-        return petTypes;
+        return services.stream().map(s -> s.getPetType()).distinct().collect(Collectors.toList());
     }
 
     public List<SitterService> getServices() {
@@ -88,9 +89,9 @@ public class Sitter implements Serializable {
         this.intro = intro;
     }
 
-    public void setPetTypes(List<PetType> petTypes) {
-        this.petTypes = petTypes;
-    }
+//    public void setPetTypes(List<PetType> petTypes) {
+//        this.petTypes = petTypes;
+//    }
 
     public void setServices(List<SitterService> services) {
         this.services = services;

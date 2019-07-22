@@ -69,13 +69,13 @@ public class SitterViewDTO {
         this.intro = intro;
     }
 
-    public List<PetType> getPetTypes() {
-        return petTypes;
-    }
-
-    public void setPetTypes(List<PetType> petTypes) {
-        this.petTypes = petTypes;
-    }
+//    public List<PetType> getPetTypes() {
+//        return petTypes;
+//    }
+//
+//    public void setPetTypes(List<PetType> petTypes) {
+//        this.petTypes = petTypes;
+//    }
 
     public List<SitterService> getServices() {
         return services;

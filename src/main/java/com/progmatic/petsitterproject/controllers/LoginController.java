@@ -30,12 +30,7 @@ public class LoginController {
     public LoginController(UserService userService) {
         this.userService = userService;
     }
-    
-    /*@GetMapping("/signin")
-    public String loginUser(String email, String password){
-        
-        return "Sikeres bejelentkezés!";
-    }*/
+
     
     //milyen oldalt mutat, amikor beléptünk? (azt, amit eddig)
     
