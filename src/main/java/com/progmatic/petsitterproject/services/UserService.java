@@ -40,15 +40,27 @@ public class UserService {
     
     @Transactional
     public void registerNewOwner(PetType petType, String name){
-        User u = getCurrentUser();
-        if(u.getOwner()== null){
-            Owner o = new Owner();
-            ur.newOwner(o);
-            u.setOwner(o);
-        }
-        Pet p = new Pet(petType,name);
-        ur.newPet(p);
-        u.getOwner().setPets(p);
+        User user = getCurrentUser();
+        // ha még nem volt a user tulajdonos, = nincs owner objektuma,
+        if( user.getOwner() == null ){
+            // akkor létrehozunk egy owner objektumot
+            Owner owner = new Owner();
+            // beállítjuk rajta a usert
+            owner.setUser(user);
+            // beállítjuk a usernek ezt az ownert
+            user.setOwner(owner);
+            // beírjuk az adatbázisba az új ownert
+            ur.newOwner(owner);
+        } 
+        // létrehozunk egy új Pet-et a beküldött paraméterekkel
+        Pet pet = new Pet(petType, name);
+        // ennek a Pet-nek beállítjuk owner-nek az aktuális user owner-ét
+        Owner owner = user.getOwner();
+        pet.setOwner(owner);
+        // beírjuk az adatbázisba az új Pet-et
+        ur.newPet(pet);
+        owner.setPets(pet);
+        //ur.newUser(user);
     }
     
     public User getUser(int userId){
@@ -57,11 +69,13 @@ public class UserService {
     
     @Transactional
     public void registerNewSitter(SitterRegistrationDTO sd){
-        Sitter s = new Sitter(sd.getProfilePhoto(), createAddress(sd.getCity()
-                , sd.getAddress(), sd.getPostalCode()), sd.getIntro()
-                , sd.getPetTypes(), newServiceList(sd.getPlace(),sd.getPetType()
-                        ,sd.getPricePerHour(), sd.getPricePerDay()), newCalendar());
-        getCurrentUser().setSitter(s);
+        Sitter s = new Sitter(sd.getProfilePhoto(), createAddress(sd.getCity(),
+                sd.getAddress(), sd.getPostalCode()), sd.getIntro(), /*sd.getPetTypes(),*/ 
+                newServiceList( sd.getPlace(),sd.getPetType(),sd.getPricePerHour(), sd.getPricePerDay() ),
+                newCalendar());
+        User user = getCurrentUser();
+        s.setUser(user);
+        user.setSitter(s);
         ur.newSitter(s);
     }
     

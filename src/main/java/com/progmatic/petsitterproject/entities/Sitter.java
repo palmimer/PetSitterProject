@@ -2,6 +2,7 @@ package com.progmatic.petsitterproject.entities;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.stream.Collectors;
 import static javax.persistence.CascadeType.REMOVE;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -32,15 +33,18 @@ public class Sitter implements Serializable {
     private List<SitterService> services;
     @OneToMany(mappedBy = "sitter")
     private List<WorkingDay> availabilities;
+    
+    @OneToOne(cascade = REMOVE)
+    private User user;
 
     public Sitter() {
     }
 
-    public Sitter(Byte[] profilePhoto, Address address, String intro, List<PetType> petTypes, List<SitterService> services, List<WorkingDay> availabilities) {
+    public Sitter(Byte[] profilePhoto, Address address, String intro, /*List<PetType> petTypes,*/ List<SitterService> services, List<WorkingDay> availabilities) {
         this.profilePhoto = profilePhoto;
         this.address = address;
         this.intro = intro;
-        this.petTypes = petTypes;
+        /*this.petTypes = petTypes;*/
         this.services = services;
         this.availabilities = availabilities;
     }
@@ -62,7 +66,7 @@ public class Sitter implements Serializable {
     }
 
     public List<PetType> getPetTypes() {
-        return petTypes;
+        return services.stream().map(s -> s.getPetType()).distinct().collect(Collectors.toList());
     }
 
     public List<SitterService> getServices() {
@@ -100,4 +104,14 @@ public class Sitter implements Serializable {
     public void setAvailabilities(List<WorkingDay> availabilities) {
         this.availabilities = availabilities;
     }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+    
+    
 }

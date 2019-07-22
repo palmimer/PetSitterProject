@@ -6,6 +6,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Entity
 public class Pet implements Serializable {
@@ -18,6 +19,7 @@ public class Pet implements Serializable {
     private PetType petType;
     private String name;
     
+    @ManyToOne
     private Owner owner;
 
     public Pet() {

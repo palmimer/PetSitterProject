@@ -1,6 +1,7 @@
 package com.progmatic.petsitterproject.entities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import static javax.persistence.CascadeType.REMOVE;
 import javax.persistence.Entity;
@@ -8,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 @Entity
 public class Owner implements Serializable {
@@ -17,6 +19,9 @@ public class Owner implements Serializable {
     private int id;
     @OneToMany(cascade = REMOVE, mappedBy = "owner")
     private List<Pet> pets;
+    
+    @OneToOne(cascade = REMOVE)
+    private User user;
 
     public Owner() {
     }
@@ -38,6 +43,19 @@ public class Owner implements Serializable {
     }
 
     public void setPets(Pet p) {
+        if (pets.isEmpty()) {
+            pets = new ArrayList<>();
+        }
         pets.add(p);
     }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+    
+    
 }

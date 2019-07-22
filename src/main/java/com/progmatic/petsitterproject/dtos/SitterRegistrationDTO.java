@@ -3,6 +3,7 @@ package com.progmatic.petsitterproject.dtos;
 import com.progmatic.petsitterproject.entities.PetType;
 import com.progmatic.petsitterproject.entities.PlaceOfService;
 import com.progmatic.petsitterproject.entities.WorkingDay;
+import java.util.ArrayList;
 import java.util.List;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -51,9 +52,11 @@ public class SitterRegistrationDTO {
         return intro;
     }
 
-//    public List<PetType> getPetTypes() {
-//        return petTypes;
-//    }
+    public List<PetType> getPetTypes() {
+        List<PetType> petTypes = new ArrayList<>();
+        petTypes.add(petType);
+        return petTypes;
+    }
 
     public List<WorkingDay> getAvailabilities() {
         return availabilities;

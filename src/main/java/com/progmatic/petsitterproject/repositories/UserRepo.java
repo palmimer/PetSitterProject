@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -27,7 +28,7 @@ public class UserRepo implements UserDetailsService{
     
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return (UserDetails)em.createQuery("select u from User u where u.username =: nm")
+        return em.createQuery("select u from User u where u.name =:nm", User.class)
                 .setParameter("nm", username).getSingleResult();
     }
     
@@ -40,6 +41,7 @@ public class UserRepo implements UserDetailsService{
         em.persist(srv);
     }
     
+    @Transactional
     public void newPet(Pet p){
         em.persist(p);
     }
@@ -48,6 +50,7 @@ public class UserRepo implements UserDetailsService{
         return findUser(userId).getOwner() != null;
     }
     
+    @Transactional
     public void newOwner(Owner o){
         em.persist(o);
     }
@@ -56,22 +59,27 @@ public class UserRepo implements UserDetailsService{
         return findUser(userId).getSitter() != null;
     }
     
+    @Transactional
     public void newSitter(Sitter s){
         em.persist(s);
         }
     
+    @Transactional
     public void newAddress(Address a){
         em.persist(a);
     }
     
+    @Transactional
     public void newSitterService(SitterService ss){
         em.persist(ss);
     }
     
+    @Transactional
     public void newUser(User u){
         em.persist(u);
     }
     
+    @Transactional
     public void deleteUser(int id){
         em.remove(findUser(id));
     }
