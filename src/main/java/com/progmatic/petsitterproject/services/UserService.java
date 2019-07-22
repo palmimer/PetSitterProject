@@ -59,7 +59,7 @@ public class UserService {
         pet.setOwner(owner);
         // beírjuk az adatbázisba az új Pet-et
         ur.newPet(pet);
-        owner.setPets(pet);
+        //owner.setPets(pet);
         //ur.newUser(user);
     }
     

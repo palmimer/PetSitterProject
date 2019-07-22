@@ -18,7 +18,7 @@ public class Owner implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @OneToMany(cascade = REMOVE, mappedBy = "owner")
-    private List<Pet> pets;
+    private List<Pet> pets = new ArrayList<>();
     
     @OneToOne(cascade = REMOVE)
     private User user;
@@ -43,9 +43,6 @@ public class Owner implements Serializable {
     }
 
     public void setPets(Pet p) {
-        if (pets.isEmpty()) {
-            pets = new ArrayList<>();
-        }
         pets.add(p);
     }
 

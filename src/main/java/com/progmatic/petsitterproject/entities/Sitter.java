@@ -22,7 +22,7 @@ public class Sitter implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     private Byte[] profilePhoto;
-    @OneToOne(cascade = REMOVE)
+    @OneToOne
     private Address address;
     private String intro;
     
@@ -34,7 +34,7 @@ public class Sitter implements Serializable {
     @OneToMany(mappedBy = "sitter")
     private List<WorkingDay> availabilities;
     
-    @OneToOne(cascade = REMOVE)
+    @OneToOne
     private User user;
 
     public Sitter() {
