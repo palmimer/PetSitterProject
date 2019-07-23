@@ -17,10 +17,14 @@ import com.progmatic.petsitterproject.services.DTOConversion;
 import com.progmatic.petsitterproject.services.UserService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -50,18 +54,25 @@ public class UserController {
     public String registerNewOwner(@RequestBody PetDTO petData){
         
         us.registerNewOwner(petData.getPetType(), petData.getName());
-        //valami visszajelzést arról, hogy megtörtént a regisztráció
+        
+        // visszajelzés arról, hogy megtörtént a regisztráció
         return "Sikeresen regisztráltál, mint állattulajdonos!";
     }
     
-    @GetMapping(value = "/user/{userId}")
+    @RequestMapping(value = "/owner", method = RequestMethod.PUT)
+    public String addNewPetToOwner(@RequestBody PetDTO petData){
+        us.registerNewOwner(petData.getPetType(), petData.getName());
+        return "Sikeresen hozzáadtad újabb állatodat!";
+    }
+    
+    @GetMapping(value = "/{userId}")
     public SitterViewDTO singleSitter( @PathVariable("userId") int userId ){
         User user = us.getUser(userId);
         Sitter sitter = user.getSitter();
         SitterViewDTO response = DTOConversion.convertToSitterViewDTO(user, sitter);
         return response;
     }
-//    
+    
     @GetMapping(value = "/search/sitters")
     public List<SitterViewDTO> listSitters(
                 @RequestParam(value = "name", defaultValue = "") String sitterName,
@@ -76,6 +87,11 @@ public class UserController {
         return selectedSitters;
     }
     
+//    @GetMapping(value = "/sitter/image/{sitterId}")
+//    public ResponseEntity<byte[]> testImage(@PathVariable("sitterId") int sitterId){
+////        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(us.getUser(sitterId).getSitter().getProfilePhoto().getPic());
+//        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(us.image(1).getPic());
+//    }
     
     
 //    private SitterViewDTO convertToDTO(User user, Sitter sitter) {

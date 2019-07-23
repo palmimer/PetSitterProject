@@ -29,9 +29,16 @@ public class UserRepo implements UserDetailsService{
     EntityManager em;
     
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return em.createQuery("select u from User u where u.name =:nm", User.class)
-                .setParameter("nm", username).getSingleResult();
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+//        return em.createQuery("select u from User u where u.name =:nm", User.class)
+//                .setParameter("nm", username).getSingleResult();
+        return em.createQuery("select u from User u where u.email =:nm", User.class)
+                .setParameter("nm", email).getSingleResult();
+    }
+    
+    public byte[] getPhotoById(int ownerId){
+        ImageModel singleResult = (ImageModel)em.createQuery("select i from petsitter.image_model i where i.ownerId =: id").setParameter("id", ownerId).getSingleResult();
+        return singleResult.getPic();
     }
     
     public boolean userAlreadyExists(String email){
@@ -144,6 +151,10 @@ public class UserRepo implements UserDetailsService{
         em.persist(a);
     }
     
+    //TODO delete
+//    public ImageModel getImage(int id) {
+//        return em.find(ImageModel.class, Long.valueOf(id));
+//    }
     
     
 }

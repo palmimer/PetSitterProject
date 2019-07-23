@@ -1,5 +1,6 @@
 package com.progmatic.petsitterproject.dtos;
 
+import com.progmatic.petsitterproject.entities.ImageModel;
 import com.progmatic.petsitterproject.entities.PetType;
 import com.progmatic.petsitterproject.entities.PlaceOfService;
 import java.util.ArrayList;
@@ -8,7 +9,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 public class SitterRegistrationDTO {
-    private Byte[] profilePhoto;
+    private ImageModel profilePhoto;
     @NotNull
     private String city;
     @NotNull
@@ -29,7 +30,7 @@ public class SitterRegistrationDTO {
     public SitterRegistrationDTO() {
     }
     
-    public Byte[] getProfilePhoto() {
+    public ImageModel getProfilePhoto() {
         return profilePhoto;
     }
 
@@ -55,7 +56,7 @@ public class SitterRegistrationDTO {
         return petTypes;
     }
 
-    public void setProfilePhoto(Byte[] profilePhoto) {
+    public void setProfilePhotoId(ImageModel profilePhoto) {
         this.profilePhoto = profilePhoto;
     }
 

@@ -19,7 +19,8 @@ import java.util.TreeMap;
  */
 
 public class SitterViewDTO {
-    private Byte[] profilePhoto;
+    private ImageModel profilePhoto;
+    @NotNull
     private String UserName;
     private String city;
     private String address;
@@ -33,11 +34,11 @@ public class SitterViewDTO {
     public SitterViewDTO() {
     }
 
-    public Byte[] getProfilePhoto() {
+    public ImageModel getProfilePhoto() {
         return profilePhoto;
     }
 
-    public void setProfilePhoto(Byte[] profilePhoto) {
+    public void setProfilePhoto(ImageModel profilePhoto) {
         this.profilePhoto = profilePhoto;
     }
 

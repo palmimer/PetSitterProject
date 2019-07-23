@@ -72,8 +72,7 @@ public class UserService {
         pet.setOwner(owner);
         // beírjuk az adatbázisba az új Pet-et
         ur.newPet(pet);
-        //owner.setPets(pet);
-        //ur.newUser(user);
+        
     }
     
     public User getUser(int userId){
@@ -278,6 +277,17 @@ public class UserService {
     private User getCurrentUser(){
         return (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
+    
+    //TODO remove
+//    public ImageModel image(int id) {
+//        return ur.getImage(id);
+//    }
+
+//    public byte[] getUserImage(int ownerId) {
+//        return ;
+//    }
+//    
+    
 }
 
 
