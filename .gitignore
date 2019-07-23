@@ -4,3 +4,5 @@ nbactions.xml
 /src/main/resources/application.properties
 
 logs/spring\.log
+
+logs/

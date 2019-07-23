@@ -11,6 +11,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
@@ -21,8 +22,11 @@ public class Sitter implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private Byte[] profilePhoto;
-    @OneToOne(cascade = REMOVE, mappedBy = "sitter")
+    
+    
+    @OneToOne
+    private ImageModel profilePhoto;
+    @OneToOne
     private Address address;
     private String intro;
     @ElementCollection(targetClass = PetType.class)
@@ -49,7 +53,7 @@ public class Sitter implements Serializable {
         return id;
     }
 
-    public Byte[] getProfilePhoto() {
+    public ImageModel getProfilePhoto() {
         return profilePhoto;
     }
 
@@ -77,7 +81,7 @@ public class Sitter implements Serializable {
         this.id = id;
     }
 
-    public void setProfilePhoto(Byte[] profilePhoto) {
+    public void setProfilePhoto(ImageModel profilePhoto) {
         this.profilePhoto = profilePhoto;
     }
 
