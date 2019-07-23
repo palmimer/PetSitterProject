@@ -17,6 +17,8 @@ import com.progmatic.petsitterproject.services.DTOConversion;
 import com.progmatic.petsitterproject.services.UserService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -84,6 +86,11 @@ public class UserController {
         return selectedSitters;
     }
     
+//    @GetMapping(value = "/sitter/image/{sitterId}")
+//    public ResponseEntity<byte[]> testImage(@PathVariable("sitterId") int sitterId){
+////        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(us.getUser(sitterId).getSitter().getProfilePhoto().getPic());
+//        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(us.image(1).getPic());
+//    }
     
     
 //    private SitterViewDTO convertToDTO(User user, Sitter sitter) {

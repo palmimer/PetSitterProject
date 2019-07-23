@@ -238,6 +238,17 @@ public class UserService {
     private User getCurrentUser(){
         return (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
+    
+    //TODO remove
+//    public ImageModel image(int id) {
+//        return ur.getImage(id);
+//    }
+
+//    public byte[] getUserImage(int ownerId) {
+//        return ;
+//    }
+//    
+    
 }
 
 

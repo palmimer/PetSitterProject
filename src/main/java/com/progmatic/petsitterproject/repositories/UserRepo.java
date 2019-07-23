@@ -36,7 +36,10 @@ public class UserRepo implements UserDetailsService{
                 .setParameter("nm", email).getSingleResult();
     }
     
-   
+    public byte[] getPhotoById(int ownerId){
+        ImageModel singleResult = (ImageModel)em.createQuery("select i from petsitter.image_model i where i.ownerId =: id").setParameter("id", ownerId).getSingleResult();
+        return singleResult.getPic();
+    }
     
     public boolean userAlreadyExists(String email){
         return !em.createQuery("select u from User u where u.email = : e")
@@ -150,6 +153,10 @@ public class UserRepo implements UserDetailsService{
         em.persist(a);
     }
     
+    //TODO delete
+//    public ImageModel getImage(int id) {
+//        return em.find(ImageModel.class, Long.valueOf(id));
+//    }
     
     
 }

@@ -5,10 +5,12 @@
  */
 package com.progmatic.petsitterproject.dtos;
 
+import com.progmatic.petsitterproject.entities.ImageModel;
 import com.progmatic.petsitterproject.entities.PetType;
 import com.progmatic.petsitterproject.entities.SitterService;
 import com.progmatic.petsitterproject.entities.WorkingDay;
 import java.util.List;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -16,7 +18,8 @@ import java.util.List;
  */
 
 public class SitterViewDTO {
-    private Byte[] profilePhoto;
+    private ImageModel profilePhoto;
+    @NotNull
     private String UserName;
     private String city;
     private String address;
@@ -29,11 +32,11 @@ public class SitterViewDTO {
     public SitterViewDTO() {
     }
 
-    public Byte[] getProfilePhoto() {
+    public ImageModel getProfilePhoto() {
         return profilePhoto;
     }
 
-    public void setProfilePhoto(Byte[] profilePhoto) {
+    public void setProfilePhoto(ImageModel profilePhoto) {
         this.profilePhoto = profilePhoto;
     }
 
