@@ -5,10 +5,13 @@
  */
 package com.progmatic.petsitterproject.dtos;
 
+import com.progmatic.petsitterproject.entities.Availability;
 import com.progmatic.petsitterproject.entities.PetType;
 import com.progmatic.petsitterproject.entities.SitterService;
 import com.progmatic.petsitterproject.entities.WorkingDay;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.TreeMap;
 
 /**
  *
@@ -22,9 +25,10 @@ public class SitterViewDTO {
     private String address;
     private int postalCode;
     private String intro;
-    private List<PetType> petTypes;
-    private List<SitterService> services;
-    private List<WorkingDay> availabilities;
+    //private List<PetType> petTypes;
+    private List<SitterServiceDTO> services;
+    private TreeMap<LocalDate, Availability> availabilities;
+    private int id;
 
     public SitterViewDTO() {
     }
@@ -77,19 +81,19 @@ public class SitterViewDTO {
 //        this.petTypes = petTypes;
 //    }
 
-    public List<SitterService> getServices() {
+    public List<SitterServiceDTO> getServices() {
         return services;
     }
 
-    public void setServices(List<SitterService> services) {
+    public void setServices(List<SitterServiceDTO> services) {
         this.services = services;
     }
 
-    public List<WorkingDay> getAvailabilities() {
+    public TreeMap<LocalDate, Availability> getAvailabilities() {
         return availabilities;
     }
 
-    public void setAvailabilities(List<WorkingDay> availabilities) {
+    public void setAvailabilities(TreeMap<LocalDate, Availability> availabilities) {
         this.availabilities = availabilities;
     }
 
@@ -100,6 +104,15 @@ public class SitterViewDTO {
     public void setUserName(String UserName) {
         this.UserName = UserName;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+    
     
     
 }

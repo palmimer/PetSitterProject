@@ -46,6 +46,7 @@ public class UserService {
     @Transactional
     public void fixDatabase(){
         makeAuthorities();
+        makeDefaultUsers();
         makeDefaultAdmin();
         
     }
@@ -82,10 +83,10 @@ public class UserService {
     @Transactional
     public void registerNewSitter(SitterRegistrationDTO sd){
         User u = getCurrentUser();
-        Sitter s = new Sitter(/*sd.getProfilePhoto(),*/ sd.getIntro()
-                , sd.getPetTypes(), u);
+        Sitter s = new Sitter(/*sd.getProfilePhoto(),*/ sd.getIntro(), u);
         s.setAddress(createAddress(sd.getCity(), sd.getAddress(), sd.getPostalCode(), s));
-        s.setServices(newServiceList(sd.getPlace(),sd.getPetType(),sd.getPricePerHour(), sd.getPricePerDay(), s));
+        s.setServices(newServiceList(sd.getPlace(),sd.getPetType()
+                ,sd.getPricePerHour(), sd.getPricePerDay(), s));
         s.setAvailabilities(newCalendar(s));
         u.setSitter(s);
         ur.newSitter(s);
@@ -152,6 +153,44 @@ public class UserService {
         }
     }
     
+    private void makeDefaultUsers(){
+        if(ur.noUsers()){
+            User u1 = new User("Techno Kolos", "techno.kolos@freemail.com", "password");
+            u1.setAuthorities(ur.findAuthority("ROLE_USER"));
+            ur.newUser(u1);
+            Sitter s1 = new Sitter("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", u1);
+            s1.setAddress(createAddress("Pocsajd", "Beton út 1.", 5555, s1));
+            s1.setServices(newServiceList(PlaceOfService.OWNERS_HOME,PetType.CAT
+                    ,1500, 6000, s1));
+            s1.setAvailabilities(newCalendar(s1));
+            ur.newSitter(s1);
+            
+            User u2 = new User("Tank Aranka", "tankari@citromail.com", "password");
+            u2.setAuthorities(ur.findAuthority("ROLE_USER"));
+            ur.newUser(u2);
+            Sitter s2 = new Sitter("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", u2);
+            s2.setAddress(createAddress("Békásmegyer", "Föld út 12.", 4593, s2));
+            s2.setServices(newServiceList(PlaceOfService.SITTERS_HOME,PetType.DOG
+                    ,900, 7000, s2));
+            s2.setAvailabilities(newCalendar(s2));
+            ur.newSitter(s2);
+            
+            User u3 = new User("Feles Elek", "feleselek@hotmail.com", "password");
+            u3.setAuthorities(ur.findAuthority("ROLE_USER"));
+            ur.newUser(u3);
+            
+            User u4 = new User("Citad Ella", "citad.ella@yandex.com", "password");
+            u4.setAuthorities(ur.findAuthority("ROLE_USER"));
+            ur.newUser(u4);
+            Sitter s4 = new Sitter("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", u2);
+            s4.setAddress(createAddress("Pocsajd", "Beton út 16.", 5555, s4));
+            s4.setServices(newServiceList(PlaceOfService.OWNERS_HOME,PetType.BIRD
+                    ,800, 4500, s4));
+            s4.setAvailabilities(newCalendar(s4));
+            ur.newSitter(s4);
+        }
+    }
+    
     private boolean noAdmin(){
         List<User> users = ur.getAllUsers();
         for (User user : users) {
@@ -176,10 +215,10 @@ public class UserService {
     }
     
     public List<SitterViewDTO> filterSitters(SearchCriteriaDTO criteria){
-        List<User> sitterUsers = searchResults(criteria.getName(), criteria.getPetType(), criteria.getPlaceOfService(), criteria.getPostCode());
+        List<Sitter> sitterUsers = searchResults(criteria.getName(), criteria.getPetType(), criteria.getPlaceOfService(), criteria.getPostCode());
         List<SitterViewDTO> petSitters = new ArrayList<>();
-        for (User sitterUser : sitterUsers) {
-            SitterViewDTO sitter = DTOConversion.convertToSitterViewDTO(sitterUser, sitterUser.getSitter());
+        for (Sitter sitterUser : sitterUsers) {
+            SitterViewDTO sitter = DTOConversion.convertToSitterViewDTO(sitterUser.getUser(), sitterUser);
             petSitters.add(sitter);
         }
         return petSitters;
@@ -199,8 +238,8 @@ public class UserService {
         return new SitterService(place, petType);
         }
     
-    private List<User> searchResults(String name, PetType pet, PlaceOfService pl, int postal){
-        List<User> sitters = ur.getAllSitters();
+    private List<Sitter> searchResults(String name, PetType pet, PlaceOfService pl, int postal){
+        List<Sitter> sitters = ur.getAllSitters();
         if(!name.isEmpty()){
             sitters = filterByName(name, sitters);
         }
@@ -216,23 +255,23 @@ public class UserService {
         return sitters;
     }
     
-    private List<User> filterByName(String name, List<User> list){
-        return list.stream().filter(u -> u.getName().contains(name))
+    private List<Sitter> filterByName(String name, List<Sitter> list){
+        return list.stream().filter(s -> s.getUser().getName().contains(name))
                 .collect(Collectors.toList());
     }
     
-    private List<User> filterByPetType(PetType p, List<User> list){
-        return list.stream().filter(u -> u.getSitter().getPetTypes()
+    private List<Sitter> filterByPetType(PetType p, List<Sitter> list){
+        return list.stream().filter(s -> s.getPetTypes()
                 .contains(p)).collect(Collectors.toList());
     }
     
-    private List<User> filterByPlace(PlaceOfService p, List<User> list){
-        return list.stream().filter(u -> u.getSitter().getServices().stream()
-                .anyMatch(s -> s.getPlace()==p)).collect(Collectors.toList());
+    private List<Sitter> filterByPlace(PlaceOfService p, List<Sitter> list){
+        return list.stream().filter(s -> s.getServices().stream()
+                .anyMatch(srv -> srv.getPlace()==p)).collect(Collectors.toList());
     }
     
-    private List<User> filterByPostal(int postal, List<User> list){
-        return list.stream().filter(u -> u.getSitter().getAddress()
+    private List<Sitter> filterByPostal(int postal, List<Sitter> list){
+        return list.stream().filter(s -> s.getAddress()
                 .getPostalCode()==postal).collect(Collectors.toList());
     }
     

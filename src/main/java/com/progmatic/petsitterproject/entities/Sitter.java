@@ -5,9 +5,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import static javax.persistence.CascadeType.REMOVE;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -25,12 +24,9 @@ public class Sitter implements Serializable {
     @OneToOne(cascade = REMOVE, mappedBy = "sitter")
     private Address address;
     private String intro;
-    @ElementCollection(targetClass = PetType.class)
-    @Enumerated
-    private List<PetType> petTypes;
     @OneToMany(mappedBy = "sitter")
     private List<SitterService> services;
-    @OneToMany(mappedBy = "sitter")
+    @OneToMany(mappedBy = "sitter", fetch = FetchType.EAGER)
     private List<WorkingDay> availabilities;
     @OneToOne
     private User user;
@@ -38,10 +34,9 @@ public class Sitter implements Serializable {
     public Sitter() {
     }
 
-    public Sitter(/*Byte[] profilePhoto,*/ String intro, List<PetType> petTypes, User user) {
+    public Sitter(/*Byte[] profilePhoto,*/ String intro, User user) {
         //this.profilePhoto = profilePhoto;
         this.intro = intro;
-        this.petTypes = petTypes;
         this.user = user;
     }
 
@@ -67,6 +62,10 @@ public class Sitter implements Serializable {
 
     public List<SitterService> getServices() {
         return services;
+    }
+    
+    public List<PlaceOfService> getPlacesOfService(){
+        return services.stream().map(s -> s.getPlace()).distinct().collect(Collectors.toList()); 
     }
 
     public List<WorkingDay> getAvailabilities() {

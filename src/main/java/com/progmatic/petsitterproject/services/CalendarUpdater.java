@@ -6,7 +6,7 @@
 package com.progmatic.petsitterproject.services;
 
 import com.progmatic.petsitterproject.entities.Availability;
-import com.progmatic.petsitterproject.entities.User;
+import com.progmatic.petsitterproject.entities.Sitter;
 import com.progmatic.petsitterproject.entities.WorkingDay;
 import com.progmatic.petsitterproject.repositories.UserRepo;
 import java.time.LocalDate;
@@ -45,11 +45,11 @@ public class CalendarUpdater extends Thread{
     
     
     private void updateCalendars(LocalDate date){
-        List<User> users = ur.getAllSitters();
-        if (!users.isEmpty()){
-            System.out.println(users.size());
-            for (User user : users) {
-                rollCalendar(user.getSitter().getAvailabilities(), date);
+        List<Sitter> sitters = ur.getAllSitters();
+        if (!sitters.isEmpty()){
+            //System.out.println(users.size());
+            for (Sitter s : sitters) {
+                rollCalendar(s.getAvailabilities(), date);
             }
         }
     }

@@ -2,7 +2,6 @@ package com.progmatic.petsitterproject.dtos;
 
 import com.progmatic.petsitterproject.entities.PetType;
 import com.progmatic.petsitterproject.entities.PlaceOfService;
-import com.progmatic.petsitterproject.entities.WorkingDay;
 import java.util.ArrayList;
 import java.util.List;
 import javax.validation.constraints.Min;

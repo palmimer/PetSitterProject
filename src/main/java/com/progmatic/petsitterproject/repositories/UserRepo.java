@@ -39,6 +39,10 @@ public class UserRepo implements UserDetailsService{
                 .setParameter("e", email).getResultList().isEmpty();
     }
     
+    public boolean noUsers(){
+        return em.createQuery("select u from User u").getResultList().isEmpty();
+    }
+    
     public void newService(SitterService srv){
         em.persist(srv);
     }
@@ -82,16 +86,20 @@ public class UserRepo implements UserDetailsService{
     }
     
     @Transactional
-    public void deleteUser(int id){
-        em.remove(findUser(id));
+    public void deleteUser(User u){
+        em.remove(u);
     }
     
-    public void deletePet(int id){
-        em.remove(findPet(id));
+    public void deletePet(Pet p){
+        em.remove(p);
     }
     
-    public void deleteSitterService(int id){
-        em.remove(findSitterService(id));
+    public void deleteSitterService(SitterService ss){
+        em.remove(ss);
+    }
+    
+    public void deleteSitter(Sitter s){
+        em.remove(s);
     }
     
     public User findUser(int id){
@@ -106,18 +114,8 @@ public class UserRepo implements UserDetailsService{
         return em.find(SitterService.class, id);
     }
     
-    public List<User> getAllSitters(){
-        /*CriteriaBuilder cb = em.getCriteriaBuilder();
-        CriteriaQuery<User> cq = cb.createQuery(User.class);
-        Root<User> u = cq.from(User.class);
-        //Join<User, Sitter> sitters = u.join(User_.sitter);
-        cq.select(u).where(cb.isNotNull(u.get(User_.sitter)));
-        List<User> results = em.createQuery(cq).getResultList();
-        return results;*/
-        /*return em.createQuery("select u from User u join fetch Sitter where u.sitter is not null")
-                .getResultList();*/
-        List<User> all = getAllUsers();
-        return all.stream().filter(u -> u.getSitter() != null).collect(Collectors.toList());
+    public List<Sitter> getAllSitters(){
+        return em.createQuery("select s from Sitter s").getResultList();
     }
     
     public List<User> getAllUsers(){
