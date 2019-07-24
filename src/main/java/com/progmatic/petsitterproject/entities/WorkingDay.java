@@ -1,5 +1,6 @@
 package com.progmatic.petsitterproject.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.time.LocalDate;
 import javax.persistence.Entity;
@@ -7,6 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import org.springframework.format.annotation.DateTimeFormat;
 
 @Entity
 public class WorkingDay implements Serializable {
@@ -16,9 +18,9 @@ public class WorkingDay implements Serializable {
     private int id;
     private LocalDate wDay;
     private Availability availability;
-    
+
     @ManyToOne
-    private Sitter sitter; 
+    private Sitter sitter;
 
     public Sitter getSitter() {
         return sitter;
@@ -27,8 +29,6 @@ public class WorkingDay implements Serializable {
     public void setSitter(Sitter sitter) {
         this.sitter = sitter;
     }
-    
-    
 
     public WorkingDay() {
     }

@@ -25,13 +25,26 @@ public class DTOConversion {
         response.setPostalCode(sitter.getAddress().getPostalCode());
         response.setIntro(sitter.getIntro());
 //        response.setPetTypes(sitter.getPetTypes());
-        response.setServices(sitter.getServices());
-        response.setAvailabilities(sitter.getAvailabilities());
+        response.setServices(new ArrayList<>(sitter.getServices()));
+        response.setAvailabilities(new ArrayList<>(sitter.getAvailabilities()));
         
         return response;
     }
     
-    public TreeMap<LocalDate, Availability> convertCalendar(List<WorkingDay> list){
+    public static SitterResponseDTO convertToSitterResponseDTO(User user, Sitter sitter) {
+        SitterResponseDTO response = new SitterResponseDTO();
+        response.setCity(sitter.getAddress().getCity());
+        response.setAddress(sitter.getAddress().getAddress());
+        response.setPostalCode(sitter.getAddress().getPostalCode());
+        response.setIntro(sitter.getIntro());
+//        response.setPetTypes(sitter.getPetTypes());
+        response.setServices(convertSitterService( new ArrayList<>(sitter.getServices())));
+        response.setAvailabilities(convertCalendar(new ArrayList<>(sitter.getAvailabilities())));
+        
+        return response;
+    }
+    
+    public static TreeMap<LocalDate, Availability> convertCalendar(List<WorkingDay> list){
         TreeMap<LocalDate, Availability> calendarView = new TreeMap<>();
         for (WorkingDay wd : list) {
             calendarView.put(wd.getwDay(), wd.getAvailability());
@@ -39,7 +52,7 @@ public class DTOConversion {
         return calendarView;
     }
     
-    public List<SitterServiceDTO> convertSitterService(List<SitterService> list){
+    public static List<SitterServiceDTO> convertSitterService(List<SitterService> list){
         List<SitterServiceDTO> serviceView = new ArrayList<>();
         for (SitterService s : list) {
             SitterServiceDTO sv = new SitterServiceDTO();
@@ -50,6 +63,14 @@ public class DTOConversion {
             serviceView.add(sv);
         }
         return serviceView;
+    }
+    
+    public static HashMap<String, PetType> convertToHashMap(List<Pet> pets){
+        HashMap<String, PetType> petsInMap = new HashMap<>();
+        for (Pet pet : pets) {
+            petsInMap.put(pet.getName(), pet.getPetType());
+        }
+        return petsInMap;
     }
     
     

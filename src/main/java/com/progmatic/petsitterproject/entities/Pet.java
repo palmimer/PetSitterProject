@@ -1,5 +1,6 @@
 package com.progmatic.petsitterproject.entities;
 
+import com.progmatic.petsitterproject.dtos.PetDTO;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
@@ -61,5 +62,7 @@ public class Pet implements Serializable {
         this.owner = owner;
     }
     
-    
+    public PetDTO getPetDTO(){
+        return new PetDTO(this.name, this.petType);
+    }
 }

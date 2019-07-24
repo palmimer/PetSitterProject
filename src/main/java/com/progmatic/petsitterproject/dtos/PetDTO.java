@@ -17,6 +17,11 @@ public class PetDTO {
 
     public PetDTO() {
     }
+    
+    public PetDTO(String name, PetType petType){
+        this.name = name;
+        this.petType = petType;
+    }
 
     public String getName() {
         return name;

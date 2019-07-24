@@ -1,17 +1,25 @@
 package com.progmatic.petsitterproject.dtos;
 
-import com.progmatic.petsitterproject.entities.Pet;
-import java.util.List;
+import com.progmatic.petsitterproject.entities.Owner;
+import java.util.Set;
 
 public class OwnerDTO {
 
-    private List<Pet> pets;
+    private Set<PetDTO> pets;
 
-    public OwnerDTO(List<Pet> pets) {
+    public OwnerDTO(Set<PetDTO> pets) {
         this.pets = pets;
     }
+    
+    public OwnerDTO(Owner owner){
+        this.pets = owner.getPetDTOs();
+    }
 
-    public void setPets(List<Pet> pets) {
+    public Set<PetDTO> getPets() {
+        return pets;
+    }
+
+    public void setPets(Set<PetDTO> pets) {
         this.pets = pets;
     }
 }

@@ -11,6 +11,7 @@ import com.progmatic.petsitterproject.entities.WorkingDay;
 import com.progmatic.petsitterproject.repositories.UserRepo;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -54,7 +55,7 @@ public class CalendarUpdater extends Thread{
         }
     }
     
-    private List<WorkingDay> rollCalendar(List<WorkingDay> cal, LocalDate date){
+    private Set<WorkingDay> rollCalendar(Set<WorkingDay> cal, LocalDate date){
         LocalDate last = findLast(cal);
         LocalDate now = date;
         for (WorkingDay w : cal) {
@@ -67,7 +68,7 @@ public class CalendarUpdater extends Thread{
         return cal;
     }
     
-    private LocalDate findLast(List<WorkingDay> cal){
+    private LocalDate findLast(Set<WorkingDay> cal){
         return cal.stream().map(d -> d.getwDay()).max((d1, d2) -> d1.compareTo(d2)).get();
     }
     

@@ -11,7 +11,9 @@ import com.progmatic.petsitterproject.entities.*;
 import com.progmatic.petsitterproject.repositories.UserRepo;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +49,6 @@ public class UserService {
     public void fixDatabase(){
         makeAuthorities();
         makeDefaultAdmin();
-        
     }
     
     @Transactional
@@ -78,22 +79,37 @@ public class UserService {
         return ur.findUser(userId);
     }
     
+    public UserDTO getUserDTO(){
+        User user = getCurrentUser();
+        UserDTO userDTO = new UserDTO(user);
+        if(user.getOwner() != null){
+            userDTO.setOwnerData(new OwnerDTO(user.getOwner()));
+        }
+        if(user.getSitter() != null){
+            userDTO.setSitterData(DTOConversion.convertToSitterResponseDTO(user, user.getSitter()));
+        }
+        return userDTO;
+    }
+    
     @Transactional
     public void registerNewSitter(SitterRegistrationDTO sd){
         User u = getCurrentUser();
         Sitter s = new Sitter(/*sd.getProfilePhoto(),*/ sd.getIntro()
                 , sd.getPetTypes(), u);
         s.setAddress(createAddress(sd.getCity(), sd.getAddress(), sd.getPostalCode(), s));
-        s.setServices(newServiceList(sd.getPlace(),sd.getPetType(),sd.getPricePerHour(), sd.getPricePerDay(), s));
+        s.setServices(newServiceList(sd.getPlace(), sd.getPetType(), sd.getPricePerHour(), sd.getPricePerDay(), s));
         s.setAvailabilities(newCalendar(s));
         u.setSitter(s);
         ur.newSitter(s);
     }
     
-    private List<SitterService> newServiceList(PlaceOfService place, PetType petType
+    private Set<SitterService> newServiceList(PlaceOfService place, PetType petType
             , int pricePerHour, int pricePerDay, Sitter s){
-        List<SitterService> listOfServices = new ArrayList<>();
-        SitterService ss = new SitterService(place,petType,pricePerHour, pricePerDay);
+        Set<SitterService> listOfServices = new HashSet<>();
+        if (s.getServices() != null) {
+            listOfServices = s.getServices();
+        }
+        SitterService ss = new SitterService(place, petType, pricePerHour, pricePerDay);
         ss.setSitter(s);
         ur.newService(ss);
         listOfServices.add(ss);
@@ -118,9 +134,9 @@ public class UserService {
     }
     
     @Transactional
-    private List<WorkingDay> newCalendar(Sitter s){
+    private Set<WorkingDay> newCalendar(Sitter s){
         LocalDate d = LocalDate.now();
-        List<WorkingDay> cal = new ArrayList<>();
+        Set<WorkingDay> cal = new HashSet<>();
         for (int i = 0; i < 30; i++) {
             WorkingDay w = new WorkingDay(d, Availability.FREE);
             w.setSitter(s);
