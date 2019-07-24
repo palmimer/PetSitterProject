@@ -61,8 +61,9 @@ public class CalendarUpdater extends Thread{
         for (WorkingDay w : cal) {
             if(w.getwDay().isBefore(now)){
                 last=last.plusDays(1);
-                w.setwDay(last);
-                w.setAvailability(Availability.FREE);
+                System.out.println("utolsó: "+last);
+                ur.setDayDate(w.getId(), last);
+                ur.setDayAvail(w.getId(), Availability.FREE);
             }
         }
         return cal;

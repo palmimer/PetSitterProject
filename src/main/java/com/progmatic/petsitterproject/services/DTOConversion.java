@@ -8,6 +8,8 @@ package com.progmatic.petsitterproject.services;
 import com.progmatic.petsitterproject.dtos.*;
 import com.progmatic.petsitterproject.entities.*;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.*;
 
 /**
@@ -32,6 +34,7 @@ public class DTOConversion {
         return response;
     }
     
+    
     public static SitterResponseDTO convertToSitterResponseDTO(User user, Sitter sitter) {
         SitterResponseDTO response = new SitterResponseDTO();
         response.setCity(sitter.getAddress().getCity());
@@ -44,12 +47,15 @@ public class DTOConversion {
         
         return response;
     }
-    
-    public static TreeMap<LocalDate, Availability> convertCalendar(List<WorkingDay> list){
-        TreeMap<LocalDate, Availability> calendarView = new TreeMap<>();
+    public static List<WorkDayViewDTO> convertCalendar(Set<WorkingDay> list){
+        List<WorkDayViewDTO> calendarView = new ArrayList<>();
         for (WorkingDay wd : list) {
-            calendarView.put(wd.getwDay(), wd.getAvailability());
+            calendarView.add(new WorkDayViewDTO(wd.getId()
+                    , wd.getAvailability()
+                    , wd.getwDay().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))));
         }
+        //Comparator<WorkDayViewDTO> c = ((w1, w2) -> w1.getDate().compareTo(w2.getDate()));
+        calendarView.sort((w1, w2) -> w1.getDate().compareTo(w2.getDate()));
         return calendarView;
     }
     

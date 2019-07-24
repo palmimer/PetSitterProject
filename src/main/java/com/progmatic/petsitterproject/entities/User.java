@@ -1,6 +1,7 @@
 package com.progmatic.petsitterproject.entities;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -33,6 +34,7 @@ public class User implements Serializable, UserDetails {
     private Sitter sitter;
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Authority> authorities;
+    private LocalDateTime dateOfJoin;
 
     public User() {
     }
@@ -42,6 +44,7 @@ public class User implements Serializable, UserDetails {
         this.email = email;
         this.password = password;
         this.authorities = new HashSet<>();
+        dateOfJoin = LocalDateTime.now();
     }
 
     public int getId() {
@@ -92,6 +95,11 @@ public class User implements Serializable, UserDetails {
         this.authorities.add(authority);
     }
 
+    public LocalDateTime getDateOfJoin() {
+        return dateOfJoin;
+    }
+    
+    
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
