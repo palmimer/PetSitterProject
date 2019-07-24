@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
@@ -42,10 +41,9 @@ public class Sitter implements Serializable {
     public Sitter() {
     }
 
-    public Sitter(/*Byte[] profilePhoto,*/ String intro, List<PetType> petTypes, User user) {
+    public Sitter(/*Byte[] profilePhoto,*/ String intro, User user) {
         //this.profilePhoto = profilePhoto;
         this.intro = intro;
-        this.petTypes = petTypes;
         this.user = user;
     }
 
@@ -71,6 +69,10 @@ public class Sitter implements Serializable {
 
     public Set<SitterService> getServices() {
         return services;
+    }
+    
+    public List<PlaceOfService> getPlacesOfService(){
+        return services.stream().map(s -> s.getPlace()).distinct().collect(Collectors.toList()); 
     }
 
     public Set<WorkingDay> getAvailabilities() {

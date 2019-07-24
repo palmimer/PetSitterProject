@@ -25,8 +25,9 @@ public class DTOConversion {
         response.setPostalCode(sitter.getAddress().getPostalCode());
         response.setIntro(sitter.getIntro());
 //        response.setPetTypes(sitter.getPetTypes());
-        response.setServices(new ArrayList<>(sitter.getServices()));
-        response.setAvailabilities(new ArrayList<>(sitter.getAvailabilities()));
+        response.setServices(convertSitterService(sitter.getServices()));
+        response.setAvailabilities(convertCalendar(sitter.getAvailabilities()));
+        response.setId(user.getId());
         
         return response;
     }
