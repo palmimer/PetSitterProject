@@ -5,13 +5,8 @@
  */
 package com.progmatic.petsitterproject.dtos;
 
-import com.progmatic.petsitterproject.entities.Availability;
-import com.progmatic.petsitterproject.entities.PetType;
-import com.progmatic.petsitterproject.entities.SitterService;
-import com.progmatic.petsitterproject.entities.WorkingDay;
-import java.time.LocalDate;
+import com.progmatic.petsitterproject.entities.ImageModel;
 import java.util.List;
-import java.util.TreeMap;
 
 /**
  *
@@ -20,7 +15,6 @@ import java.util.TreeMap;
 
 public class SitterViewDTO {
     private ImageModel profilePhoto;
-    @NotNull
     private String UserName;
     private String city;
     private String address;
@@ -28,7 +22,7 @@ public class SitterViewDTO {
     private String intro;
     //private List<PetType> petTypes;
     private List<SitterServiceDTO> services;
-    private TreeMap<LocalDate, Availability> availabilities;
+    private List<WorkDayViewDTO> availabilities;
     private int id;
 
     public SitterViewDTO() {
@@ -90,11 +84,11 @@ public class SitterViewDTO {
         this.services = services;
     }
 
-    public TreeMap<LocalDate, Availability> getAvailabilities() {
+    public List<WorkDayViewDTO> getAvailabilities() {
         return availabilities;
     }
 
-    public void setAvailabilities(TreeMap<LocalDate, Availability> availabilities) {
+    public void setAvailabilities(List<WorkDayViewDTO> availabilities) {
         this.availabilities = availabilities;
     }
 

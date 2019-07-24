@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -41,14 +40,6 @@ public class UserService {
     
     private void startBackGroundTasks(){
         cu.start();
-    }
-    
-    @Transactional
-    public void fixDatabase(){
-        makeAuthorities();
-        makeDefaultUsers();
-        makeDefaultAdmin();
-        
     }
     
     @Transactional
@@ -132,74 +123,18 @@ public class UserService {
         return cal;
     }
     
-    
     @Transactional
-    private void makeAuthorities(){
-        if(ur.absentAuthority("ROLE_USER")){
-            ur.newAuthority(new Authority("ROLE_USER"));
-        }
-        if(ur.absentAuthority("ROLE_ADMIN")){
-            ur.newAuthority(new Authority("ROLE_ADMIN"));
-        }
-    }
-    
-    @Transactional
-    private void makeDefaultAdmin(){
-        if(noAdmin()){
-            User u = new User("admin", "adress@email.com", "super secret admin password");
-            u.setAuthorities(ur.findAuthority("ROLE_ADMIN"));
-            ur.newUser(u);
-        }
-    }
-    
-    private void makeDefaultUsers(){
-        if(ur.noUsers()){
-            User u1 = new User("Techno Kolos", "techno.kolos@freemail.com", "password");
-            u1.setAuthorities(ur.findAuthority("ROLE_USER"));
-            ur.newUser(u1);
-            Sitter s1 = new Sitter("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", u1);
-            s1.setAddress(createAddress("Pocsajd", "Beton út 1.", 5555, s1));
-            s1.setServices(newServiceList(PlaceOfService.OWNERS_HOME,PetType.CAT
-                    ,1500, 6000, s1));
-            s1.setAvailabilities(newCalendar(s1));
-            ur.newSitter(s1);
-            
-            User u2 = new User("Tank Aranka", "tankari@citromail.com", "password");
-            u2.setAuthorities(ur.findAuthority("ROLE_USER"));
-            ur.newUser(u2);
-            Sitter s2 = new Sitter("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", u2);
-            s2.setAddress(createAddress("Békásmegyer", "Föld út 12.", 4593, s2));
-            s2.setServices(newServiceList(PlaceOfService.SITTERS_HOME,PetType.DOG
-                    ,900, 7000, s2));
-            s2.setAvailabilities(newCalendar(s2));
-            ur.newSitter(s2);
-            
-            User u3 = new User("Feles Elek", "feleselek@hotmail.com", "password");
-            u3.setAuthorities(ur.findAuthority("ROLE_USER"));
-            ur.newUser(u3);
-            
-            User u4 = new User("Citad Ella", "citad.ella@yandex.com", "password");
-            u4.setAuthorities(ur.findAuthority("ROLE_USER"));
-            ur.newUser(u4);
-            Sitter s4 = new Sitter("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", u2);
-            s4.setAddress(createAddress("Pocsajd", "Beton út 16.", 5555, s4));
-            s4.setServices(newServiceList(PlaceOfService.OWNERS_HOME,PetType.BIRD
-                    ,800, 4500, s4));
-            s4.setAvailabilities(newCalendar(s4));
-            ur.newSitter(s4);
-        }
-    }
-    
-    private boolean noAdmin(){
-        List<User> users = ur.getAllUsers();
-        for (User user : users) {
-            for (GrantedAuthority authority : user.getAuthorities()) {
-                if(authority.getAuthority().equals("ROLE_ADMIN")){
-                    return false;
-                }
-            }
-        }
-        return true;
+    public void editProfile(ProfileEditDTO edit){
+        User u = (User) ur.findUser(getCurrentUser().getId());
+        u.setName(edit.getUsername());
+        u.setPassword(pwd.encode(edit.getPassword()));
+        Sitter s = ur.findSitter(u.getSitter().getId());
+        s.setIntro(edit.getIntro());
+        s.setProfilePhoto(edit.getProfilePhoto());
+        Address a = ur.findAddress(s.getAddress().getId());
+        a.setAddress(edit.getAddress());
+        a.setCity(edit.getCity());
+        a.setPostalCode(edit.getPostalCode());
     }
     
     @Transactional
@@ -227,10 +162,16 @@ public class UserService {
         if (ur.userAlreadyExists(registration.getEmail())) {
             throw new AlreadyExistsException("Ilyen e-mailcím már létezik az adatbázisban!");
         }
-        Authority auth = ur.findAuthority("ROLE_USER");
+        //Authority auth = ur.findAuthority("ROLE_USER");
         User newUser = new User(registration.getUsername(), registration.getEmail(), pwd.encode(registration.getPassword()));
-        newUser.setAuthorities(auth);
+        //newUser.setAuthorities(auth);
         ur.newUser(newUser);
+    }
+    
+    @Transactional
+    public void suspendAccount(){
+        User u = ur.findUser(getCurrentUser().getId());
+        u.getAuthorities().clear();
     }
     
     private SitterService createServiceWithoutPrice(PlaceOfService place, PetType petType) {

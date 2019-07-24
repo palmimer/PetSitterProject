@@ -54,14 +54,16 @@ public class CalendarUpdater extends Thread{
         }
     }
     
+    @Transactional
     private List<WorkingDay> rollCalendar(List<WorkingDay> cal, LocalDate date){
         LocalDate last = findLast(cal);
         LocalDate now = date;
         for (WorkingDay w : cal) {
             if(w.getwDay().isBefore(now)){
                 last=last.plusDays(1);
-                w.setwDay(last);
-                w.setAvailability(Availability.FREE);
+                System.out.println("utolsó: "+last);
+                ur.setDayDate(w.getId(), last);
+                ur.setDayAvail(w.getId(), Availability.FREE);
             }
         }
         return cal;
