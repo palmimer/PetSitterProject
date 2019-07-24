@@ -52,32 +52,59 @@ public class UserService {
         makeDefaultAdmin();
     }
     
+//    @Transactional
+//    public void registerNewOwner(PetType petType, String name){
+//        User user = getCurrentUser();
+//        // ha még nem volt a user tulajdonos, = nincs owner objektuma,
+//        if( user.getOwner() == null ){
+//            // akkor létrehozunk egy owner objektumot
+//            Owner owner = new Owner();
+//            // beállítjuk rajta a usert
+//            owner.setUser(user);
+//            // beállítjuk a usernek ezt az ownert
+//            user.setOwner(owner);
+//            // beírjuk az adatbázisba az új ownert
+//            ur.newOwner(owner);
+//        } 
+//        // létrehozunk egy új Pet-et a beküldött paraméterekkel
+//        Pet pet = new Pet(petType, name);
+//        // ennek a Pet-nek beállítjuk owner-nek az aktuális user owner-ét
+//        Owner owner = user.getOwner();
+//        pet.setOwner(owner);
+//        // beírjuk az adatbázisba az új Pet-et
+//        ur.newPet(pet);
+//    }
+    
     @Transactional
-    public void registerNewOwner(PetType petType, String name){
-        User user = getCurrentUser();
-        // ha még nem volt a user tulajdonos, = nincs owner objektuma,
+    public void registerNewOwner(int userId, Set<PetDTO> petsToRegister){
+        User user = new User();
+        if (getCurrentUser() != null) {
+            user = getCurrentUser();
+        } else {
+            user = ur.findUser(userId);
+        }
         if( user.getOwner() == null ){
-            // akkor létrehozunk egy owner objektumot
             Owner owner = new Owner();
-            // beállítjuk rajta a usert
             owner.setUser(user);
-            // beállítjuk a usernek ezt az ownert
             user.setOwner(owner);
-            // beírjuk az adatbázisba az új ownert
             ur.newOwner(owner);
-        } 
-        // létrehozunk egy új Pet-et a beküldött paraméterekkel
-        Pet pet = new Pet(petType, name);
-        // ennek a Pet-nek beállítjuk owner-nek az aktuális user owner-ét
+        }
         Owner owner = user.getOwner();
-        pet.setOwner(owner);
-        // beírjuk az adatbázisba az új Pet-et
-        ur.newPet(pet);
+        for (PetDTO petToRegister : petsToRegister) {
+            Pet pet = new Pet(petToRegister.getPetType(), petToRegister.getName());
+            pet.setOwner(owner);
+            ur.newPet(pet);
+        }
+        
         
     }
     
     public User getUser(int userId){
         return ur.findUser(userId);
+    }
+    
+    public int getUserIdOfCurrentUser(){
+        return ur.getUserId(getCurrentUser().getEmail());
     }
     
     public UserDTO getUserDTO(){
@@ -93,18 +120,28 @@ public class UserService {
     }
     
     @Transactional
-    public void registerNewSitter(SitterRegistrationDTO sd){
-        User u = getCurrentUser();
-        Sitter s = new Sitter(/*sd.getProfilePhoto(),*/ sd.getIntro(), u);
+    public void registerNewSitter(int userId, SitterRegistrationDTO sd){
+        User user = new User();
+        if (getCurrentUser() != null) {
+            user = getCurrentUser();
+        } else {
+            user = ur.findUser(userId);
+        }
+        Sitter s = new Sitter( sd.getIntro(), user);
+        s.setProfilePhoto(sd.getProfilePhoto());
         s.setAddress(createAddress(sd.getCity(), sd.getAddress(), sd.getPostalCode(), s));
-        s.setServices(newServiceList(sd.getPlace(), sd.getPetType(), sd.getPricePerHour(), sd.getPricePerDay(), s));
+        s.setServices(DTOConversion.convertToSitterService(sd.getServices()));
         s.setAvailabilities(newCalendar(s));
-        u.setSitter(s);
+        user.setSitter(s);
         ur.newSitter(s);
     }
     
-    private Set<SitterService> newServiceList(PlaceOfService place, PetType petType
-            , int pricePerHour, int pricePerDay, Sitter s){
+    private Set<SitterService> newServiceList(
+            PlaceOfService place, 
+            PetType petType, 
+            int pricePerHour, 
+            int pricePerDay, 
+            Sitter s){
         Set<SitterService> listOfServices = new HashSet<>();
         if (s.getServices() != null) {
             listOfServices = s.getServices();
@@ -117,8 +154,14 @@ public class UserService {
     }
     
     @Transactional
-    public void registerNewService(SitterServiceDTO ssrv){
-        Sitter current = getCurrentUser().getSitter();
+    public void registerNewService(int userId, SitterServiceDTO ssrv){
+        User user = new User();
+        if (getCurrentUser() != null) {
+            user = getCurrentUser();
+        } else {
+            user = ur.findUser(userId);
+        }
+        Sitter current = user.getSitter();
         SitterService ss = new SitterService(ssrv.getPlace(),ssrv.getPetType()
                 ,ssrv.getPricePerHour(), ssrv.getPricePerDay());
         ss.setSitter(current);
@@ -238,14 +281,15 @@ public class UserService {
         return petSitters;
     }
     @Transactional
-    public void createUser(RegistrationDTO registration) throws AlreadyExistsException {
-        if (ur.userAlreadyExists(registration.getEmail())) {
+    public int createUser(UserRegistrationDTO userData) throws AlreadyExistsException {
+        if (ur.userAlreadyExists(userData.getEmail())) {
             throw new AlreadyExistsException("Ilyen e-mailcím már létezik az adatbázisban!");
         }
         Authority auth = ur.findAuthority("ROLE_USER");
-        User newUser = new User(registration.getUsername(), registration.getEmail(), pwd.encode(registration.getPassword()));
+        User newUser = new User(userData.getUsername(), userData.getEmail(), pwd.encode(userData.getPassword()));
         newUser.setAuthorities(auth);
         ur.newUser(newUser);
+        return ur.getUserId(userData.getEmail());
     }
     
     private SitterService createServiceWithoutPrice(PlaceOfService place, PetType petType) {
@@ -289,9 +333,10 @@ public class UserService {
                 .getPostalCode()==postal).collect(Collectors.toList());
     }
     
-    private User getCurrentUser(){
+    public User getCurrentUser(){
         return (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
+    
     
     //TODO remove
 //    public ImageModel image(int id) {

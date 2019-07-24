@@ -6,6 +6,7 @@
 package com.progmatic.petsitterproject.controllers;
 
 import com.progmatic.petsitterproject.dtos.PetDTO;
+import com.progmatic.petsitterproject.dtos.RegistrationDTO;
 import com.progmatic.petsitterproject.dtos.SearchCriteriaDTO;
 import com.progmatic.petsitterproject.dtos.SitterRegistrationDTO;
 import com.progmatic.petsitterproject.dtos.SitterViewDTO;
@@ -16,6 +17,7 @@ import com.progmatic.petsitterproject.entities.PlaceOfService;
 import com.progmatic.petsitterproject.services.DTOConversion;
 import com.progmatic.petsitterproject.services.UserService;
 import java.util.List;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -42,26 +44,44 @@ public class UserController {
         this.us = us;
     }
     
-    @PostMapping(value = "/newsitter")
-    public String registerNewSitter(@RequestBody SitterRegistrationDTO sitterData){
-        
-        us.registerNewSitter(sitterData);
-        //valami visszajelzést arról, hogy megtörtént a regisztráció
-        return "Sikeresen regisztráltál, mint KiVi!";
+    @PostMapping("/newregistration")
+    public String registerNewUser(@RequestBody RegistrationDTO registration) throws AlreadyExistsException{
+    
+        us.fixDatabase();
+        int newUserID = us.createUser(registration.getUserData());
+        System.out.println("user regisztráció sikerült");
+        if (registration.getOwnerData() != null) {
+            us.registerNewOwner(newUserID, registration.getOwnerData().getPets());
+            System.out.println("owner regisztráció sikerült");
+        }
+        if (registration.getSitterData() != null) {
+            us.registerNewSitter(newUserID, registration.getSitterData());
+            System.out.println("sitter regisztráció sikerült");
+        }
+        return "Sikeres regisztráció!";
     }
     
-    @PostMapping(value = "/newowner")
-    public String registerNewOwner(@RequestBody PetDTO petData){
-        
-        us.registerNewOwner(petData.getPetType(), petData.getName());
-        
-        // visszajelzés arról, hogy megtörtént a regisztráció
-        return "Sikeresen regisztráltál, mint állattulajdonos!";
-    }
+//    @PostMapping(value = "/newsitter")
+//    public String registerNewSitter(@RequestBody SitterRegistrationDTO sitterData){
+//        
+//        us.registerNewSitter(sitterData);
+//        //valami visszajelzést arról, hogy megtörtént a regisztráció
+//        return "Sikeresen regisztráltál, mint KiVi!";
+//    }
+//    
+//    @PostMapping(value = "/newowner")
+//    public String registerNewOwner(@RequestBody Set<PetDTO> petData){
+//        
+//        us.registerNewOwner(petData);
+//        
+//        // visszajelzés arról, hogy megtörtént a regisztráció
+//        return "Sikeresen regisztráltál, mint állattulajdonos!";
+//    }
     
     @RequestMapping(value = "/owner", method = RequestMethod.PUT)
-    public String addNewPetToOwner(@RequestBody PetDTO petData){
-        us.registerNewOwner(petData.getPetType(), petData.getName());
+    public String addNewPetToOwner(@RequestBody Set<PetDTO> petData){
+        int userId = us.getUserIdOfCurrentUser();
+        us.registerNewOwner(userId, petData);
         return "Sikeresen hozzáadtad újabb állatodat!";
     }
     
@@ -76,12 +96,11 @@ public class UserController {
     @GetMapping(value = "/search/sitters")
     public List<SitterViewDTO> listSitters(
                 @RequestParam(value = "name", defaultValue = "") String sitterName,
-                @RequestParam(value = "PlaceOfService", required = false) PlaceOfService placeOfService,
+                @RequestParam(value = "placeOfService", required = false) PlaceOfService placeOfService,
                 @RequestParam(value = "petType", required = false) PetType petType,
                 @RequestParam(value = "postCode", defaultValue = "0") int postCode
                 
     ){
-        System.out.println(petType);
         SearchCriteriaDTO criteria = new SearchCriteriaDTO(sitterName, postCode, placeOfService, petType);
         List<SitterViewDTO> selectedSitters =  us.filterSitters(criteria);
         return selectedSitters;

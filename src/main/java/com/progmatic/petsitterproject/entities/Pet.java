@@ -3,6 +3,7 @@ package com.progmatic.petsitterproject.entities;
 import com.progmatic.petsitterproject.dtos.PetDTO;
 import java.io.Serializable;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,7 +17,7 @@ public class Pet implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private PetType petType;
     private String name;
     @ManyToOne

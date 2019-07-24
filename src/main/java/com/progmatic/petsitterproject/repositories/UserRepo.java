@@ -92,6 +92,12 @@ public class UserRepo implements UserDetailsService{
         em.persist(u);
     }
     
+    public int getUserId(String email){
+        return em.createQuery("SELECT u.id FROM User u WHERE u.email = :email")
+                .setParameter("email", email)
+                .getFirstResult();
+    }
+    
     @Transactional
     public void deleteUser(User u){
         em.remove(u);

@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -28,9 +30,6 @@ public class Sitter implements Serializable {
     @OneToOne
     private Address address;
     private String intro;
-    @ElementCollection(targetClass = PetType.class)
-    @Enumerated
-    private List<PetType> petTypes;
     @OneToMany(mappedBy = "sitter", fetch = FetchType.EAGER)
     private Set<SitterService> services;
     @OneToMany(mappedBy = "sitter", fetch = FetchType.EAGER)

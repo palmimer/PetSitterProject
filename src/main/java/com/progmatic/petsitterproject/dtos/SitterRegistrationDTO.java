@@ -5,6 +5,7 @@ import com.progmatic.petsitterproject.entities.PetType;
 import com.progmatic.petsitterproject.entities.PlaceOfService;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
@@ -19,13 +20,12 @@ public class SitterRegistrationDTO {
     @NotNull
     private String intro;
     @NotNull
-//    private List<PetType> petTypes;
+    private Set<SitterServiceDTO> services;
+//    private PlaceOfService place;
 //    @NotNull
-    private PlaceOfService place;
-    @NotNull
-    private PetType petType;
-    private int pricePerHour;
-    private int pricePerDay;
+//    private PetType petType;
+//    private int pricePerHour;
+//    private int pricePerDay;
 
     public SitterRegistrationDTO() {
     }
@@ -50,11 +50,11 @@ public class SitterRegistrationDTO {
         return intro;
     }
 
-    public List<PetType> getPetTypes() {
-        List<PetType> petTypes = new ArrayList<>();
-        petTypes.add(petType);
-        return petTypes;
-    }
+//    public List<PetType> getPetTypes() {
+//        List<PetType> petTypes = new ArrayList<>();
+//        petTypes.add(petType);
+//        return petTypes;
+//    }
 
     public void setProfilePhotoId(ImageModel profilePhoto) {
         this.profilePhoto = profilePhoto;
@@ -76,42 +76,12 @@ public class SitterRegistrationDTO {
         this.intro = intro;
     }
 
-//    public void setPetTypes(List<PetType> petTypes) {
-//        this.petTypes = petTypes;
-//    }
-
-    public PlaceOfService getPlace() {
-        return place;
+    public Set<SitterServiceDTO> getServices() {
+        return services;
     }
 
-    public void setPlace(PlaceOfService place) {
-        this.place = place;
+    public void setServices(Set<SitterServiceDTO> services) {
+        this.services = services;
     }
-
-    public PetType getPetType() {
-        return petType;
-    }
-
-    public void setPetType(PetType petType) {
-        this.petType = petType;
-    }
-
-    public int getPricePerHour() {
-        return pricePerHour;
-    }
-
-    public void setPricePerHour(int pricePerHour) {
-        this.pricePerHour = pricePerHour;
-    }
-
-    public int getPricePerDay() {
-        return pricePerDay;
-    }
-
-    public void setPricePerDay(int pricePerDay) {
-        this.pricePerDay = pricePerDay;
-    }
-
     
-
 }

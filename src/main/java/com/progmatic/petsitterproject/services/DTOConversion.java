@@ -25,8 +25,8 @@ public class DTOConversion {
         response.setPostalCode(sitter.getAddress().getPostalCode());
         response.setIntro(sitter.getIntro());
 //        response.setPetTypes(sitter.getPetTypes());
-        response.setServices(convertSitterService(sitter.getServices()));
-        response.setAvailabilities(convertCalendar(sitter.getAvailabilities()));
+        response.setServices(convertToSitterServiceDTO( new ArrayList<>(sitter.getServices())));
+        response.setAvailabilities( convertCalendar( new ArrayList<>(sitter.getAvailabilities() ) ) );
         response.setId(user.getId());
         
         return response;
@@ -39,7 +39,7 @@ public class DTOConversion {
         response.setPostalCode(sitter.getAddress().getPostalCode());
         response.setIntro(sitter.getIntro());
 //        response.setPetTypes(sitter.getPetTypes());
-        response.setServices(convertSitterService( new ArrayList<>(sitter.getServices())));
+        response.setServices(convertToSitterServiceDTO( new ArrayList<>(sitter.getServices())));
         response.setAvailabilities(convertCalendar(new ArrayList<>(sitter.getAvailabilities())));
         
         return response;
@@ -53,7 +53,7 @@ public class DTOConversion {
         return calendarView;
     }
     
-    public static List<SitterServiceDTO> convertSitterService(List<SitterService> list){
+    public static List<SitterServiceDTO> convertToSitterServiceDTO(List<SitterService> list){
         List<SitterServiceDTO> serviceView = new ArrayList<>();
         for (SitterService s : list) {
             SitterServiceDTO sv = new SitterServiceDTO();
@@ -64,6 +64,19 @@ public class DTOConversion {
             serviceView.add(sv);
         }
         return serviceView;
+    }
+    
+    public static Set<SitterService> convertToSitterService(Set<SitterServiceDTO> sitterServices){
+        Set<SitterService> services = new HashSet<>();
+        for (SitterServiceDTO s : sitterServices) {
+            SitterService serv = new SitterService();
+            serv.setPetType(s.getPetType());
+            serv.setPlace(s.getPlace());
+            serv.setPricePerDay(s.getPricePerDay());
+            serv.setPricePerHour(s.getPricePerHour());
+            services.add(serv);
+        }
+        return services;
     }
     
     public static HashMap<String, PetType> convertToHashMap(List<Pet> pets){

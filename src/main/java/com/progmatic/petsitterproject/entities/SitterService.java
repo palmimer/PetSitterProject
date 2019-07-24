@@ -18,6 +18,7 @@ public class SitterService implements Serializable {
     private int id;
     @Enumerated(EnumType.STRING)
     private PlaceOfService place;
+    @Enumerated(EnumType.STRING)
     private PetType petType;
     private int pricePerHour;
     private int pricePerDay;

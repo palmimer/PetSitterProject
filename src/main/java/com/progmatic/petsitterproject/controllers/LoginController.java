@@ -5,7 +5,11 @@
  */
 package com.progmatic.petsitterproject.controllers;
 
+import com.progmatic.petsitterproject.dtos.OwnerDTO;
 import com.progmatic.petsitterproject.dtos.RegistrationDTO;
+import com.progmatic.petsitterproject.dtos.UserRegistrationDTO;
+import com.progmatic.petsitterproject.dtos.SitterRegistrationDTO;
+import com.progmatic.petsitterproject.dtos.UserDTO;
 import com.progmatic.petsitterproject.services.UserService;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,14 +38,13 @@ public class LoginController {
     
     //milyen oldalt mutat, amikor beléptünk? (azt, amit eddig)
     
-    @PostMapping("/newregistration")
-    public String registerNewUser(
-            @Valid
-            @RequestBody RegistrationDTO registration) throws AlreadyExistsException{
     
-        userService.fixDatabase();
-        userService.createUser(registration);
-        return "Sikeres regisztráció!";
+    @PostMapping("/checkuser")
+    public UserDTO checkIfUserIsLoggedIn() throws NoUserLoggedInException{
+        if (userService.getCurrentUser() == null) {
+            throw new NoUserLoggedInException("Nincs bejelentkezett felhasználó!");
+        } else {
+            return userService.getUserDTO();
+        }
     }
-    
 }
