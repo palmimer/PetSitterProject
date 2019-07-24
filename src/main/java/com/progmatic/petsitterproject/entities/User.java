@@ -27,7 +27,7 @@ public class User implements Serializable, UserDetails {
     private String password;
     @OneToOne(cascade = REMOVE, mappedBy = "user")
     private Owner owner;
-    @OneToOne(cascade = REMOVE, fetch = FetchType.EAGER, mappedBy = "user")
+    @OneToOne(cascade = REMOVE, mappedBy = "user")
     private Sitter sitter;
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Authority> authorities;

@@ -1,29 +1,33 @@
 package com.progmatic.petsitterproject.dtos;
 
-import com.progmatic.petsitterproject.entities.Authority;
-import com.progmatic.petsitterproject.entities.Owner;
-import com.progmatic.petsitterproject.entities.Sitter;
-import java.util.HashSet;
-import java.util.Set;
+import com.progmatic.petsitterproject.entities.User;
 import javax.validation.constraints.NotNull;
 
 public class UserDTO {
     @NotNull
+    private int userId;
+    @NotNull
     private String name;
     @NotNull
     private String email;
-    @NotNull
-    private String password;
-    private Owner owner;
-    private Sitter sitter;
-    private Set<Authority> authorities = new HashSet<>();
+    private OwnerDTO ownerData;
+    private SitterResponseDTO sitterData;
+    
+    public UserDTO(User user) {
+        this.userId = user.getId();
+        this.name = user.getName();
+        this.email = user.getEmail();
+        // mi van, ha null?
+//        this.ownerData = new OwnerDTO(user.getOwner());
+//        this.sitterData = new SitterViewDTO();
+    }
 
-    public UserDTO(String name, String email, String password, Owner owner, Sitter sitter) {
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.owner = owner;
-        this.sitter = sitter;
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public String getName() {
@@ -34,22 +38,6 @@ public class UserDTO {
         return email;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public Owner getOwner() {
-        return owner;
-    }
-
-    public Sitter getSitter() {
-        return sitter;
-    }
-
-    public Set<Authority> getAuthorities() {
-        return authorities;
-    }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -58,19 +46,22 @@ public class UserDTO {
         this.email = email;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public OwnerDTO getOwnerData() {
+        return ownerData;
     }
 
-    public void setOwner(Owner owner) {
-        this.owner = owner;
+    public void setOwnerData(OwnerDTO ownerData) {
+        this.ownerData = ownerData;
     }
 
-    public void setSitter(Sitter sitter) {
-        this.sitter = sitter;
+    public SitterResponseDTO getSitterData() {
+        return sitterData;
     }
 
-    public void setAuthorities(Set<Authority> authorities) {
-        this.authorities = authorities;
+    public void setSitterData(SitterResponseDTO sitterData) {
+        this.sitterData = sitterData;
     }
+    
+    
+    
 }

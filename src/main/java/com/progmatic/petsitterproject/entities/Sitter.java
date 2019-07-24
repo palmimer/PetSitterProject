@@ -2,15 +2,15 @@ package com.progmatic.petsitterproject.entities;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
-import static javax.persistence.CascadeType.REMOVE;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
@@ -28,10 +28,13 @@ public class Sitter implements Serializable {
     @OneToOne
     private Address address;
     private String intro;
-    @OneToMany(mappedBy = "sitter")
-    private List<SitterService> services;
+    @ElementCollection(targetClass = PetType.class)
+    @Enumerated
+    private List<PetType> petTypes;
     @OneToMany(mappedBy = "sitter", fetch = FetchType.EAGER)
-    private List<WorkingDay> availabilities;
+    private Set<SitterService> services;
+    @OneToMany(mappedBy = "sitter", fetch = FetchType.EAGER)
+    private Set<WorkingDay> availabilities;
     @OneToOne
     private User user;
 
@@ -64,7 +67,7 @@ public class Sitter implements Serializable {
         return services.stream().map(s -> s.getPetType()).distinct().collect(Collectors.toList());
     }
 
-    public List<SitterService> getServices() {
+    public Set<SitterService> getServices() {
         return services;
     }
     
@@ -72,7 +75,7 @@ public class Sitter implements Serializable {
         return services.stream().map(s -> s.getPlace()).distinct().collect(Collectors.toList()); 
     }
 
-    public List<WorkingDay> getAvailabilities() {
+    public Set<WorkingDay> getAvailabilities() {
         return availabilities;
     }
 
@@ -96,11 +99,11 @@ public class Sitter implements Serializable {
 //        this.petTypes = petTypes;
 //    }
 
-    public void setServices(List<SitterService> services) {
+    public void setServices(Set<SitterService> services) {
         this.services = services;
     }
 
-    public void setAvailabilities(List<WorkingDay> availabilities) {
+    public void setAvailabilities(Set<WorkingDay> availabilities) {
         this.availabilities = availabilities;
     }
 

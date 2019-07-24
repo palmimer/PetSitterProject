@@ -1,10 +1,14 @@
 package com.progmatic.petsitterproject.entities;
 
+import com.progmatic.petsitterproject.dtos.PetDTO;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import static javax.persistence.CascadeType.REMOVE;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -17,15 +21,16 @@ public class Owner implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @OneToMany(cascade = REMOVE, mappedBy = "owner")
-    private List<Pet> pets;
+    @OneToMany(cascade = REMOVE, mappedBy = "owner", fetch = FetchType.EAGER)
+//    private List<Pet> pets;
+    private Set<Pet> pets;
     @OneToOne
     private User user;
 
     public Owner() {
     }
 
-    public Owner(List<Pet> pets) {
+    public Owner(Set<Pet> pets) {
         this.pets = pets;
     }
 
@@ -33,10 +38,10 @@ public class Owner implements Serializable {
         return id;
     }
 
-    public List<Pet> getPets() {
+    public Set<Pet> getPets() {
         return pets;
     }
-
+    
     public void setId(int id) {
         this.id = id;
     }
@@ -51,6 +56,14 @@ public class Owner implements Serializable {
 
     public void setUser(User user) {
         this.user = user;
+    }
+    
+    public Set<PetDTO> getPetDTOs(){
+        Set<PetDTO> petDTOs = new HashSet<>();
+        for (Pet pet : pets) {
+            petDTOs.add(pet.getPetDTO());
+        }
+        return petDTOs;
     }
     
 }

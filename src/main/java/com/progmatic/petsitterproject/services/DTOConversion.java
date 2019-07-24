@@ -36,6 +36,18 @@ public class DTOConversion {
     
     public static List<WorkDayViewDTO> convertCalendar(List<WorkingDay> list){
         List<WorkDayViewDTO> calendarView = new ArrayList<>();
+    public static SitterResponseDTO convertToSitterResponseDTO(User user, Sitter sitter) {
+        SitterResponseDTO response = new SitterResponseDTO();
+        response.setCity(sitter.getAddress().getCity());
+        response.setAddress(sitter.getAddress().getAddress());
+        response.setPostalCode(sitter.getAddress().getPostalCode());
+        response.setIntro(sitter.getIntro());
+//        response.setPetTypes(sitter.getPetTypes());
+        response.setServices(convertSitterService( new ArrayList<>(sitter.getServices())));
+        response.setAvailabilities(convertCalendar(new ArrayList<>(sitter.getAvailabilities())));
+        
+        return response;
+    }
         for (WorkingDay wd : list) {
             calendarView.add(new WorkDayViewDTO(wd.getId()
                     , wd.getAvailability()
@@ -57,6 +69,14 @@ public class DTOConversion {
             serviceView.add(sv);
         }
         return serviceView;
+    }
+    
+    public static HashMap<String, PetType> convertToHashMap(List<Pet> pets){
+        HashMap<String, PetType> petsInMap = new HashMap<>();
+        for (Pet pet : pets) {
+            petsInMap.put(pet.getName(), pet.getPetType());
+        }
+        return petsInMap;
     }
     
     

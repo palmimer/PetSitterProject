@@ -44,7 +44,7 @@ public class PetSitterSuccessHandler
         
         responseMap.put("message", "Sikeres belépés!");
         
-        
+        //jackson átalakítása a message-nek json formátummá
         ObjectMapper om = new ObjectMapper();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         PrintWriter writer = response.getWriter();

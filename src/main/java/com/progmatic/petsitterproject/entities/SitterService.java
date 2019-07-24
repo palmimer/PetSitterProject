@@ -1,7 +1,10 @@
 package com.progmatic.petsitterproject.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -13,10 +16,12 @@ public class SitterService implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @Enumerated(EnumType.STRING)
     private PlaceOfService place;
     private PetType petType;
     private int pricePerHour;
     private int pricePerDay;
+    
     @ManyToOne
     private Sitter sitter;
 
