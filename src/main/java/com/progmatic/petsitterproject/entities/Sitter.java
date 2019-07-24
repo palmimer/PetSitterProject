@@ -28,9 +28,6 @@ public class Sitter implements Serializable {
     @OneToOne
     private Address address;
     private String intro;
-    @ElementCollection(targetClass = PetType.class)
-    @Enumerated
-    private List<PetType> petTypes;
     @OneToMany(mappedBy = "sitter", fetch = FetchType.EAGER)
     private Set<SitterService> services;
     @OneToMany(mappedBy = "sitter", fetch = FetchType.EAGER)

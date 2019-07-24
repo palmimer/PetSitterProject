@@ -16,8 +16,7 @@ import com.progmatic.petsitterproject.entities.User;
 import com.progmatic.petsitterproject.entities.WorkingDay;
 import com.progmatic.petsitterproject.repositories.UserRepo;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -117,9 +116,9 @@ public class FillerService {
         }
     }
     
-    private List<SitterService> newServiceList(PlaceOfService place, PetType petType
+    private Set<SitterService> newServiceList(PlaceOfService place, PetType petType
             , int pricePerHour, int pricePerDay, Sitter s){
-        List<SitterService> listOfServices = new ArrayList<>();
+        Set<SitterService> listOfServices = new HashSet<>();
         SitterService ss = new SitterService(place,petType,pricePerHour, pricePerDay);
         ss.setSitter(s);
         ur.newService(ss);
@@ -136,9 +135,9 @@ public class FillerService {
     }
     
     @Transactional
-    private List<WorkingDay> newCalendar(Sitter s){
+    private Set<WorkingDay> newCalendar(Sitter s){
         LocalDate d = LocalDate.now();
-        List<WorkingDay> cal = new ArrayList<>();
+        Set<WorkingDay> cal = new HashSet<>();
         for (int i = 0; i < 30; i++) {
             WorkingDay w = new WorkingDay(d, Availability.FREE);
             w.setSitter(s);

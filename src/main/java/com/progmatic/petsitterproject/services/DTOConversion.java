@@ -34,8 +34,7 @@ public class DTOConversion {
         return response;
     }
     
-    public static List<WorkDayViewDTO> convertCalendar(List<WorkingDay> list){
-        List<WorkDayViewDTO> calendarView = new ArrayList<>();
+    
     public static SitterResponseDTO convertToSitterResponseDTO(User user, Sitter sitter) {
         SitterResponseDTO response = new SitterResponseDTO();
         response.setCity(sitter.getAddress().getCity());
@@ -43,11 +42,13 @@ public class DTOConversion {
         response.setPostalCode(sitter.getAddress().getPostalCode());
         response.setIntro(sitter.getIntro());
 //        response.setPetTypes(sitter.getPetTypes());
-        response.setServices(convertSitterService( new ArrayList<>(sitter.getServices())));
-        response.setAvailabilities(convertCalendar(new ArrayList<>(sitter.getAvailabilities())));
+        response.setServices(convertSitterService(sitter.getServices()));
+        response.setAvailabilities(convertCalendar(sitter.getAvailabilities()));
         
         return response;
     }
+    public static List<WorkDayViewDTO> convertCalendar(Set<WorkingDay> list){
+        List<WorkDayViewDTO> calendarView = new ArrayList<>();
         for (WorkingDay wd : list) {
             calendarView.add(new WorkDayViewDTO(wd.getId()
                     , wd.getAvailability()
@@ -58,7 +59,7 @@ public class DTOConversion {
         return calendarView;
     }
     
-    public static List<SitterServiceDTO> convertSitterService(List<SitterService> list){
+    public static List<SitterServiceDTO> convertSitterService(Set<SitterService> list){
         List<SitterServiceDTO> serviceView = new ArrayList<>();
         for (SitterService s : list) {
             SitterServiceDTO sv = new SitterServiceDTO();

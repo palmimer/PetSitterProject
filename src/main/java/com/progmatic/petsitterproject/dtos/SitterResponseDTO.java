@@ -20,7 +20,7 @@ public class SitterResponseDTO {
     private int postalCode;
     private String intro;
     private List<SitterServiceDTO> services;
-    private TreeMap<LocalDate, Availability> availabilities;
+    private List<WorkDayViewDTO> availabilities;
 
     public SitterResponseDTO() {
     }
@@ -65,11 +65,11 @@ public class SitterResponseDTO {
         this.services = services;
     }
 
-    public TreeMap<LocalDate, Availability> getAvailabilities() {
+    public List<WorkDayViewDTO> getAvailabilities() {
         return availabilities;
     }
 
-    public void setAvailabilities(TreeMap<LocalDate, Availability> availabilities) {
+    public void setAvailabilities(List<WorkDayViewDTO> availabilities) {
         this.availabilities = availabilities;
     }
     
