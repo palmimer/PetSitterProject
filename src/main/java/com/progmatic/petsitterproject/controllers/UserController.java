@@ -6,10 +6,12 @@
 package com.progmatic.petsitterproject.controllers;
 
 import com.progmatic.petsitterproject.dtos.PetDTO;
+import com.progmatic.petsitterproject.dtos.RegistrationDTO;
 import com.progmatic.petsitterproject.dtos.SearchCriteriaDTO;
 import com.progmatic.petsitterproject.dtos.SitterRegistrationDTO;
 import com.progmatic.petsitterproject.dtos.SitterViewDTO;
 import com.progmatic.petsitterproject.entities.ImageModel;
+import com.progmatic.petsitterproject.dtos.UserDTO;
 import com.progmatic.petsitterproject.entities.PetType;
 import com.progmatic.petsitterproject.entities.Sitter;
 import com.progmatic.petsitterproject.entities.User;
@@ -18,6 +20,7 @@ import com.progmatic.petsitterproject.services.DTOConversion;
 import com.progmatic.petsitterproject.services.UserService;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -54,17 +57,17 @@ public class UserController {
     }
 
     @PostMapping(value = "/newowner")
-    public String registerNewOwner(@RequestBody PetDTO petData) {
-
-        us.registerNewOwner(petData.getPetType(), petData.getName());
-
+    public String registerNewOwner(@RequestBody Set<PetDTO> petData){
+        
+        us.registerNewOwner(petData);
+        
         // visszajelzés arról, hogy megtörtént a regisztráció
         return "Sikeresen regisztráltál, mint állattulajdonos!";
     }
 
     @RequestMapping(value = "/owner", method = RequestMethod.PUT)
-    public String addNewPetToOwner(@RequestBody PetDTO petData) {
-        us.registerNewOwner(petData.getPetType(), petData.getName());
+    public String addNewPetToOwner(@RequestBody Set<PetDTO> petData){
+        us.registerNewOwner(petData);
         return "Sikeresen hozzáadtad újabb állatodat!";
     }
 
@@ -78,15 +81,36 @@ public class UserController {
 
     @GetMapping(value = "/search/sitters")
     public List<SitterViewDTO> listSitters(
-            @RequestParam(value = "name", defaultValue = "") String sitterName,
-            @RequestParam(value = "PlaceOfService", required = false) PlaceOfService placeOfService,
-            @RequestParam(value = "petType", required = false) PetType petType,
-            @RequestParam(value = "postCode", defaultValue = "0") int postCode
-    ) {
+                @RequestParam(value = "name", defaultValue = "") String sitterName,
+                @RequestParam(value = "placeOfService", required = false) PlaceOfService placeOfService,
+                @RequestParam(value = "petType", required = false) PetType petType,
+                @RequestParam(value = "postCode", defaultValue = "0") int postCode
+                
+    ){
         SearchCriteriaDTO criteria = new SearchCriteriaDTO(sitterName, postCode, placeOfService, petType);
         List<SitterViewDTO> selectedSitters = us.filterSitters(criteria);
         return selectedSitters;
     }
+    
+    @PostMapping("/editprofile")
+    public String editProfile(@RequestBody UserDTO edit){
+        us.editProfile(edit);
+        return "A profil módosult!";
+    }
+    
+    @PostMapping("/removepet")
+    public String removePet(@RequestBody PetDTO pet){
+        us.removePet(pet);
+        return "Az állatot eltávolítottuk a nyilvántartásból.";
+    }
+    
+//    @GetMapping(value = "/sitter/image/{sitterId}")
+//    public ResponseEntity<byte[]> testImage(@PathVariable("sitterId") int sitterId){
+////        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(us.getUser(sitterId).getSitter().getProfilePhoto().getPic());
+//        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(us.image(1).getPic());
+//    }
+    
+    
 
     @PostMapping(value = "/sitter/image/{sitterId}")
     public String uploadImage(@PathVariable("sitterId") int sitterId, @RequestParam("image") MultipartFile image) throws IOException {

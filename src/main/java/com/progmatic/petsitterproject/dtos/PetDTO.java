@@ -14,13 +14,15 @@ import com.progmatic.petsitterproject.entities.PetType;
 public class PetDTO {
      private String name;
      private PetType petType;
+     private int id;
 
     public PetDTO() {
     }
     
-    public PetDTO(String name, PetType petType){
+    public PetDTO(String name, PetType petType, int petId){
         this.name = name;
         this.petType = petType;
+        this.id = petId;
     }
 
     public String getName() {
@@ -38,6 +40,16 @@ public class PetDTO {
     public void setPetType(PetType petType) {
         this.petType = petType;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+    
+    
      
      
 }

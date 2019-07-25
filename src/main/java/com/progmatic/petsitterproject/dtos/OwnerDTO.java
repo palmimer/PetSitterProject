@@ -7,6 +7,9 @@ public class OwnerDTO {
 
     private Set<PetDTO> pets;
 
+    public OwnerDTO() {
+    }
+   
     public OwnerDTO(Set<PetDTO> pets) {
         this.pets = pets;
     }

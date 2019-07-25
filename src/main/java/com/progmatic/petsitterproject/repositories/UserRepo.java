@@ -8,10 +8,8 @@ package com.progmatic.petsitterproject.repositories;
 import com.progmatic.petsitterproject.entities.*;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.criteria.*;
 import javax.transaction.Transactional;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -72,6 +70,10 @@ public class UserRepo implements UserDetailsService{
         return findUser(userId).getSitter() != null;
     }
     
+    public boolean petExists(int petId){
+        return null != em.find(Pet.class, petId);
+    }
+    
     @Transactional
     public void newSitter(Sitter s){
         em.persist(s);
@@ -92,33 +94,59 @@ public class UserRepo implements UserDetailsService{
         em.persist(u);
     }
     
+    public int getUserId(String email){
+        return em.createQuery("SELECT u.id FROM User u WHERE u.email = :email")
+                .setParameter("email", email)
+                .getFirstResult();
+    }
+    
     @Transactional
     public void deleteUser(User u){
-        em.remove(u);
+        em.remove(findUser(u.getId()));
     }
     
     public void deletePet(Pet p){
-        em.remove(p);
+        em.remove(findPet(p.getId()));
     }
     
     public void deleteSitterService(SitterService ss){
-        em.remove(ss);
+        em.remove(findSitterService(ss.getId()));
     }
     
     public void deleteSitter(Sitter s){
-        em.remove(s);
+        em.remove(findSitter(s.getId()));
+    }
+    
+    public void deleteOwner(Owner o){
+        em.remove(findOwner(o.getId()));
     }
     
     public User findUser(int id){
        return em.find(User.class, id);
     }
     
+    public Sitter findSitter(int id){
+        return em.find(Sitter.class, id);
+    }
+    
     public Pet findPet(int id){
         return em.find(Pet.class, id);
     }
     
+    public Owner findOwner(int id){
+        return em.find(Owner.class, id);
+    }
+    
+    public Address findAddress(int id){
+        return em.find(Address.class, id);
+    }
+    
     public SitterService findSitterService(int id){
         return em.find(SitterService.class, id);
+    }
+    
+    public boolean sitterServiceExists(int id){
+        return null != em.find(SitterService.class, id);
     }
     
     public List<Sitter> getAllSitters(){
@@ -135,6 +163,13 @@ public class UserRepo implements UserDetailsService{
     
     public WorkingDay findDay(int dayId){
         return em.find(WorkingDay.class, dayId);
+    }
+    
+    public void setDayAvail(int dayId, Availability avail){
+        em.find(WorkingDay.class, dayId).setAvailability(avail);
+    }
+    public void setDayDate(int dayId, LocalDate date){
+        em.find(WorkingDay.class, dayId).setwDay(date);
     }
     
     public Authority findAuthority(String authority){

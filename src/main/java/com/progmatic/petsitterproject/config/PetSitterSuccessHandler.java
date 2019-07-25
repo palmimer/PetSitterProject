@@ -6,6 +6,7 @@
 package com.progmatic.petsitterproject.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.progmatic.petsitterproject.services.UserService;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
@@ -31,7 +32,12 @@ public class PetSitterSuccessHandler
   extends SimpleUrlAuthenticationSuccessHandler {
  
     private RequestCache requestCache = new HttpSessionRequestCache();
- 
+    private UserService userService;
+
+    public PetSitterSuccessHandler(UserService userService) {
+        this.userService = userService;
+    }
+    
     @Override
     public void onAuthenticationSuccess(
       HttpServletRequest request,
@@ -43,6 +49,7 @@ public class PetSitterSuccessHandler
         Map<String, Object> responseMap = new HashMap<>();
         
         responseMap.put("message", "Sikeres belépés!");
+        responseMap.put("user", userService.getUserDTO());
         
         //jackson átalakítása a message-nek json formátummá
         ObjectMapper om = new ObjectMapper();

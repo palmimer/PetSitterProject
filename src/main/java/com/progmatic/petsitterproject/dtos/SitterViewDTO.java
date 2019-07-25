@@ -13,6 +13,7 @@ import com.progmatic.petsitterproject.entities.WorkingDay;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.TreeMap;
+import javax.validation.constraints.NotNull;
 
 /**
  *
@@ -28,7 +29,7 @@ public class SitterViewDTO {
     private String intro;
     //private List<PetType> petTypes;
     private List<SitterServiceDTO> services;
-    private TreeMap<LocalDate, Availability> availabilities;
+    private List<WorkDayViewDTO> availabilities;
     private int id;
 
     public SitterViewDTO() {
@@ -90,11 +91,11 @@ public class SitterViewDTO {
         this.services = services;
     }
 
-    public TreeMap<LocalDate, Availability> getAvailabilities() {
+    public List<WorkDayViewDTO> getAvailabilities() {
         return availabilities;
     }
 
-    public void setAvailabilities(TreeMap<LocalDate, Availability> availabilities) {
+    public void setAvailabilities(List<WorkDayViewDTO> availabilities) {
         this.availabilities = availabilities;
     }
 

@@ -18,7 +18,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -48,12 +47,6 @@ public class UserService {
         cu.start();
     }
     
-    @Transactional
-    public void fixDatabase(){
-        makeAuthorities();
-        makeDefaultUsers();
-        makeDefaultAdmin();
-    }
     
     @Transactional
     public void registerNewOwner(PetType petType, String name){
@@ -76,7 +69,41 @@ public class UserService {
         pet.setOwner(owner);
         // beírjuk az adatbázisba az új Pet-et
         ur.newPet(pet);
-        
+    }
+    
+    @Transactional
+    public void registerNewOwner(String email, Set<PetDTO> petsToRegister){
+        User user = (User) ur.loadUserByUsername(email);
+        if( user.getOwner() == null ){
+            Owner owner = new Owner();
+            owner.setUser(user);
+            user.setOwner(owner);
+            ur.newOwner(owner);
+        }
+        Owner owner = user.getOwner();
+        for (PetDTO petToRegister : petsToRegister) {
+            Pet pet = new Pet(petToRegister.getPetType(), petToRegister.getName());
+            pet.setOwner(owner);
+            ur.newPet(pet);
+        }
+    }
+    
+    //Overloadolás, ha utólag akar azzá válni  
+    @Transactional
+    public void registerNewOwner(Set<PetDTO> petsToRegister){
+        User user = getCurrentUser();
+        if( user.getOwner() == null ){
+            Owner owner = new Owner();
+            owner.setUser(user);
+            user.setOwner(owner);
+            ur.newOwner(owner);
+        }
+        Owner owner = user.getOwner();
+        for (PetDTO petToRegister : petsToRegister) {
+            Pet pet = new Pet(petToRegister.getPetType(), petToRegister.getName());
+            pet.setOwner(owner);
+            ur.newPet(pet);
+        }    
     }
     
     public User getUser(int userId){
@@ -96,32 +123,49 @@ public class UserService {
     }
     
     @Transactional
-    public void registerNewSitter(SitterRegistrationDTO sd){
-        User u = getCurrentUser();
-        Sitter s = new Sitter(/*sd.getProfilePhoto(),*/ sd.getIntro(), u);
+    public void registerNewSitter(String email, SitterRegistrationDTO sd){
+        User user = (User) ur.loadUserByUsername(email);
+        Sitter s = new Sitter( sd.getIntro(), user);
+        s.setProfilePhoto(sd.getProfilePhoto());
         s.setAddress(createAddress(sd.getCity(), sd.getAddress(), sd.getPostalCode(), s));
-        s.setServices(newServiceList(sd.getPlace(), sd.getPetType(), sd.getPricePerHour(), sd.getPricePerDay(), s));
+        s.setServices(newServiceSet(sd.getServices(), s));
         s.setAvailabilities(newCalendar(s));
-        u.setSitter(s);
+        user.setSitter(s);
         ur.newSitter(s);
     }
     
-    private Set<SitterService> newServiceList(PlaceOfService place, PetType petType
-            , int pricePerHour, int pricePerDay, Sitter s){
+    //Overloadolás, ha utólag akar azzá válni
+    @Transactional
+    public void registerNewSitter(SitterRegistrationDTO sd){
+        User user = getCurrentUser();
+        Sitter s = new Sitter( sd.getIntro(), user);
+        s.setProfilePhoto(sd.getProfilePhoto());
+        s.setAddress(createAddress(sd.getCity(), sd.getAddress(), sd.getPostalCode(), s));
+        s.setServices(newServiceSet(sd.getServices(), s));
+        s.setAvailabilities(newCalendar(s));
+        user.setSitter(s);
+        ur.newSitter(s);
+    }
+    
+    private Set<SitterService> newServiceSet(Set<SitterServiceDTO> srv, Sitter s){
         Set<SitterService> listOfServices = new HashSet<>();
         if (s.getServices() != null) {
             listOfServices = s.getServices();
         }
-        SitterService ss = new SitterService(place, petType, pricePerHour, pricePerDay);
-        ss.setSitter(s);
-        ur.newService(ss);
-        listOfServices.add(ss);
+        for (SitterServiceDTO dto : srv) {
+            SitterService ss = new SitterService(dto.getPlace(), dto.getPetType()
+                    , dto.getPricePerHour(), dto.getPricePerDay());
+            ss.setSitter(s);
+            ur.newService(ss);
+            listOfServices.add(ss);
+        }
         return listOfServices;
     }
     
     @Transactional
-    public void registerNewService(SitterServiceDTO ssrv){
-        Sitter current = getCurrentUser().getSitter();
+    public void registerNewService(int userId, SitterServiceDTO ssrv){
+        User user = getCurrentUser();
+        Sitter current = user.getSitter();
         SitterService ss = new SitterService(ssrv.getPlace(),ssrv.getPetType()
                 ,ssrv.getPricePerHour(), ssrv.getPricePerDay());
         ss.setSitter(current);
@@ -150,85 +194,54 @@ public class UserService {
         return cal;
     }
     
+    @Transactional
+    public void editProfile(UserDTO edit){
+        User u = (User) ur.findUser(getCurrentUser().getId());
+        u.setName(edit.getName());
+        u.setEmail(edit.getEmail());
+        if(edit.getOwnerData() == null || edit.getOwnerData().getPets().isEmpty()){
+            ur.deleteOwner(u.getOwner());
+        } else {
+            editPets(edit.getOwnerData().getPets());
+        }
+        if(edit.getSitterData() == null){
+            ur.deleteSitter(u.getSitter());
+        } else {
+            Sitter s = ur.findSitter(u.getSitter().getId());
+            s.setIntro(edit.getSitterData().getIntro());
+            //s.setProfilePhoto(edit.getSitterData().getProfilePhoto());
+            Address a = ur.findAddress(s.getAddress().getId());
+            a.setAddress(edit.getSitterData().getAddress());
+            a.setCity(edit.getSitterData().getCity());
+            a.setPostalCode(edit.getSitterData().getPostalCode());
+        }
+    }
+    
+    private void editPets(Set<PetDTO> pets){
+        for (PetDTO pet : pets) {
+            
+        }
+    }
+    
+    private void editSitter(){
+        
+    }
     
     @Transactional
-    private void makeAuthorities(){
-        if(ur.absentAuthority("ROLE_USER")){
-            ur.newAuthority(new Authority("ROLE_USER"));
-        }
-        if(ur.absentAuthority("ROLE_ADMIN")){
-            ur.newAuthority(new Authority("ROLE_ADMIN"));
-        }
+    public void setWorkingDay(int dayId, Availability avail){
+        ur.setDayAvail(dayId, avail);
     }
     
     @Transactional
-    private void makeDefaultAdmin(){
-        if(noAdmin()){
-            User u = new User("admin", "adress@email.com", "super secret admin password");
-            u.setAuthorities(ur.findAuthority("ROLE_ADMIN"));
-            ur.newUser(u);
-        }
-    }
-    
-    private void makeDefaultUsers(){
-        if(ur.noUsers()){
-            User u1 = new User("Techno Kolos", "techno.kolos@freemail.com", "password");
-            u1.setAuthorities(ur.findAuthority("ROLE_USER"));
-            ur.newUser(u1);
-            Sitter s1 = new Sitter("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", u1);
-            s1.setAddress(createAddress("Pocsajd", "Beton út 1.", 5555, s1));
-            s1.setServices(newServiceList(PlaceOfService.OWNERS_HOME,PetType.CAT
-                    ,1500, 6000, s1));
-            s1.setAvailabilities(newCalendar(s1));
-            ur.newSitter(s1);
-            
-            User u2 = new User("Tank Aranka", "tankari@citromail.com", "password");
-            u2.setAuthorities(ur.findAuthority("ROLE_USER"));
-            ur.newUser(u2);
-            Sitter s2 = new Sitter("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", u2);
-            s2.setAddress(createAddress("Békásmegyer", "Föld út 12.", 4593, s2));
-            s2.setServices(newServiceList(PlaceOfService.SITTERS_HOME,PetType.DOG
-                    ,900, 7000, s2));
-            s2.setAvailabilities(newCalendar(s2));
-            ur.newSitter(s2);
-            
-            User u3 = new User("Feles Elek", "feleselek@hotmail.com", "password");
-            u3.setAuthorities(ur.findAuthority("ROLE_USER"));
-            ur.newUser(u3);
-            
-            User u4 = new User("Citad Ella", "citad.ella@yandex.com", "password");
-            u4.setAuthorities(ur.findAuthority("ROLE_USER"));
-            ur.newUser(u4);
-            Sitter s4 = new Sitter("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.", u2);
-            s4.setAddress(createAddress("Pocsajd", "Beton út 16.", 5555, s4));
-            s4.setServices(newServiceList(PlaceOfService.OWNERS_HOME,PetType.BIRD
-                    ,800, 4500, s4));
-            s4.setAvailabilities(newCalendar(s4));
-            ur.newSitter(s4);
-        }
-    }
-    
-    private boolean noAdmin(){
-        List<User> users = ur.getAllUsers();
-        for (User user : users) {
-            for (GrantedAuthority authority : user.getAuthorities()) {
-                if(authority.getAuthority().equals("ROLE_ADMIN")){
-                    return false;
-                }
+    public void removePet(PetDTO pet){
+        Set<Pet> pets = getCurrentUser().getOwner().getPets();
+        List<Pet> all = new ArrayList<>();
+        for (Pet p : pets) {
+            if(p.getName().equals(pet.getName()) && p.getPetType() == pet.getPetType()){
+                all.add(p);
             }
         }
-        return true;
-    }
-    
-    @Transactional
-    public void setWorkingDay(LocalDate day, Availability avail){
-        Sitter s = getCurrentUser().getSitter();
-        for (WorkingDay w : s.getAvailabilities()) {
-            if(w.getwDay().isEqual(day)){
-                ur.findDay(w.getId()).setAvailability(avail);
-                break;
-            }
-        }
+        ur.deletePet(all.get(0));
     }
     
     public List<SitterViewDTO> filterSitters(SearchCriteriaDTO criteria){
@@ -241,14 +254,20 @@ public class UserService {
         return petSitters;
     }
     @Transactional
-    public void createUser(RegistrationDTO registration) throws AlreadyExistsException {
-        if (ur.userAlreadyExists(registration.getEmail())) {
+    public void createUser(UserRegistrationDTO userData) throws AlreadyExistsException {
+        if (ur.userAlreadyExists(userData.getEmail())) {
             throw new AlreadyExistsException("Ilyen e-mailcím már létezik az adatbázisban!");
         }
-        Authority auth = ur.findAuthority("ROLE_USER");
-        User newUser = new User(registration.getUsername(), registration.getEmail(), pwd.encode(registration.getPassword()));
-        newUser.setAuthorities(auth);
+        //Authority auth = ur.findAuthority("ROLE_USER");
+        User newUser = new User(userData.getUsername(), userData.getEmail(), pwd.encode(userData.getPassword()));
+        //newUser.setAuthorities(auth);
         ur.newUser(newUser);
+    }
+    
+    @Transactional
+    public void suspendAccount(){
+        User u = ur.findUser(getCurrentUser().getId());
+        u.getAuthorities().clear();
     }
     
     private SitterService createServiceWithoutPrice(PlaceOfService place, PetType petType) {
@@ -292,7 +311,7 @@ public class UserService {
                 .getPostalCode()==postal).collect(Collectors.toList());
     }
     
-    private User getCurrentUser(){
+    public User getCurrentUser(){
         return (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
     

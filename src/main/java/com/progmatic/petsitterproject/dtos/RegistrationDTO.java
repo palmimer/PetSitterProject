@@ -5,55 +5,42 @@
  */
 package com.progmatic.petsitterproject.dtos;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 /**
  *
  * @author progmatic
  */
-
-
 public class RegistrationDTO {
-    
-    @NotNull
-    @NotEmpty
-    @Size(min = 4, message=("Legalább 4 karaktert írj!"))
-    private String username;
-    @NotNull
-//    @Pattern(regexp = "^\\S+@\\S+$")
-    private String email;
-    @NotNull
-    @Size(min = 4, message=("Legalább 4 karaktert írj!"))
-    private String password;
+    private UserRegistrationDTO userData;
+    private SitterRegistrationDTO sitterData;
+    private OwnerDTO ownerData;
 
     public RegistrationDTO() {
     }
     
+
+    public UserRegistrationDTO getUserData() {
+        return userData;
+    }
+
+    public void setUserData(UserRegistrationDTO userData) {
+        this.userData = userData;
+    }
+
+    public SitterRegistrationDTO getSitterData() {
+        return sitterData;
+    }
+
+    public void setSitterData(SitterRegistrationDTO sitterData) {
+        this.sitterData = sitterData;
+    }
+
+    public OwnerDTO getOwnerData() {
+        return ownerData;
+    }
+
+    public void setOwnerData(OwnerDTO ownerData) {
+        this.ownerData = ownerData;
+    }
     
-    public RegistrationDTO(String userName, String email, String password1) {
-        this.username = userName;
-        this.password = password1;
-        this.email = email;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
     
-
 }
