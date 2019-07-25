@@ -6,6 +6,7 @@
 package com.progmatic.petsitterproject.controllers;
 
 import com.progmatic.petsitterproject.dtos.PetDTO;
+import com.progmatic.petsitterproject.dtos.ProfileEditDTO;
 import com.progmatic.petsitterproject.dtos.RegistrationDTO;
 import com.progmatic.petsitterproject.dtos.SearchCriteriaDTO;
 import com.progmatic.petsitterproject.dtos.SitterRegistrationDTO;
@@ -45,29 +46,6 @@ public class UserController {
         this.us = us;
     }
     
-    @PostMapping(value = "/newsitter")
-    public String registerNewSitter(@RequestBody SitterRegistrationDTO sitterData){
-        
-        us.registerNewSitter(sitterData);
-        //valami visszajelzést arról, hogy megtörtént a regisztráció
-        return "Sikeresen regisztráltál, mint KiVi!";
-    }
-    
-    @PostMapping(value = "/newowner")
-    public String registerNewOwner(@RequestBody Set<PetDTO> petData){
-        
-        us.registerNewOwner(petData);
-        
-        // visszajelzés arról, hogy megtörtént a regisztráció
-        return "Sikeresen regisztráltál, mint állattulajdonos!";
-    }
-    
-    @RequestMapping(value = "/owner", method = RequestMethod.PUT)
-    public String addNewPetToOwner(@RequestBody Set<PetDTO> petData){
-        us.registerNewOwner(petData);
-        return "Sikeresen hozzáadtad újabb állatodat!";
-    }
-    
     @GetMapping(value = "/{userId}")
     public SitterViewDTO singleSitter( @PathVariable("userId") int userId ){
         User user = us.getUser(userId);
@@ -90,16 +68,16 @@ public class UserController {
     }
     
     @PostMapping("/editprofile")
-    public String editProfile(@RequestBody UserDTO edit){
+    public String editProfile(@RequestBody ProfileEditDTO edit){
         us.editProfile(edit);
         return "A profil módosult!";
     }
     
-    @PostMapping("/removepet")
-    public String removePet(@RequestBody PetDTO pet){
-        us.removePet(pet);
-        return "Az állatot eltávolítottuk a nyilvántartásból.";
-    }
+//    @PostMapping("/removepet")
+//    public String removePet(@RequestBody PetDTO pet){
+//        us.removePet(pet);
+//        return "Az állatot eltávolítottuk a nyilvántartásból.";
+//    }
     
 //    @GetMapping(value = "/sitter/image/{sitterId}")
 //    public ResponseEntity<byte[]> testImage(@PathVariable("sitterId") int sitterId){

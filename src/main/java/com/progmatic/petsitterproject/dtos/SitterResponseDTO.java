@@ -8,6 +8,7 @@ package com.progmatic.petsitterproject.dtos;
 import com.progmatic.petsitterproject.entities.Availability;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -19,7 +20,7 @@ public class SitterResponseDTO {
     private String address;
     private int postalCode;
     private String intro;
-    private List<SitterServiceDTO> services;
+    private Set<SitterServiceDTO> services;
     private List<WorkDayViewDTO> availabilities;
 
     public SitterResponseDTO() {
@@ -57,11 +58,11 @@ public class SitterResponseDTO {
         this.intro = intro;
     }
 
-    public List<SitterServiceDTO> getServices() {
+    public Set<SitterServiceDTO> getServices() {
         return services;
     }
 
-    public void setServices(List<SitterServiceDTO> services) {
+    public void setServices(Set<SitterServiceDTO> services) {
         this.services = services;
     }
 

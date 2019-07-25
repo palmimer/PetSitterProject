@@ -59,8 +59,8 @@ public class DTOConversion {
         return calendarView;
     }
     
-    public static List<SitterServiceDTO> convertToSitterServiceDTO(Set<SitterService> list){
-        List<SitterServiceDTO> serviceView = new ArrayList<>();
+    public static Set<SitterServiceDTO> convertToSitterServiceDTO(Set<SitterService> list){
+        Set<SitterServiceDTO> serviceView = new HashSet<>();
         for (SitterService s : list) {
             SitterServiceDTO sv = new SitterServiceDTO();
             sv.setPetType(s.getPetType());

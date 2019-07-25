@@ -43,30 +43,30 @@ public class UserService {
     private void startBackGroundTasks(){
         cu.start();
     }
-    
-    
-    @Transactional
-    public void registerNewOwner(PetType petType, String name){
-        User user = getCurrentUser();
-        // ha még nem volt a user tulajdonos, = nincs owner objektuma,
-        if( user.getOwner() == null ){
-            // akkor létrehozunk egy owner objektumot
-            Owner owner = new Owner();
-            // beállítjuk rajta a usert
-            owner.setUser(user);
-            // beállítjuk a usernek ezt az ownert
-            user.setOwner(owner);
-            // beírjuk az adatbázisba az új ownert
-            ur.newOwner(owner);
-        } 
-        // létrehozunk egy új Pet-et a beküldött paraméterekkel
-        Pet pet = new Pet(petType, name);
-        // ennek a Pet-nek beállítjuk owner-nek az aktuális user owner-ét
-        Owner owner = user.getOwner();
-        pet.setOwner(owner);
-        // beírjuk az adatbázisba az új Pet-et
-        ur.newPet(pet);
-    }
+//    
+//    
+//    @Transactional
+//    public void registerNewOwner(PetType petType, String name){
+//        User user = getCurrentUser();
+//        // ha még nem volt a user tulajdonos, = nincs owner objektuma,
+//        if( user.getOwner() == null ){
+//            // akkor létrehozunk egy owner objektumot
+//            Owner owner = new Owner();
+//            // beállítjuk rajta a usert
+//            owner.setUser(user);
+//            // beállítjuk a usernek ezt az ownert
+//            user.setOwner(owner);
+//            // beírjuk az adatbázisba az új ownert
+//            ur.newOwner(owner);
+//        } 
+//        // létrehozunk egy új Pet-et a beküldött paraméterekkel
+//        Pet pet = new Pet(petType, name);
+//        // ennek a Pet-nek beállítjuk owner-nek az aktuális user owner-ét
+//        Owner owner = user.getOwner();
+//        pet.setOwner(owner);
+//        // beírjuk az adatbázisba az új Pet-et
+//        ur.newPet(pet);
+//    }
     
     @Transactional
     public void registerNewOwner(String email, Set<PetDTO> petsToRegister){
@@ -85,23 +85,6 @@ public class UserService {
         }
     }
     
-    //Overloadolás, ha utólag akar azzá válni  
-    @Transactional
-    public void registerNewOwner(Set<PetDTO> petsToRegister){
-        User user = getCurrentUser();
-        if( user.getOwner() == null ){
-            Owner owner = new Owner();
-            owner.setUser(user);
-            user.setOwner(owner);
-            ur.newOwner(owner);
-        }
-        Owner owner = user.getOwner();
-        for (PetDTO petToRegister : petsToRegister) {
-            Pet pet = new Pet(petToRegister.getPetType(), petToRegister.getName());
-            pet.setOwner(owner);
-            ur.newPet(pet);
-        }    
-    }
     
     public User getUser(int userId){
         return ur.findUser(userId);
@@ -122,19 +105,6 @@ public class UserService {
     @Transactional
     public void registerNewSitter(String email, SitterRegistrationDTO sd){
         User user = (User) ur.loadUserByUsername(email);
-        Sitter s = new Sitter( sd.getIntro(), user);
-        s.setProfilePhoto(sd.getProfilePhoto());
-        s.setAddress(createAddress(sd.getCity(), sd.getAddress(), sd.getPostalCode(), s));
-        s.setServices(newServiceSet(sd.getServices(), s));
-        s.setAvailabilities(newCalendar(s));
-        user.setSitter(s);
-        ur.newSitter(s);
-    }
-    
-    //Overloadolás, ha utólag akar azzá válni
-    @Transactional
-    public void registerNewSitter(SitterRegistrationDTO sd){
-        User user = getCurrentUser();
         Sitter s = new Sitter( sd.getIntro(), user);
         s.setProfilePhoto(sd.getProfilePhoto());
         s.setAddress(createAddress(sd.getCity(), sd.getAddress(), sd.getPostalCode(), s));
@@ -192,16 +162,17 @@ public class UserService {
     }
     
     @Transactional
-    public void editProfile(UserDTO edit){
+    public void editProfile(ProfileEditDTO edit){
         User u = (User) ur.findUser(getCurrentUser().getId());
-        u.setName(edit.getName());
+        u.setName(edit.getUsername());
+        u.setPassword(pwd.encode(edit.getPassword()));
         u.setEmail(edit.getEmail());
-        if(edit.getOwnerData() == null || edit.getOwnerData().getPets().isEmpty()){
+        if(ur.isOwner(u.getId()) && (edit.getOwnerData() == null || edit.getOwnerData().getPets().isEmpty())){
             ur.deleteOwner(u.getOwner());
         } else {
-            editPets(edit.getOwnerData().getPets());
+            editPets(edit.getOwnerData().getPets(), u.getEmail());
         }
-        if(edit.getSitterData() == null){
+        if(ur.isSitter(u.getId()) && edit.getSitterData() == null){
             ur.deleteSitter(u.getSitter());
         } else {
             Sitter s = ur.findSitter(u.getSitter().getId());
@@ -214,9 +185,41 @@ public class UserService {
         }
     }
     
-    private void editPets(Set<PetDTO> pets){
-        for (PetDTO pet : pets) {
-            
+    private void editPets(Set<PetDTO> pets, String email){
+        findNewPets(pets, email);
+        findObsoletePets(pets, email);
+    }
+    
+    private void findNewPets(Set<PetDTO> pets, String email){
+        Set<PetDTO> extra = new HashSet<>();
+        for (PetDTO dto : extra) {
+            if(dto.getId()==0){
+                extra.add(dto);
+            }
+        }
+        registerNewOwner(email, extra);
+    }
+    
+    private void findObsoletePets(Set<PetDTO> pets, String email){
+        Set<Integer> excess = new HashSet<>();
+        User u = (User)ur.loadUserByUsername(email);
+        if(ur.isOwner(u.getId()) && !u.getOwner().getPets().isEmpty()){
+            Set<Pet> current = ur.findUser(u.getId()).getOwner().getPets();
+            for (Pet extantpet : current) {
+                boolean found = false;
+                for (PetDTO dto : pets) {
+                    if(dto.getId() == extantpet.getId()){
+                        found = true;
+                        break;
+                    }
+                }
+                if(!found){
+                    excess.add(extantpet.getId());
+                }
+            }
+        }
+        if(!excess.isEmpty()){
+            removePets(excess);
         }
     }
     
@@ -229,16 +232,13 @@ public class UserService {
         ur.setDayAvail(dayId, avail);
     }
     
-    @Transactional
-    public void removePet(PetDTO pet){
+    private void removePets(Set<Integer> toRemove){
         Set<Pet> pets = getCurrentUser().getOwner().getPets();
-        List<Pet> all = new ArrayList<>();
         for (Pet p : pets) {
-            if(p.getName().equals(pet.getName()) && p.getPetType() == pet.getPetType()){
-                all.add(p);
+            if(toRemove.contains(p.getId())){
+                ur.deletePet(p);
             }
         }
-        ur.deletePet(all.get(0));
     }
     
     public List<SitterViewDTO> filterSitters(SearchCriteriaDTO criteria){

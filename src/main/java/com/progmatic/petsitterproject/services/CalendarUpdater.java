@@ -94,7 +94,7 @@ public class CalendarUpdater extends Thread{
         List<User> users = ur.getAllUsers();
         for (User u : users) {
             if(u.getAuthorities().isEmpty() 
-                    && u.getDateOfJoin().isBefore(LocalDateTime.now().minusHours(2))){
+                    && u.getDateOfJoin().isBefore(LocalDateTime.now())){
                 System.out.println("Lejárt: "+u.getName());
                 ur.deleteUser(u);
             }
