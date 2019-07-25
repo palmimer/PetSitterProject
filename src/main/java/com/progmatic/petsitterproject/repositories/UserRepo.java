@@ -186,7 +186,15 @@ public class UserRepo implements UserDetailsService{
         em.persist(a);
     }
     
-    //TODO delete
+//    public Sitter findSitterById(int id){
+//        return (Sitter) em.createQuery("select i from image_model i where i.sitter_id =: 3")
+//                .getSingleResult();
+//    }
+    
+    public Sitter findSitterById(int id) {
+        return em.find(Sitter.class, id);
+    }
+    
 //    public ImageModel getImage(int id) {
 //        return em.find(ImageModel.class, Long.valueOf(id));
 //    }

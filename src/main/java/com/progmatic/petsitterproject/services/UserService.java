@@ -8,6 +8,7 @@ package com.progmatic.petsitterproject.services;
 import com.progmatic.petsitterproject.controllers.AlreadyExistsException;
 import com.progmatic.petsitterproject.dtos.*;
 import com.progmatic.petsitterproject.entities.*;
+import com.progmatic.petsitterproject.repositories.ImageRepository;
 import com.progmatic.petsitterproject.repositories.UserRepo;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -31,12 +32,14 @@ public class UserService {
     private UserRepo ur;
     private PasswordEncoder pwd;
     private CalendarUpdater cu;
+    private ImageRepository imageRepository;
     
     @Autowired
-    public UserService(UserRepo ur, PasswordEncoder pwd, CalendarUpdater cu) {
+    public UserService(UserRepo ur, PasswordEncoder pwd, CalendarUpdater cu, ImageRepository imageRepository) {
         this.ur = ur;
         this.pwd = pwd;
         this.cu = cu;
+        this.imageRepository = imageRepository;
         startBackGroundTasks();
     }
     
@@ -312,8 +315,13 @@ public class UserService {
         return (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
     
+    @Transactional
+    public void saveSitterImage(int sitterId, ImageModel image) {
+        Sitter sitter = ur.findSitterById(sitterId);
+        imageRepository.saveAndFlush(image);
+        sitter.setProfilePhoto(image);
+    }
     
-    //TODO remove
 //    public ImageModel image(int id) {
 //        return ur.getImage(id);
 //    }
