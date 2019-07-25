@@ -70,6 +70,10 @@ public class UserRepo implements UserDetailsService{
         return findUser(userId).getSitter() != null;
     }
     
+    public boolean petExists(int petId){
+        return null != em.find(Pet.class, petId);
+    }
+    
     @Transactional
     public void newSitter(Sitter s){
         em.persist(s);
@@ -113,6 +117,10 @@ public class UserRepo implements UserDetailsService{
         em.remove(findSitter(s.getId()));
     }
     
+    public void deleteOwner(Owner o){
+        em.remove(findOwner(o.getId()));
+    }
+    
     public User findUser(int id){
        return em.find(User.class, id);
     }
@@ -125,12 +133,20 @@ public class UserRepo implements UserDetailsService{
         return em.find(Pet.class, id);
     }
     
+    public Owner findOwner(int id){
+        return em.find(Owner.class, id);
+    }
+    
     public Address findAddress(int id){
         return em.find(Address.class, id);
     }
     
     public SitterService findSitterService(int id){
         return em.find(SitterService.class, id);
+    }
+    
+    public boolean sitterServiceExists(int id){
+        return null != em.find(SitterService.class, id);
     }
     
     public List<Sitter> getAllSitters(){

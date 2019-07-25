@@ -55,11 +55,24 @@ public class LoginController {
         }
     }
         
-        fillerService.fixDatabase();
-        userService.createUser(registration);
-        emailService.sendSimpleActivatorMessage(registration.getEmail());
-        return "Sikeres regisztráció!";
     
+    @PostMapping("/newregistration")
+    public String registerNewUser(@RequestBody RegistrationDTO registration) throws AlreadyExistsException{
+        
+        userService.createUser(registration.getUserData());
+        //System.out.println("user regisztráció sikerült");
+        if (registration.getOwnerData() != null) {
+            userService.registerNewOwner(registration.getUserData().getEmail(), registration.getOwnerData().getPets());
+            //System.out.println("owner regisztráció sikerült");
+        }
+        if (registration.getSitterData() != null) {
+            userService.registerNewSitter(registration.getUserData().getEmail(), registration.getSitterData());
+            //System.out.println("sitter regisztráció sikerült");
+        }
+        emailService.sendSimpleActivatorMessage(registration.getUserData().getEmail());
+        return "Sikeres regisztráció! A belépéshez kérjük aktiváld fiókodat a címedre érkező üzenettel!";
+    }
+        
     @GetMapping("/verify")
     public String activateUser(@RequestParam("ver") String valid){
         emailService.activateUser(valid);
@@ -70,6 +83,12 @@ public class LoginController {
     public String removeSelf(){
         userService.suspendAccount();
         return "Fiókját felfüggesztettük.";
+    }
+    
+    @GetMapping("/filler")
+    public String fillers(){
+        fillerService.fixDatabase();
+        return "Megtöltve!";
     }
     
 }

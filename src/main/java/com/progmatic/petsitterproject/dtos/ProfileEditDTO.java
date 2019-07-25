@@ -12,9 +12,10 @@ import com.progmatic.petsitterproject.entities.ImageModel;
  * @author imaginifer
  */
 public class ProfileEditDTO {
-    private String username, password, city, address, intro;
-    private ImageModel profilePhoto;
+    private String username, password;
     private int postalCode;
+    private SitterViewDTO sitterData;
+    private OwnerDTO ownerData;
 
     public String getUsername() {
         return username;
@@ -24,37 +25,23 @@ public class ProfileEditDTO {
         this.username = username;
     }
 
-    public String getCity() {
-        return city;
+    public SitterViewDTO getSitterData() {
+        return sitterData;
     }
 
-    public void setCity(String city) {
-        this.city = city;
+    public void setSitterData(SitterViewDTO sitterData) {
+        this.sitterData = sitterData;
     }
 
-    public String getAddress() {
-        return address;
+    public OwnerDTO getOwnerData() {
+        return ownerData;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setOwnerData(OwnerDTO ownerData) {
+        this.ownerData = ownerData;
     }
 
-    public String getIntro() {
-        return intro;
-    }
-
-    public void setIntro(String intro) {
-        this.intro = intro;
-    }
-
-    public ImageModel getProfilePhoto() {
-        return profilePhoto;
-    }
-
-    public void setProfilePhoto(ImageModel profilePhoto) {
-        this.profilePhoto = profilePhoto;
-    }
+    
 
     public int getPostalCode() {
         return postalCode;

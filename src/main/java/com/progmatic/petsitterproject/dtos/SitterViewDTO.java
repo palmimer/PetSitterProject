@@ -29,7 +29,7 @@ public class SitterViewDTO {
     private String intro;
     //private List<PetType> petTypes;
     private List<SitterServiceDTO> services;
-    private TreeMap<LocalDate, Availability> availabilities;
+    private List<WorkDayViewDTO> availabilities;
     private int id;
 
     public SitterViewDTO() {

@@ -1,10 +1,6 @@
 package com.progmatic.petsitterproject.dtos;
 
 import com.progmatic.petsitterproject.entities.ImageModel;
-import com.progmatic.petsitterproject.entities.PetType;
-import com.progmatic.petsitterproject.entities.PlaceOfService;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;

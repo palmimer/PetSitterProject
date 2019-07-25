@@ -64,6 +64,6 @@ public class Pet implements Serializable {
     }
     
     public PetDTO getPetDTO(){
-        return new PetDTO(this.name, this.petType);
+        return new PetDTO(this.name, this.petType, this.id);
     }
 }
