@@ -92,11 +92,11 @@ public class SitterViewDTO {
         this.services = services;
     }
 
-    public TreeMap<LocalDate, Availability> getAvailabilities() {
+    public List<WorkDayViewDTO> getAvailabilities() {
         return availabilities;
     }
 
-    public void setAvailabilities(TreeMap<LocalDate, Availability> availabilities) {
+    public void setAvailabilities(List<WorkDayViewDTO> availabilities) {
         this.availabilities = availabilities;
     }
 
