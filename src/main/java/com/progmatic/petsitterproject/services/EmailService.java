@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class EmailService {
-    
+
     private JavaMailSender sender;
     private UserRepo ur;
 
@@ -30,8 +30,8 @@ public class EmailService {
         this.sender = sender;
         this.ur = ur;
     }
-    
-    public void sendSimpleTestMessage(){
+
+    public void sendSimpleTestMessage() {
         SimpleMailMessage smm = new SimpleMailMessage();
         smm.setFrom("kividrotposta@gmail.com");
         smm.setTo("povazsonk@gmail.com");
@@ -39,48 +39,46 @@ public class EmailService {
         smm.setText("Ha ezt megkaptad, a levelezés működik.");
         sender.send(smm);
     }
-    
-    public void sendSimpleActivatorMessage(String userEmail){
-        String activator =  makeActivator(userEmail);
+
+    public void sendSimpleActivatorMessage(String userEmail) {
+        String activator = makeActivator(userEmail);
         SimpleMailMessage smm = new SimpleMailMessage();
         smm.setFrom("kividrotposta@gmail.com");
         smm.setTo(userEmail);
         smm.setSubject("Üdvözöl a KiVi közösség!");
         smm.setText("A felhasználói fiókod hitelesítéséhez kérjük, "
-                + "kövesd a következő hivatkozást: "+
-                "http://localhost:8080/verify?ver="+activator);
+                + "kövesd a következő hivatkozást: "
+                + "http://localhost:8080/verify?ver=" + activator);
         sender.send(smm);
     }
-    
-    private String makeActivator(String email){
-        User u = (User)ur.loadUserByUsername(email);
+
+    private String makeActivator(String email) {
+        User u = (User) ur.loadUserByUsername(email);
         Random r = new Random();
-        int chaff = r.nextInt(9000)+1000;
+        int chaff = r.nextInt(9000) + 1000;
         int ident = u.getId();
         StringBuilder sb = new StringBuilder();
         sb.append(chaff).append(ident);
-        int kvant = Integer.parseInt(sb.toString())*17;
+        int kvant = Integer.parseInt(sb.toString()) * 17;
         return String.valueOf(kvant);
     }
-    
-    private int disentangleActivator(String valid){
-        int q = Integer.parseInt(valid)/17;
+
+    private int disentangleActivator(String valid) {
+        int q = Integer.parseInt(valid) / 17;
         String s = String.valueOf(q).substring(4);
-        //System.out.println("érték: "+s);
+        //System.out.println("érték: " + s);
         return Integer.parseInt(s);
     }
-    
+
     @Transactional
-    public void activateUser(String val){
+    public void activateUser(String val) {
         User u;
-        try{
+        try {
             u = ur.findUser(disentangleActivator(val));
-        }catch(EntityNotFoundException e){
+        } catch (EntityNotFoundException e) {
             return;
         }
         u.setAuthorities(ur.findAuthority("ROLE_USER"));
     }
-    
-     
-     
+
 }

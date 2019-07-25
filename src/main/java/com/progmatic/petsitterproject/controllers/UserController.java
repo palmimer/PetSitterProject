@@ -18,6 +18,8 @@ import com.progmatic.petsitterproject.entities.Sitter;
 import com.progmatic.petsitterproject.entities.User;
 import com.progmatic.petsitterproject.entities.PlaceOfService;
 import com.progmatic.petsitterproject.services.DTOConversion;
+import com.progmatic.petsitterproject.services.EmailService;
+import com.progmatic.petsitterproject.services.FillerService;
 import com.progmatic.petsitterproject.services.UserService;
 import java.io.IOException;
 import java.util.List;
@@ -45,8 +47,10 @@ public class UserController {
     private UserService us;
 
     @Autowired
-    public UserController(UserService us) {
-        this.us = us;
+    public UserController(UserService userService, FillerService fillerService, EmailService emailService) {
+        this.us = userService;
+        this.fillerService = fillerService;
+        this.emailService = emailService;
     }
 
     @GetMapping(value = "/{userId}")

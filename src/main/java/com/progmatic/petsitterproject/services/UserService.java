@@ -72,7 +72,7 @@ public class UserService {
 //    }
 
     @Transactional
-    public void registerNewOwner(String email, Set<PetDTO> petsToRegister) {
+    public void registerNewOwner(String email, Set<PetDTO> petsToRegister){
         User user = (User) ur.loadUserByUsername(email);
         if (user.getOwner() == null) {
             Owner owner = new Owner();
