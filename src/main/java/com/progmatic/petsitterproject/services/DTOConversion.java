@@ -39,13 +39,13 @@ public class DTOConversion {
         response.setPostalCode(sitter.getAddress().getPostalCode());
         response.setIntro(sitter.getIntro());
 //        response.setPetTypes(sitter.getPetTypes());
-        response.setServices(convertSitterService( new ArrayList<>(sitter.getServices())));
-        response.setAvailabilities(convertCalendar(new ArrayList<>(sitter.getAvailabilities())));
+        response.setServices(convertSitterService((sitter.getServices())));
+        response.setAvailabilities(convertCalendar((sitter.getAvailabilities())));
         
         return response;
     }
     
-    public static TreeMap<LocalDate, Availability> convertCalendar(List<WorkingDay> list){
+    public static TreeMap<LocalDate, Availability> convertCalendar(Set<WorkingDay> list){
         TreeMap<LocalDate, Availability> calendarView = new TreeMap<>();
         for (WorkingDay wd : list) {
             calendarView.put(wd.getwDay(), wd.getAvailability());
@@ -53,7 +53,7 @@ public class DTOConversion {
         return calendarView;
     }
     
-    public static List<SitterServiceDTO> convertSitterService(List<SitterService> list){
+    public static List<SitterServiceDTO> convertSitterService(Set<SitterService> list){
         List<SitterServiceDTO> serviceView = new ArrayList<>();
         for (SitterService s : list) {
             SitterServiceDTO sv = new SitterServiceDTO();
