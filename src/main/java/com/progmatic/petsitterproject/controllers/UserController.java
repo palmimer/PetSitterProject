@@ -87,21 +87,18 @@ public class UserController {
 //    }
     @PostMapping(value = "/user/{userId}/image")
     public String uploadImage(@PathVariable("userId") int userId, @RequestParam("image") MultipartFile image) throws IOException {
-        int sitterId = us.findSitterIdByUserId(userId);
-        ImageModel pic = new ImageModel(sitterId, image.getName(), image.getContentType(), image.getBytes());
-        us.saveSitterImage(sitterId, pic);
+        ImageModel pic = new ImageModel(userId, image.getName(), image.getContentType(), image.getBytes());
+        us.saveUserImage(userId, pic);
         return "Image upload successful!";
     }
 
     @GetMapping(value = "/user/{userId}/image")
     public ResponseEntity<byte[]> showImage(@PathVariable("userId") int userId) {
-        int sitterId = us.findSitterIdByUserId(userId);
         return ResponseEntity
                 .ok()
                 .contentType(MediaType.IMAGE_JPEG)
                 .body(us
-                        .getUser(sitterId)
-                        .getSitter()
+                        .getUser(userId)
                         .getProfilePhoto()
                         .getPic());
     }

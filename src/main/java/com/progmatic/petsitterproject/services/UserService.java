@@ -108,7 +108,6 @@ public class UserService {
     public void registerNewSitter(String email, SitterRegistrationDTO sd) {
         User user = (User) ur.loadUserByUsername(email);
         Sitter s = new Sitter(sd.getIntro(), user);
-        s.setProfilePhoto(sd.getProfilePhoto());
         s.setAddress(createAddress(sd.getCity(), sd.getAddress(), sd.getPostalCode(), s));
         s.setServices(newServiceSet(sd.getServices(), s));
         s.setAvailabilities(newCalendar(s));
@@ -316,10 +315,10 @@ public class UserService {
     }
 
     @Transactional
-    public void saveSitterImage(int sitterId, ImageModel image) {
-        Sitter sitter = ur.findSitterById(sitterId);
+    public void saveUserImage(int userId, ImageModel image) {
+        User user = ur.findUser(userId);
         imageRepository.saveAndFlush(image);
-        sitter.setProfilePhoto(image);
+        user.setProfilePhoto(image);
     }
 
     public int findSitterIdByUserId(int userId) {

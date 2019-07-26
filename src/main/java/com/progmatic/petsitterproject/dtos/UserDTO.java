@@ -4,6 +4,7 @@ import com.progmatic.petsitterproject.entities.User;
 import javax.validation.constraints.NotNull;
 
 public class UserDTO {
+
     @NotNull
     private int userId;
     @NotNull
@@ -12,7 +13,7 @@ public class UserDTO {
     private String email;
     private OwnerDTO ownerData;
     private SitterResponseDTO sitterData;
-    
+
     public UserDTO(User user) {
         this.userId = user.getId();
         this.name = user.getName();
@@ -61,7 +62,4 @@ public class UserDTO {
     public void setSitterData(SitterResponseDTO sitterData) {
         this.sitterData = sitterData;
     }
-    
-    
-    
 }
