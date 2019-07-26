@@ -87,7 +87,8 @@ public class UserService {
             ur.newPet(pet);
         }
     }
-
+    
+    @Transactional
     public User getUser(int userId) {
         return ur.findUser(userId);
     }
@@ -108,15 +109,15 @@ public class UserService {
     public void registerNewSitter(String email, SitterRegistrationDTO sd) {
         User user = (User) ur.loadUserByUsername(email);
         Sitter s = new Sitter(sd.getIntro(), user);
-        s.setProfilePhoto(sd.getProfilePhoto());
         s.setAddress(createAddress(sd.getCity(), sd.getAddress(), sd.getPostalCode(), s));
-        s.setServices(newServiceSet(sd.getServices(), s));
+        s.setServices(registerNewServiceSet(sd.getServices(), s));
         s.setAvailabilities(newCalendar(s));
         user.setSitter(s);
         ur.newSitter(s);
     }
-
-    private Set<SitterService> newServiceSet(Set<SitterServiceDTO> srv, Sitter s) {
+    
+    @Transactional
+    private Set<SitterService> registerNewServiceSet(Set<SitterServiceDTO> srv, Sitter s) {
         Set<SitterService> listOfServices = new HashSet<>();
         if (s.getServices() != null) {
             listOfServices = s.getServices();
@@ -131,16 +132,16 @@ public class UserService {
         return listOfServices;
     }
 
-    @Transactional
-    public void registerNewService(int userId, SitterServiceDTO ssrv) {
-        User user = getCurrentUser();
-        Sitter current = user.getSitter();
-        SitterService ss = new SitterService(ssrv.getPlace(), ssrv.getPetType(),
-                ssrv.getPricePerHour(), ssrv.getPricePerDay());
-        ss.setSitter(current);
-        //current.getServices().add(ss);
-        ur.newService(ss);
-    }
+//    @Transactional
+//    public void registerNewService(int userId, SitterServiceDTO ssrv) {
+//        User user = getCurrentUser();
+//        Sitter current = user.getSitter();
+//        SitterService ss = new SitterService(ssrv.getPlace(), ssrv.getPetType(),
+//                ssrv.getPricePerHour(), ssrv.getPricePerDay());
+//        ss.setSitter(current);
+//        //current.getServices().add(ss);
+//        ur.newService(ss);
+//    }
 
     @Transactional
     public Address createAddress(String city, String address, int postalCode, Sitter s) {
@@ -164,76 +165,124 @@ public class UserService {
     }
 
     @Transactional
-    public void editProfile(ProfileEditDTO edit) {
+    public void editProfile(ProfileEditDTO editedProfile){
         User u = (User) ur.findUser(getCurrentUser().getId());
-        u.setName(edit.getUsername());
-        u.setPassword(pwd.encode(edit.getPassword()));
-        u.setEmail(edit.getEmail());
-        if (ur.isOwner(u.getId()) && (edit.getOwnerData() == null || edit.getOwnerData().getPets().isEmpty())) {
+        modifyBasicUserData(editedProfile);
+        // ha a usernek eddig volt owner objektuma de a beérkezett adatokban most már nincs owner adat
+        // vagy a beérkező adatokban az owner adatban nincs állat, akkor törli a User Owner objektumát
+        if(ur.isOwner(u.getId()) && (editedProfile.getOwnerData() == null || editedProfile.getOwnerData().getPets().isEmpty())){
             ur.deleteOwner(u.getOwner());
+            // ha érkezik adat az Owner objektumban
         } else {
-            editPets(edit.getOwnerData().getPets(), u.getEmail());
+            // elküldjük az új állatlistát és a userId-t szerkesztésre
+            editPets(editedProfile.getOwnerData().getPets(), u.getId());
         }
-        if (ur.isSitter(u.getId()) && edit.getSitterData() == null) {
+        // ha a usernek eddig volt sitter objektuma, de a beérkezett adatokban most már nincs sitter adat
+        if(ur.isSitter(u.getId()) && editedProfile.getSitterData() == null){
             ur.deleteSitter(u.getSitter());
+        // ha a usernek nem volt sittere és most van sitter adat, akkor új sittert regisztrálunk
+        } else if (!ur.isSitter(u.getId()) && editedProfile.getSitterData() != null) {
+            SitterRegistrationDTO sitterData = DTOConversion.convertToSitterRegistrationDTO(editedProfile.getSitterData());
+            registerNewSitter(u.getEmail(), sitterData);
+        // ha volt sittere és most is van sitter adat, 
         } else {
+            // elővesszük a régi sitterét
             Sitter s = ur.findSitter(u.getSitter().getId());
-            s.setIntro(edit.getSitterData().getIntro());
-            //s.setProfilePhoto(edit.getSitterData().getProfilePhoto());
-            Address a = ur.findAddress(s.getAddress().getId());
-            a.setAddress(edit.getSitterData().getAddress());
-            a.setCity(edit.getSitterData().getCity());
-            a.setPostalCode(edit.getSitterData().getPostalCode());
+            modifySitterData(s, editedProfile.getSitterData());
         }
     }
-
-    private void editPets(Set<PetDTO> pets, String email) {
-        findNewPets(pets, email);
-        findObsoletePets(pets, email);
+    
+    @Transactional
+    private void modifyBasicUserData(ProfileEditDTO editedProfile){
+        User u = (User) ur.findUser(getCurrentUser().getId());
+        u.setName(editedProfile.getUsername());
+        u.setPassword(pwd.encode(editedProfile.getPassword()));
+        u.setEmail(editedProfile.getEmail());
     }
-
-    private void findNewPets(Set<PetDTO> pets, String email) {
-        Set<PetDTO> extra = new HashSet<>();
-        for (PetDTO dto : extra) {
-            if (dto.getId() == 0) {
-                extra.add(dto);
+    
+    @Transactional
+    private void modifySitterData(Sitter s, SitterViewDTO newSitterData){
+        s.setIntro(newSitterData.getIntro());
+        setNewAddress(s, newSitterData);
+        // services beállítása, ha van benne változás
+        // eredeti sitterservices átalakítása
+        Set<SitterServiceDTO> originalServices = DTOConversion.convertSetToSitterServiceDTO(s.getServices());
+        // ha az új nem egyezik a régivel
+        if ( !newSitterData.getServices().equals(originalServices) ) {
+            Set<SitterService> editedServices = DTOConversion.convertDTOToSitterService(newSitterData.getServices());
+            // beállítjuk az új service-eket a sitternek
+            s.setServices(editedServices);
+        }
+    }
+    
+    @Transactional
+    private void setNewAddress(Sitter s, SitterViewDTO newSitterData){
+        Address a = ur.findAddress(s.getAddress().getId());
+        a.setAddress(newSitterData.getAddress());
+        a.setCity(newSitterData.getCity());
+        a.setPostalCode(newSitterData.getPostalCode());
+    }
+    
+    @Transactional
+    private void editPets(Set<PetDTO> pets, int userId) {
+        Set<PetDTO> newSetOfPetDTOs = new HashSet<>();
+        // elővesszük az eddigi állatlistát és átalakítjuk DTO-kká
+        Set<PetDTO> oldPetDTOs = findOldPetsAndConvertToDTO(userId);
+        // kikeressük az új állatokat a régivel összehasonlítva
+        Set<PetDTO> newPets = findNewPets(pets, oldPetDTOs);
+        // hozzáadjuk az új állatokat a listához
+        newSetOfPetDTOs.addAll(newPets);
+        Set<Pet> newSetOfPets = DTOConversion.convertPetDTOsToPets(newSetOfPetDTOs);
+        // létrehozzuk az új állatokat az adatbázisban
+        ur.newPets(newSetOfPets);
+        // kikeressük a régi állatokat, ami már nincs az új listában
+        Set<PetDTO> oldPetsToDelete = findObsoletePets(pets, oldPetDTOs);
+        // a törlendő állatokat kitöröljük az adatbázisból
+        for (PetDTO oldPetToDelete : oldPetsToDelete) {
+            Pet petToDelete = ur.findPet(oldPetToDelete.getName(), oldPetToDelete.getPetType());
+            ur.deletePet(petToDelete);
+        }
+        // az ownernek beállítjuk ezeket az új állatokat
+        Owner owner = ur.findOwner(userId);
+        owner.setPets(newSetOfPets);
+        // az új lista elemeiből új állatobjektumokat hoz létre
+        // előveszi az eddigi listát, és hozzáadja az új lista elemeit
+        
+    }
+    
+    private Set<PetDTO> findNewPets(Set<PetDTO> pets, Set<PetDTO> oldPets) {
+        Set<PetDTO> newPets = new HashSet<>();
+        // végignézzük az új listát, megnézzük benne van-e a régiben
+        for (PetDTO pet : pets) {
+            if(!oldPets.contains(pet)){
+                newPets.add(pet);
             }
         }
-        registerNewOwner(email, extra);
+        return newPets;
     }
-
-    private void findObsoletePets(Set<PetDTO> pets, String email) {
-        Set<Integer> excess = new HashSet<>();
-        User u = (User) ur.loadUserByUsername(email);
-        if (ur.isOwner(u.getId()) && !u.getOwner().getPets().isEmpty()) {
-            Set<Pet> current = ur.findUser(u.getId()).getOwner().getPets();
-            for (Pet extantpet : current) {
-                boolean found = false;
-                for (PetDTO dto : pets) {
-                    if (dto.getId() == extantpet.getId()) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found) {
-                    excess.add(extantpet.getId());
-                }
+    
+    // megtalálni az új listában nem szereplő, de a régiben meglévő állatokat
+    private Set<PetDTO> findObsoletePets(Set<PetDTO> pets, Set<PetDTO> oldPets) {
+        Set<PetDTO> oldPetsToDelete = new HashSet<>();
+        for (PetDTO oldPet : oldPets) {
+            if(!pets.contains(oldPet)){
+                oldPetsToDelete.add(oldPet);
             }
         }
-        if (!excess.isEmpty()) {
-            removePets(excess);
-        }
+        return oldPetsToDelete;
     }
-
-    private void editSitter() {
-
+    
+    private Set<PetDTO> findOldPetsAndConvertToDTO(int userId){
+        Set<Pet> oldPets = ur.findUser(userId).getOwner().getPets();
+        return DTOConversion.convertPetsToPetDTOs(oldPets);
     }
 
     @Transactional
     public void setWorkingDay(int dayId, Availability avail) {
         ur.setDayAvail(dayId, avail);
     }
-
+    
+    @Transactional
     private void removePets(Set<Integer> toRemove) {
         Set<Pet> pets = getCurrentUser().getOwner().getPets();
         for (Pet p : pets) {

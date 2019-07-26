@@ -53,7 +53,7 @@ public class WebSecConfig extends WebSecurityConfigurerAdapter {
                 .logout()
                 .and()
                 .authorizeRequests()
-                .antMatchers("/", "/signin", "/newregistration", "/sitters/search","/verify","/filler")
+                .antMatchers("/", "/signin", "/newregistration", "/sitters/search", "/sitter/{userId}","/verify","/filler")
                 .permitAll().anyRequest().authenticated();
     }
 

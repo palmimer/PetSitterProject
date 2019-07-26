@@ -20,14 +20,14 @@ public class DTOConversion {
     
     public static SitterViewDTO convertToSitterViewDTO(User user, Sitter sitter) {
         SitterViewDTO response = new SitterViewDTO();
-        response.setProfilePhoto(sitter.getProfilePhoto());
+//        response.setProfilePhoto(sitter.getProfilePhoto());
         response.setUserName(user.getName());
         response.setCity(sitter.getAddress().getCity());
         response.setAddress(sitter.getAddress().getAddress());
         response.setPostalCode(sitter.getAddress().getPostalCode());
         response.setIntro(sitter.getIntro());
 //        response.setPetTypes(sitter.getPetTypes());
-        response.setServices(convertToSitterServiceDTO(sitter.getServices()));
+        response.setServices(convertSetToSitterServiceDTO(sitter.getServices()));
         response.setAvailabilities(convertCalendar( sitter.getAvailabilities() ) );
         response.setId(user.getId());
         
@@ -42,11 +42,22 @@ public class DTOConversion {
         response.setPostalCode(sitter.getAddress().getPostalCode());
         response.setIntro(sitter.getIntro());
 //        response.setPetTypes(sitter.getPetTypes());
-        response.setServices(convertToSitterServiceDTO(sitter.getServices()));
+        response.setServices(convertSetToSitterServiceDTO(sitter.getServices()));
         response.setAvailabilities(convertCalendar(sitter.getAvailabilities()));
         
         return response;
     }
+    
+    public static SitterRegistrationDTO convertToSitterRegistrationDTO(SitterViewDTO sitterData){
+        SitterRegistrationDTO newSitterData = new SitterRegistrationDTO();
+        newSitterData.setIntro(sitterData.getIntro());
+        newSitterData.setCity(sitterData.getCity());
+        newSitterData.setAddress(sitterData.getAddress());
+        newSitterData.setPostalCode(sitterData.getPostalCode());
+        newSitterData.setServices(sitterData.getServices());
+        return newSitterData;
+    }
+    
     public static TreeMap<LocalDate, Availability> convertCalendarToTreeMap(Set<WorkingDay> list){
         TreeMap<LocalDate, Availability> calendarView = new TreeMap<>();
         for (WorkingDay workingDay : list) {
@@ -70,17 +81,17 @@ public class DTOConversion {
         return calendarView;
     }
     
-    public static Set<SitterServiceDTO> convertToSitterServiceDTO(Set<SitterService> list){
-        Set<SitterServiceDTO> serviceView = new HashSet<>();
-        for (SitterService s : list) {
-            SitterServiceDTO sv = new SitterServiceDTO();
-            sv.setPetType(s.getPetType());
-            sv.setPlace(s.getPlace());
-            sv.setPricePerDay(s.getPricePerDay());
-            sv.setPricePerHour(s.getPricePerHour());
-            serviceView.add(sv);
+    public static Set<SitterService> convertDTOToSitterService(Set<SitterServiceDTO> serviceDTOs){
+        Set<SitterService> services = new HashSet<>();
+        for (SitterServiceDTO sdto : serviceDTOs) {
+            SitterService sv = new SitterService();
+            sv.setPetType(sdto.getPetType());
+            sv.setPlace(sdto.getPlace());
+            sv.setPricePerDay(sdto.getPricePerDay());
+            sv.setPricePerHour(sdto.getPricePerHour());
+            services.add(sv);
         }
-        return serviceView;
+        return services;
     }
     
     
@@ -117,5 +128,22 @@ public class DTOConversion {
         return serviceDTOs;
     }
     
+    public static Set<Pet> convertPetDTOsToPets(Set<PetDTO> petDTOs){
+        Set<Pet> pets = new HashSet<>();
+        for (PetDTO petDTO : petDTOs) {
+            Pet pet = new Pet(petDTO.getPetType(), petDTO.getName());
+            pets.add(pet);
+        }
+        return pets;
+    }
+    
+    public static Set<PetDTO> convertPetsToPetDTOs(Set<Pet> pets){
+        Set<PetDTO> petDTOs = new HashSet<>();
+        for (Pet pet : pets) {
+            PetDTO petDTO = new PetDTO(pet.getName(), pet.getPetType());
+            petDTOs.add(petDTO);
+        }
+        return petDTOs;
+    }
     
 }

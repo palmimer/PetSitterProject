@@ -22,7 +22,7 @@ import javax.validation.constraints.NotNull;
  */
 
 public class SitterViewDTO {
-    private ImageModel profilePhoto;
+//    private ImageModel profilePhoto;
     private String UserName;
     private String city;
     private String address;
@@ -36,13 +36,13 @@ public class SitterViewDTO {
     public SitterViewDTO() {
     }
 
-    public ImageModel getProfilePhoto() {
-        return profilePhoto;
-    }
-
-    public void setProfilePhoto(ImageModel profilePhoto) {
-        this.profilePhoto = profilePhoto;
-    }
+//    public ImageModel getProfilePhoto() {
+//        return profilePhoto;
+//    }
+//
+//    public void setProfilePhoto(ImageModel profilePhoto) {
+//        this.profilePhoto = profilePhoto;
+//    }
 
     public String getCity() {
         return city;
@@ -75,14 +75,6 @@ public class SitterViewDTO {
     public void setIntro(String intro) {
         this.intro = intro;
     }
-
-//    public List<PetType> getPetTypes() {
-//        return petTypes;
-//    }
-//
-//    public void setPetTypes(List<PetType> petTypes) {
-//        this.petTypes = petTypes;
-//    }
 
     public Set<SitterServiceDTO> getServices() {
         return services;

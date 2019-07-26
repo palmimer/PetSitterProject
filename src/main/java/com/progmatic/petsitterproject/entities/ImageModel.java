@@ -16,7 +16,7 @@ public class ImageModel implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private int sitterId;
+    private int userId;
     private String name;
     private String type;
     @Lob
@@ -26,7 +26,7 @@ public class ImageModel implements Serializable {
     }
 
     public ImageModel(int sitterId, String name, String type, byte[] pic) {
-        this.sitterId = sitterId;
+        this.userId = sitterId;
         this.name = name;
         this.type = type;
         this.pic = pic;
@@ -64,11 +64,11 @@ public class ImageModel implements Serializable {
         this.pic = pic;
     }
 
-    public int getSitterId() {
-        return sitterId;
+    public int getUserId() {
+        return userId;
     }
 
-    public void setSitterId(int sitterId) {
-        this.sitterId = sitterId;
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 }

@@ -6,7 +6,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 public class SitterRegistrationDTO {
-    private ImageModel profilePhoto;
     @NotNull
     private String city;
     @NotNull
@@ -26,10 +25,6 @@ public class SitterRegistrationDTO {
     public SitterRegistrationDTO() {
     }
     
-    public ImageModel getProfilePhoto() {
-        return profilePhoto;
-    }
-
     public String getCity() {
         return city;
     }
@@ -51,10 +46,6 @@ public class SitterRegistrationDTO {
 //        petTypes.add(petType);
 //        return petTypes;
 //    }
-
-    public void setProfilePhotoId(ImageModel profilePhoto) {
-        this.profilePhoto = profilePhoto;
-    }
 
     public void setAddress(String address) {
         this.address = address;
