@@ -45,7 +45,9 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserController {
 
     private UserService us;
-
+    private FillerService fillerService;
+    private EmailService emailService;
+    
     @Autowired
     public UserController(UserService userService, FillerService fillerService, EmailService emailService) {
         this.us = userService;
