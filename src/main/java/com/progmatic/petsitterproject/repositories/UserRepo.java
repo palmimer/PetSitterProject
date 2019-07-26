@@ -21,11 +21,11 @@ import org.springframework.stereotype.Repository;
  * @author progmatic
  */
 @Repository
-public class UserRepo implements UserDetailsService{
-    
+public class UserRepo implements UserDetailsService {
+
     @PersistenceContext
     EntityManager em;
-    
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 //        return em.createQuery("select u from User u where u.name =:nm", User.class)
@@ -33,171 +33,169 @@ public class UserRepo implements UserDetailsService{
         return em.createQuery("select u from User u where u.email =:nm", User.class)
                 .setParameter("nm", email).getSingleResult();
     }
-    
-    public byte[] getPhotoById(int ownerId){
-        ImageModel singleResult = (ImageModel)em.createQuery("select i from petsitter.image_model i where i.ownerId =: id").setParameter("id", ownerId).getSingleResult();
+
+    public byte[] getPhotoById(int ownerId) {
+        ImageModel singleResult = (ImageModel) em.createQuery("select i from petsitter.image_model i where i.ownerId =: id").setParameter("id", ownerId).getSingleResult();
         return singleResult.getPic();
     }
-    
-    public boolean userAlreadyExists(String email){
+
+    public boolean userAlreadyExists(String email) {
         return !em.createQuery("select u from User u where u.email = : e")
                 .setParameter("e", email).getResultList().isEmpty();
     }
-    
-    public boolean noUsers(){
+
+    public boolean noUsers() {
         return em.createQuery("select u from User u").getResultList().isEmpty();
     }
-    
-    public void newService(SitterService srv){
+
+    public void newService(SitterService srv) {
         em.persist(srv);
     }
-    
+
     @Transactional
-    public void newPet(Pet p){
+    public void newPet(Pet p) {
         em.persist(p);
     }
-    
-    public boolean isOwner(int userId){
+
+    public boolean isOwner(int userId) {
         return findUser(userId).getOwner() != null;
     }
-    
+
     @Transactional
-    public void newOwner(Owner o){
+    public void newOwner(Owner o) {
         em.persist(o);
     }
-    
-    public boolean isSitter(int userId){
+
+    public boolean isSitter(int userId) {
         return findUser(userId).getSitter() != null;
     }
-    
-    public boolean petExists(int petId){
+
+    public boolean petExists(int petId) {
         return null != em.find(Pet.class, petId);
     }
-    
+
     @Transactional
-    public void newSitter(Sitter s){
+    public void newSitter(Sitter s) {
         em.persist(s);
-        }
-    
+    }
+
     @Transactional
-    public void newAddress(Address a){
+    public void newAddress(Address a) {
         em.persist(a);
     }
-    
+
     @Transactional
-    public void newSitterService(SitterService ss){
+    public void newSitterService(SitterService ss) {
         em.persist(ss);
     }
-    
+
     @Transactional
-    public void newUser(User u){
+    public void newUser(User u) {
         em.persist(u);
     }
-    
-    public int getUserId(String email){
+
+    public int getUserId(String email) {
         return em.createQuery("SELECT u.id FROM User u WHERE u.email = :email")
                 .setParameter("email", email)
                 .getFirstResult();
     }
-    
+
     @Transactional
-    public void deleteUser(User u){
+    public void deleteUser(User u) {
         em.remove(findUser(u.getId()));
     }
-    
-    public void deletePet(Pet p){
+
+    public void deletePet(Pet p) {
         em.remove(findPet(p.getId()));
     }
-    
-    public void deleteSitterService(SitterService ss){
+
+    public void deleteSitterService(SitterService ss) {
         em.remove(findSitterService(ss.getId()));
     }
-    
-    public void deleteSitter(Sitter s){
+
+    public void deleteSitter(Sitter s) {
         em.remove(findSitter(s.getId()));
     }
-    
-    public void deleteOwner(Owner o){
+
+    public void deleteOwner(Owner o) {
         em.remove(findOwner(o.getId()));
     }
-    
-    public User findUser(int id){
-       return em.find(User.class, id);
+
+    public User findUser(int id) {
+        return em.find(User.class, id);
     }
-    
-    public Sitter findSitter(int id){
+
+    public Sitter findSitter(int id) {
         return em.find(Sitter.class, id);
     }
-    
-    public Pet findPet(int id){
+
+    public Pet findPet(int id) {
         return em.find(Pet.class, id);
     }
-    
-    public Owner findOwner(int id){
+
+    public Owner findOwner(int id) {
         return em.find(Owner.class, id);
     }
-    
-    public Address findAddress(int id){
+
+    public Address findAddress(int id) {
         return em.find(Address.class, id);
     }
-    
-    public SitterService findSitterService(int id){
+
+    public SitterService findSitterService(int id) {
         return em.find(SitterService.class, id);
     }
-    
-    public boolean sitterServiceExists(int id){
+
+    public boolean sitterServiceExists(int id) {
         return null != em.find(SitterService.class, id);
     }
-    
-    public List<Sitter> getAllSitters(){
+
+    public List<Sitter> getAllSitters() {
         return em.createQuery("select s from Sitter s").getResultList();
     }
-    
-    public List<User> getAllUsers(){
+
+    public List<User> getAllUsers() {
         return em.createQuery("select u from User u").getResultList();
     }
-    
-    public void newDay(WorkingDay w){
+
+    public void newDay(WorkingDay w) {
         em.persist(w);
     }
-    
-    public WorkingDay findDay(int dayId){
+
+    public WorkingDay findDay(int dayId) {
         return em.find(WorkingDay.class, dayId);
     }
-    
-    public void setDayAvail(int dayId, Availability avail){
+
+    public void setDayAvail(int dayId, Availability avail) {
         em.find(WorkingDay.class, dayId).setAvailability(avail);
     }
-    public void setDayDate(int dayId, LocalDate date){
+
+    public void setDayDate(int dayId, LocalDate date) {
         em.find(WorkingDay.class, dayId).setwDay(date);
     }
-    
-    public Authority findAuthority(String authority){
+
+    public Authority findAuthority(String authority) {
         return (Authority) em.createQuery("select a from Authority a where a.name = : au")
                 .setParameter("au", authority).getSingleResult();
     }
-    
-    public boolean absentAuthority(String authority){
+
+    public boolean absentAuthority(String authority) {
         return em.createQuery("select a from Authority a where a.name = : au")
                 .setParameter("au", authority).getResultList().isEmpty();
     }
-    
-    public void newAuthority(Authority a){
+
+    public void newAuthority(Authority a) {
         em.persist(a);
     }
-    
+
 //    public Sitter findSitterById(int id){
 //        return (Sitter) em.createQuery("select i from image_model i where i.sitter_id =: 3")
 //                .getSingleResult();
 //    }
-    
     public Sitter findSitterById(int id) {
         return em.find(Sitter.class, id);
     }
-    
+
 //    public ImageModel getImage(int id) {
 //        return em.find(ImageModel.class, Long.valueOf(id));
 //    }
-    
-    
 }

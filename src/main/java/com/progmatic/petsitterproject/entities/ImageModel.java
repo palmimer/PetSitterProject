@@ -3,6 +3,8 @@ package com.progmatic.petsitterproject.entities;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
@@ -12,27 +14,19 @@ import javax.persistence.Table;
 public class ImageModel implements Serializable {
 
     @Id
-    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @Column(name = "ownerId")
-    private int ownerId;
-
-    @Column(name = "name")
+    private int sitterId;
     private String name;
-
-    @Column(name = "type")
     private String type;
-
     @Lob
-    @Column(name = "pic")
     private byte[] pic;
 
     public ImageModel() {
     }
 
-    public ImageModel(long id, String name, String type, byte[] pic) {
-        this.id = id;
+    public ImageModel(int sitterId, String name, String type, byte[] pic) {
+        this.sitterId = sitterId;
         this.name = name;
         this.type = type;
         this.pic = pic;
@@ -68,5 +62,13 @@ public class ImageModel implements Serializable {
 
     public void setPic(byte[] pic) {
         this.pic = pic;
+    }
+
+    public int getSitterId() {
+        return sitterId;
+    }
+
+    public void setSitterId(int sitterId) {
+        this.sitterId = sitterId;
     }
 }

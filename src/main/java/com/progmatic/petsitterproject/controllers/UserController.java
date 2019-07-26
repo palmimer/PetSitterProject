@@ -48,7 +48,7 @@ public class UserController {
     public UserController(UserService us) {
         this.us = us;
     }
-    
+
     @GetMapping(value = "/{userId}")
     public SitterViewDTO singleSitter(@PathVariable("userId") int userId) {
         User user = us.getUser(userId);
@@ -59,47 +59,43 @@ public class UserController {
 
     @GetMapping(value = "/search/sitters")
     public List<SitterViewDTO> listSitters(
-                @RequestParam(value = "name", defaultValue = "") String sitterName,
-                @RequestParam(value = "placeOfService", required = false) PlaceOfService placeOfService,
-                @RequestParam(value = "petType", required = false) PetType petType,
-                @RequestParam(value = "postCode", defaultValue = "0") int postCode
-                
-    ){
+            @RequestParam(value = "name", defaultValue = "") String sitterName,
+            @RequestParam(value = "placeOfService", required = false) PlaceOfService placeOfService,
+            @RequestParam(value = "petType", required = false) PetType petType,
+            @RequestParam(value = "postCode", defaultValue = "0") int postCode
+    ) {
         SearchCriteriaDTO criteria = new SearchCriteriaDTO(sitterName, postCode, placeOfService, petType);
         List<SitterViewDTO> selectedSitters = us.filterSitters(criteria);
         return selectedSitters;
     }
-    
+
     @PostMapping("/editprofile")
-    public String editProfile(@RequestBody ProfileEditDTO edit){
+    public String editProfile(@RequestBody ProfileEditDTO edit) {
         us.editProfile(edit);
         return "A profil módosult!";
     }
-    
+
 //    @PostMapping("/removepet")
 //    public String removePet(@RequestBody PetDTO pet){
 //        us.removePet(pet);
 //        return "Az állatot eltávolítottuk a nyilvántartásból.";
 //    }
-    
 //    @GetMapping(value = "/sitter/image/{sitterId}")
 //    public ResponseEntity<byte[]> testImage(@PathVariable("sitterId") int sitterId){
 ////        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(us.getUser(sitterId).getSitter().getProfilePhoto().getPic());
 //        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(us.image(1).getPic());
 //    }
-    
-    
-
-    @PostMapping(value = "/sitter/image/{sitterId}")
-    public String uploadImage(@PathVariable("sitterId") int sitterId, @RequestParam("image") MultipartFile image) throws IOException {
+    @PostMapping(value = "/user/{userId}/image")
+    public String uploadImage(@PathVariable("userId") int userId, @RequestParam("image") MultipartFile image) throws IOException {
+        int sitterId = us.findSitterIdByUserId(userId);
         ImageModel pic = new ImageModel(sitterId, image.getName(), image.getContentType(), image.getBytes());
         us.saveSitterImage(sitterId, pic);
         return "Image upload successful!";
     }
 
-    @GetMapping(value = "/sitter/image/{sitterId}")
-    public ResponseEntity<byte[]> showImage(@PathVariable("sitterId") int sitterId) {
-        System.out.println(us.getUser(sitterId).getSitter().getProfilePhoto());
+    @GetMapping(value = "/user/{userId}/image")
+    public ResponseEntity<byte[]> showImage(@PathVariable("userId") int userId) {
+        int sitterId = us.findSitterIdByUserId(userId);
         return ResponseEntity
                 .ok()
                 .contentType(MediaType.IMAGE_JPEG)
