@@ -5,25 +5,16 @@
  */
 package com.progmatic.petsitterproject.dtos;
 
-import com.progmatic.petsitterproject.entities.Availability;
-import com.progmatic.petsitterproject.entities.ImageModel;
-import com.progmatic.petsitterproject.entities.PetType;
-import com.progmatic.petsitterproject.entities.SitterService;
-import com.progmatic.petsitterproject.entities.WorkingDay;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeMap;
-import javax.validation.constraints.NotNull;
 
 /**
  *
  * @author progmatic
  */
-
 public class SitterViewDTO {
-//    private ImageModel profilePhoto;
-    private String userName;
+
+    private String UserName;
     private String city;
     private String address;
     private int postalCode;
@@ -35,14 +26,6 @@ public class SitterViewDTO {
 
     public SitterViewDTO() {
     }
-
-//    public ImageModel getProfilePhoto() {
-//        return profilePhoto;
-//    }
-//
-//    public void setProfilePhoto(ImageModel profilePhoto) {
-//        this.profilePhoto = profilePhoto;
-//    }
 
     public String getCity() {
         return city;
@@ -107,7 +90,4 @@ public class SitterViewDTO {
     public void setId(int id) {
         this.id = id;
     }
-    
-    
-    
 }

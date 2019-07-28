@@ -7,9 +7,7 @@ package com.progmatic.petsitterproject.services;
 
 import com.progmatic.petsitterproject.dtos.*;
 import com.progmatic.petsitterproject.entities.*;
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.*;
 
 /**
@@ -17,24 +15,21 @@ import java.util.*;
  * @author imaginifer
  */
 public class DTOConversion {
-    
+
     public static SitterViewDTO convertToSitterViewDTO(User user, Sitter sitter) {
         SitterViewDTO response = new SitterViewDTO();
-//        response.setProfilePhoto(sitter.getProfilePhoto());
         response.setUserName(user.getName());
         response.setCity(sitter.getAddress().getCity());
         response.setAddress(sitter.getAddress().getAddress());
         response.setPostalCode(sitter.getAddress().getPostalCode());
         response.setIntro(sitter.getIntro());
-//        response.setPetTypes(sitter.getPetTypes());
-        response.setServices(convertSetToSitterServiceDTO(sitter.getServices()));
-        response.setAvailabilities(convertCalendar( sitter.getAvailabilities() ) );
+        response.setServices(convertToSitterServiceDTO(sitter.getServices()));
+        response.setAvailabilities(convertCalendar(sitter.getAvailabilities()));
         response.setId(user.getId());
-        
+
         return response;
     }
-    
-    
+
     public static SitterResponseDTO convertToSitterResponseDTO(User user, Sitter sitter) {
         SitterResponseDTO response = new SitterResponseDTO();
         response.setCity(sitter.getAddress().getCity());
@@ -44,7 +39,7 @@ public class DTOConversion {
 //        response.setPetTypes(sitter.getPetTypes());
         response.setServices(convertSetToSitterServiceDTO(sitter.getServices()));
         response.setAvailabilities(convertCalendar(sitter.getAvailabilities()));
-        
+
         return response;
     }
     
@@ -72,9 +67,9 @@ public class DTOConversion {
         
         List<WorkDayViewDTO> calendarView = new ArrayList<>();
         for (WorkingDay wd : list) {
-            calendarView.add(new WorkDayViewDTO(wd.getId()
-                    , wd.getAvailability()
-                    , wd.getwDay().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))));
+            calendarView.add(new WorkDayViewDTO(wd.getId(),
+                     wd.getAvailability(),
+                     wd.getwDay().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))));
         }
 //        Comparator<WorkDayViewDTO> c = ((w1, w2) -> w1.getDate().compareTo(w2.getDate()));
         calendarView.sort((w1, w2) -> w1.getDate().compareTo(w2.getDate()));
@@ -115,6 +110,7 @@ public class DTOConversion {
         }
         return petsInMap;
     }
+
 
     private static List<SitterServiceDTO> convertSetToListSitterServiceDTO(Set<SitterService> services) {
         List<SitterServiceDTO> serviceDTOs = new ArrayList<>();

@@ -1,6 +1,5 @@
 package com.progmatic.petsitterproject.dtos;
 
-import com.progmatic.petsitterproject.entities.ImageModel;
 import java.util.Set;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -32,7 +31,7 @@ public class SitterRegistrationDTO {
     public int getPostalCode() {
         return postalCode;
     }
-    
+
     public String getAddress() {
         return address;
     }
@@ -70,5 +69,5 @@ public class SitterRegistrationDTO {
     public void setServices(Set<SitterServiceDTO> services) {
         this.services = services;
     }
-    
+
 }

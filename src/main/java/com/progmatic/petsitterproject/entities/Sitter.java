@@ -7,10 +7,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -25,10 +22,6 @@ public class Sitter implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    
-    
-    @OneToOne
-    private ImageModel profilePhoto;
     @OneToOne
     private Address address;
     private String intro;
@@ -42,18 +35,13 @@ public class Sitter implements Serializable {
     public Sitter() {
     }
 
-    public Sitter(/*Byte[] profilePhoto,*/ String intro, User user) {
-        //this.profilePhoto = profilePhoto;
+    public Sitter(String intro, User user) {
         this.intro = intro;
         this.user = user;
     }
 
     public int getId() {
         return id;
-    }
-
-    public ImageModel getProfilePhoto() {
-        return profilePhoto;
     }
 
     public Address getAddress() {
@@ -71,9 +59,9 @@ public class Sitter implements Serializable {
     public Set<SitterService> getServices() {
         return services;
     }
-    
-    public List<PlaceOfService> getPlacesOfService(){
-        return services.stream().map(s -> s.getPlace()).distinct().collect(Collectors.toList()); 
+
+    public List<PlaceOfService> getPlacesOfService() {
+        return services.stream().map(s -> s.getPlace()).distinct().collect(Collectors.toList());
     }
 
     public Set<WorkingDay> getAvailabilities() {
@@ -82,10 +70,6 @@ public class Sitter implements Serializable {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public void setProfilePhoto(ImageModel profilePhoto) {
-        this.profilePhoto = profilePhoto;
     }
 
     public void setAddress(Address address) {
@@ -99,7 +83,6 @@ public class Sitter implements Serializable {
 //    public void setPetTypes(List<PetType> petTypes) {
 //        this.petTypes = petTypes;
 //    }
-
     public void setServices(Set<SitterService> services) {
         this.services = services;
     }
@@ -115,5 +98,5 @@ public class Sitter implements Serializable {
     public void setUser(User user) {
         this.user = user;
     }
-    
+
 }

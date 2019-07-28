@@ -381,10 +381,10 @@ public class UserService {
     }
 
     @Transactional
-    public void saveSitterImage(int sitterId, ImageModel image) {
-        Sitter sitter = ur.findSitterById(sitterId);
+    public void saveUserImage(int userId, ImageModel image) {
+        User user = ur.findUser(userId);
         imageRepository.saveAndFlush(image);
-        sitter.setProfilePhoto(image);
+        user.setProfilePhoto(image);
     }
 
     public int findSitterIdByUserId(int userId) {

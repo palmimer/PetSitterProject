@@ -12,9 +12,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
-import javax.persistence.NamedAttributeNode;
-import javax.persistence.NamedEntityGraph;
-import javax.persistence.NamedEntityGraphs;
 import javax.persistence.OneToOne;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,6 +25,8 @@ public class User implements Serializable, UserDetails {
     private String name;
     private String email;
     private String password;
+    @OneToOne
+    private ImageModel profilePhoto;
     @OneToOne(cascade = REMOVE, mappedBy = "user")
     private Owner owner;
     @OneToOne(cascade = REMOVE, mappedBy = "user")
@@ -38,7 +37,7 @@ public class User implements Serializable, UserDetails {
 
     public User() {
     }
-   
+
     public User(String name, String email, String password) {
         this.name = name;
         this.email = email;
@@ -65,6 +64,10 @@ public class User implements Serializable, UserDetails {
 
     public Sitter getSitter() {
         return sitter;
+    }
+
+    public ImageModel getProfilePhoto() {
+        return profilePhoto;
     }
 
     public void setId(int id) {
@@ -95,11 +98,14 @@ public class User implements Serializable, UserDetails {
         this.authorities.add(authority);
     }
 
+    public void setProfilePhoto(ImageModel profilePhoto) {
+        this.profilePhoto = profilePhoto;
+    }
+
     public LocalDateTime getDateOfJoin() {
         return dateOfJoin;
     }
-    
-    
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
