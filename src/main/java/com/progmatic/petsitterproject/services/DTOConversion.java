@@ -7,9 +7,7 @@ package com.progmatic.petsitterproject.services;
 
 import com.progmatic.petsitterproject.dtos.*;
 import com.progmatic.petsitterproject.entities.*;
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.*;
 
 /**
@@ -17,24 +15,21 @@ import java.util.*;
  * @author imaginifer
  */
 public class DTOConversion {
-    
+
     public static SitterViewDTO convertToSitterViewDTO(User user, Sitter sitter) {
         SitterViewDTO response = new SitterViewDTO();
-        response.setProfilePhoto(sitter.getProfilePhoto());
         response.setUserName(user.getName());
         response.setCity(sitter.getAddress().getCity());
         response.setAddress(sitter.getAddress().getAddress());
         response.setPostalCode(sitter.getAddress().getPostalCode());
         response.setIntro(sitter.getIntro());
-//        response.setPetTypes(sitter.getPetTypes());
         response.setServices(convertToSitterServiceDTO(sitter.getServices()));
-        response.setAvailabilities(convertCalendar( sitter.getAvailabilities() ) );
+        response.setAvailabilities(convertCalendar(sitter.getAvailabilities()));
         response.setId(user.getId());
-        
+
         return response;
     }
-    
-    
+
     public static SitterResponseDTO convertToSitterResponseDTO(User user, Sitter sitter) {
         SitterResponseDTO response = new SitterResponseDTO();
         response.setCity(sitter.getAddress().getCity());
@@ -44,22 +39,23 @@ public class DTOConversion {
 //        response.setPetTypes(sitter.getPetTypes());
         response.setServices(convertToSitterServiceDTO(sitter.getServices()));
         response.setAvailabilities(convertCalendar(sitter.getAvailabilities()));
-        
+
         return response;
     }
-    public static List<WorkDayViewDTO> convertCalendar(Set<WorkingDay> list){
+
+    public static List<WorkDayViewDTO> convertCalendar(Set<WorkingDay> list) {
         List<WorkDayViewDTO> calendarView = new ArrayList<>();
         for (WorkingDay wd : list) {
-            calendarView.add(new WorkDayViewDTO(wd.getId()
-                    , wd.getAvailability()
-                    , wd.getwDay().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))));
+            calendarView.add(new WorkDayViewDTO(wd.getId(),
+                     wd.getAvailability(),
+                     wd.getwDay().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))));
         }
         //Comparator<WorkDayViewDTO> c = ((w1, w2) -> w1.getDate().compareTo(w2.getDate()));
         calendarView.sort((w1, w2) -> w1.getDate().compareTo(w2.getDate()));
         return calendarView;
     }
-    
-    public static Set<SitterServiceDTO> convertToSitterServiceDTO(Set<SitterService> list){
+
+    public static Set<SitterServiceDTO> convertToSitterServiceDTO(Set<SitterService> list) {
         Set<SitterServiceDTO> serviceView = new HashSet<>();
         for (SitterService s : list) {
             SitterServiceDTO sv = new SitterServiceDTO();
@@ -71,15 +67,13 @@ public class DTOConversion {
         }
         return serviceView;
     }
-    
-    
-    public static HashMap<String, PetType> convertToHashMap(List<Pet> pets){
+
+    public static HashMap<String, PetType> convertToHashMap(List<Pet> pets) {
         HashMap<String, PetType> petsInMap = new HashMap<>();
         for (Pet pet : pets) {
             petsInMap.put(pet.getName(), pet.getPetType());
         }
         return petsInMap;
     }
-    
-    
+
 }
