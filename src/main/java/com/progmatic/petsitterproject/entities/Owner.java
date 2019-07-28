@@ -46,8 +46,10 @@ public class Owner implements Serializable {
         this.id = id;
     }
 
-    public void setPets(Pet p) {
-        pets.add(p);
+    public void setPets(Set<Pet> petsToAdd) {
+        for (Pet petToAdd : petsToAdd) {
+            pets.add(petToAdd);
+        }
     }
 
     public User getUser() {

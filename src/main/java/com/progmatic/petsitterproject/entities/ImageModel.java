@@ -24,8 +24,8 @@ public class ImageModel implements Serializable {
     public ImageModel() {
     }
 
-    public ImageModel(int userId, String name, String type, byte[] pic) {
-        this.userId = userId;
+    public ImageModel(int sitterId, String name, String type, byte[] pic) {
+        this.userId = sitterId;
         this.name = name;
         this.type = type;
         this.pic = pic;

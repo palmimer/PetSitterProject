@@ -8,6 +8,7 @@ package com.progmatic.petsitterproject.repositories;
 import com.progmatic.petsitterproject.entities.*;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
@@ -48,13 +49,16 @@ public class UserRepo implements UserDetailsService {
         return em.createQuery("select u from User u").getResultList().isEmpty();
     }
 
-    public void newService(SitterService srv) {
-        em.persist(srv);
-    }
-
     @Transactional
     public void newPet(Pet p) {
         em.persist(p);
+    }
+    
+    @Transactional
+    public void newPets(Set<Pet> pets) {
+        for (Pet pet : pets) {
+            em.persist(pet);
+        }
     }
 
     public boolean isOwner(int userId) {
@@ -65,7 +69,7 @@ public class UserRepo implements UserDetailsService {
     public void newOwner(Owner o) {
         em.persist(o);
     }
-
+    
     public boolean isSitter(int userId) {
         return findUser(userId).getSitter() != null;
     }
@@ -108,7 +112,7 @@ public class UserRepo implements UserDetailsService {
     public void deletePet(Pet p) {
         em.remove(findPet(p.getId()));
     }
-
+    
     public void deleteSitterService(SitterService ss) {
         em.remove(findSitterService(ss.getId()));
     }
@@ -132,9 +136,21 @@ public class UserRepo implements UserDetailsService {
     public Pet findPet(int id) {
         return em.find(Pet.class, id);
     }
+    
+    public Pet findPet(String name, PetType petType) {
+        return em.createQuery("SELECT p FROM Pet p WHERE p.name = :petName AND p.petType = :petType", Pet.class)
+                .setParameter("petName", name)
+                .setParameter("petType", petType)
+                .getSingleResult();
+    }
 
     public Owner findOwner(int id) {
         return em.find(Owner.class, id);
+    }
+    
+    public Owner findOwnerByUserId(int userId) {
+        User user = findUser(userId);
+        return user.getOwner();
     }
 
     public Address findAddress(int id) {

@@ -31,8 +31,7 @@ public class LoginController {
     private EmailService emailService;
     
     @Autowired
-    public LoginController(UserService userService, FillerService fillerService
-            , EmailService emailService) {
+    public LoginController(UserService userService, FillerService fillerService, EmailService emailService) {
         
         this.userService = userService;
         this.fillerService = fillerService;

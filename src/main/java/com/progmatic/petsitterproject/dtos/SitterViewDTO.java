@@ -59,13 +59,6 @@ public class SitterViewDTO {
         this.intro = intro;
     }
 
-//    public List<PetType> getPetTypes() {
-//        return petTypes;
-//    }
-//
-//    public void setPetTypes(List<PetType> petTypes) {
-//        this.petTypes = petTypes;
-//    }
     public Set<SitterServiceDTO> getServices() {
         return services;
     }
@@ -83,11 +76,11 @@ public class SitterViewDTO {
     }
 
     public String getUserName() {
-        return UserName;
+        return userName;
     }
 
-    public void setUserName(String UserName) {
-        this.UserName = UserName;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public int getId() {
