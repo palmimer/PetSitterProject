@@ -105,7 +105,11 @@ public class User implements Serializable, UserDetails {
     public LocalDateTime getDateOfJoin() {
         return dateOfJoin;
     }
-
+    
+    public void resetDateOfJoin(){
+        dateOfJoin = LocalDateTime.now();
+    } 
+    
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;

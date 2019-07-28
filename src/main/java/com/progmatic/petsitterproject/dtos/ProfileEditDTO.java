@@ -48,7 +48,7 @@ public class ProfileEditDTO {
     public void setOwnerData(OwnerDTO ownerData) {
         this.ownerData = ownerData;
     }
-
+    
     public String getPassword() {
         return password;
     }

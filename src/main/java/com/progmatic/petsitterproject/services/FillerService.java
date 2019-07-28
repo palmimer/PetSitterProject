@@ -37,6 +37,9 @@ public class FillerService {
     public FillerService(UserRepo ur, PasswordEncoder pwd) {
         this.ur = ur;
         this.pwd = pwd;
+        makeAuthorities();
+        makeDefaultUsers();
+        makeDefaultAdmin();
     }
     
     @Transactional
@@ -56,6 +59,7 @@ public class FillerService {
         }
     }
     
+    @Transactional
     private void makeDefaultUsers(){
         if(ur.noUsers()){
             User u1 = new User("Techno Kolos", "techno.kolos@freemail.com", pwd.encode("password"));
@@ -116,6 +120,7 @@ public class FillerService {
         }
     }
     
+    @Transactional
     private Set<SitterService> newServiceList(PlaceOfService place, PetType petType
             , int pricePerHour, int pricePerDay, Sitter s){
         Set<SitterService> listOfServices = new HashSet<>();
