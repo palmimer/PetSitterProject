@@ -7,6 +7,7 @@ package com.progmatic.petsitterproject.services;
 
 import com.progmatic.petsitterproject.dtos.*;
 import com.progmatic.petsitterproject.entities.*;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -23,7 +24,7 @@ public class DTOConversion {
         response.setAddress(sitter.getAddress().getAddress());
         response.setPostalCode(sitter.getAddress().getPostalCode());
         response.setIntro(sitter.getIntro());
-        response.setServices(convertToSitterServiceDTO(sitter.getServices()));
+        response.setServices(convertSetToSitterServiceDTO(sitter.getServices()));
         response.setAvailabilities(convertCalendar(sitter.getAvailabilities()));
         response.setId(user.getId());
 

@@ -7,6 +7,7 @@ package com.progmatic.petsitterproject.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.progmatic.petsitterproject.dtos.ProfileEditDTO;
+import com.progmatic.petsitterproject.dtos.RegistrationDTO;
 import com.progmatic.petsitterproject.dtos.SearchCriteriaDTO;
 import com.progmatic.petsitterproject.dtos.SitterViewDTO;
 import com.progmatic.petsitterproject.entities.ImageModel;
@@ -18,9 +19,9 @@ import com.progmatic.petsitterproject.services.DTOConversion;
 import com.progmatic.petsitterproject.services.EmailService;
 import com.progmatic.petsitterproject.services.UserService;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -126,7 +126,7 @@ public class FillerService {
         Set<SitterService> listOfServices = new HashSet<>();
         SitterService ss = new SitterService(place,petType,pricePerHour, pricePerDay);
         ss.setSitter(s);
-        ur.newService(ss);
+        ur.newSitterService(ss);
         listOfServices.add(ss);
         return listOfServices;
     }
