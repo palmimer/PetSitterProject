@@ -19,12 +19,14 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  *
  * @author imaginifer
  */
 @SpringBootApplication
+@EnableScheduling
 @ComponentScan("com.progmatic.petsitterproject")
 public class Main /*implements CommandLineRunner*/ {
 

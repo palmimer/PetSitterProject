@@ -9,6 +9,7 @@ import com.progmatic.petsitterproject.controllers.AlreadyExistsException;
 import com.progmatic.petsitterproject.dtos.*;
 import com.progmatic.petsitterproject.entities.*;
 import com.progmatic.petsitterproject.repositories.ImageRepository;
+import com.progmatic.petsitterproject.repositories.SearchRepo;
 import com.progmatic.petsitterproject.repositories.UserRepo;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -33,19 +35,21 @@ public class UserService {
     private PasswordEncoder pwd;
     private CalendarUpdater cu;
     private ImageRepository imageRepository;
+    private SearchRepo sr;
+    EmailService es;
     
     @Autowired
-    public UserService(UserRepo ur, PasswordEncoder pwd, CalendarUpdater cu, ImageRepository imageRepository) {
+    public UserService(UserRepo ur, PasswordEncoder pwd, CalendarUpdater cu
+            , ImageRepository imageRepository, SearchRepo sr, EmailService es) {
         this.ur = ur;
         this.pwd = pwd;
         this.cu = cu;
         this.imageRepository = imageRepository;
-        startBackGroundTasks();
+        this.sr = sr;
+        this.es = es;
     }
     
-    private void startBackGroundTasks(){
-        cu.start();
-    }
+    
 //    
 //    
 //    @Transactional
@@ -195,7 +199,7 @@ public class UserService {
     
     private void findNewPets(Set<PetDTO> pets, String email){
         Set<PetDTO> extra = new HashSet<>();
-        for (PetDTO dto : extra) {
+        for (PetDTO dto : pets) {
             if(dto.getId()==0){
                 extra.add(dto);
             }
@@ -245,7 +249,7 @@ public class UserService {
     }
     
     public List<SitterViewDTO> filterSitters(SearchCriteriaDTO criteria){
-        List<Sitter> sitterUsers = searchResults(criteria.getName(), criteria.getPetType(), criteria.getPlaceOfService(), criteria.getPostCode());
+        List<Sitter> sitterUsers = sr.searchSitters(criteria.getName(), criteria.getPetType(), criteria.getPlaceOfService(), criteria.getPostCode());
         List<SitterViewDTO> petSitters = new ArrayList<>();
         for (Sitter sitterUser : sitterUsers) {
             SitterViewDTO sitter = DTOConversion.convertToSitterViewDTO(sitterUser.getUser(), sitterUser);
@@ -254,63 +258,25 @@ public class UserService {
         return petSitters;
     }
     @Transactional
-    public void createUser(UserRegistrationDTO userData) throws AlreadyExistsException {
+    public void createUser(UserRegistrationDTO userData) throws AlreadyExistsException{
         if (ur.userAlreadyExists(userData.getEmail())) {
-            throw new AlreadyExistsException("Ilyen e-mailcím már létezik az adatbázisban!");
+            throw new AlreadyExistsException("Ilyen e-mail cím már létezik az adatbázisban!");
         }
-        //Authority auth = ur.findAuthority("ROLE_USER");
         User newUser = new User(userData.getUsername(), userData.getEmail(), pwd.encode(userData.getPassword()));
-        //newUser.setAuthorities(auth);
         ur.newUser(newUser);
     }
     
     @Transactional
     public void suspendAccount(){
         User u = ur.findUser(getCurrentUser().getId());
+        u.resetDateOfJoin();
         u.getAuthorities().clear();
     }
     
     private SitterService createServiceWithoutPrice(PlaceOfService place, PetType petType) {
         return new SitterService(place, petType);
         }
-    
-    private List<Sitter> searchResults(String name, PetType pet, PlaceOfService pl, int postal){
-        List<Sitter> sitters = ur.getAllSitters();
-        if(!name.isEmpty()){
-            sitters = filterByName(name, sitters);
-        }
-        if (pet != null){
-            sitters = filterByPetType(pet, sitters);
-        }
-        if (pl != null){
-            sitters = filterByPlace(pl, sitters);
-        }
-        if (postal != 0){
-            sitters = filterByPostal(postal, sitters);
-        }
-        return sitters;
-    }
-    
-    private List<Sitter> filterByName(String name, List<Sitter> list){
-        return list.stream().filter(s -> s.getUser().getName().contains(name))
-                .collect(Collectors.toList());
-    }
-    
-    private List<Sitter> filterByPetType(PetType p, List<Sitter> list){
-        return list.stream().filter(s -> s.getPetTypes()
-                .contains(p)).collect(Collectors.toList());
-    }
-    
-    private List<Sitter> filterByPlace(PlaceOfService p, List<Sitter> list){
-        return list.stream().filter(s -> s.getServices().stream()
-                .anyMatch(srv -> srv.getPlace()==p)).collect(Collectors.toList());
-    }
-    
-    private List<Sitter> filterByPostal(int postal, List<Sitter> list){
-        return list.stream().filter(s -> s.getAddress()
-                .getPostalCode()==postal).collect(Collectors.toList());
-    }
-    
+        
     public User getCurrentUser(){
         return (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }

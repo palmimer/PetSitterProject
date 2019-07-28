@@ -18,10 +18,12 @@ import com.progmatic.petsitterproject.entities.Sitter;
 import com.progmatic.petsitterproject.entities.User;
 import com.progmatic.petsitterproject.entities.PlaceOfService;
 import com.progmatic.petsitterproject.services.DTOConversion;
+import com.progmatic.petsitterproject.services.EmailService;
 import com.progmatic.petsitterproject.services.UserService;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
+import javax.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -43,10 +45,12 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserController {
 
     private UserService us;
+    private EmailService es;
 
     @Autowired
-    public UserController(UserService us) {
+    public UserController(UserService us, EmailService es) {
         this.us = us;
+        this.es = es;
     }
     
     @GetMapping(value = "/{userId}")
@@ -56,6 +60,29 @@ public class UserController {
         SitterViewDTO response = DTOConversion.convertToSitterViewDTO(user, sitter);
         return response;
     }
+    
+    @PostMapping("/newregistration")
+    public String registerNewUser(@RequestBody RegistrationDTO registration) throws AlreadyExistsException{
+        
+        us.createUser(registration.getUserData());
+        System.out.println("user regisztráció sikerült");
+        if (registration.getOwnerData() != null) {
+            us.registerNewOwner(registration.getUserData().getEmail(), registration.getOwnerData().getPets());
+            System.out.println("owner regisztráció sikerült");
+        }
+        if (registration.getSitterData() != null) {
+            us.registerNewSitter(registration.getUserData().getEmail(), registration.getSitterData());
+            System.out.println("sitter regisztráció sikerült");
+        }
+        try {
+            es.sendActivatorLink(registration.getUserData().getEmail());
+        } catch (MessagingException e) {
+            throw new AlreadyExistsException("Az érvényesítő üzenet elküldése "
+                    + "sajnos meghiúsult! Kérj fiók-visszaállítást az érvényesítéshez!");
+        }
+        return "Sikeres regisztráció! A belépéshez kérjük aktiváld fiókodat a címedre érkező üzenettel!";
+    }
+     
 
     @GetMapping(value = "/search/sitters")
     public List<SitterViewDTO> listSitters(

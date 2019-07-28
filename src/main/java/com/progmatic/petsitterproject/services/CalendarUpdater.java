@@ -14,51 +14,36 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
  * @author imaginifer
  */
 @Service
-public class CalendarUpdater extends Thread{
+public class CalendarUpdater{
     
     private LocalDate reference;
     private UserRepo ur;
-    @Autowired
-    private CalendarUpdater self;
-    
     
     @Autowired
     public CalendarUpdater(UserRepo ur){
         this.ur = ur;
         reference = LocalDate.of(1970, 1, 1);
     }
-
-    @Override
-    @Transactional
-    public void run() {
-        self.runTask();
-    }
     
-    @Transactional
+    @Scheduled(fixedRate = 900000)
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void runTask() {
-        while(true){
-            LocalDate present = LocalDate.now();
-            if(reference.isBefore(present)){
-                reference = present;
-                updateCalendars(present);
-                removeExpiredUsers();
-            }
-            try {
-                Thread.sleep(900000);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(CalendarUpdater.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        LocalDate present = LocalDate.now();
+        if(reference.isBefore(present)){
+            reference = present;
+            updateCalendars(present);
+            removeExpiredUsers();
         }
     }
     
@@ -73,6 +58,7 @@ public class CalendarUpdater extends Thread{
         }
     }
     
+    @Transactional
     private void rollCalendar(Set<WorkingDay> cal, LocalDate date){
         LocalDate last = findLast(cal);
         LocalDate now = date;
@@ -90,11 +76,13 @@ public class CalendarUpdater extends Thread{
         return cal.stream().map(d -> d.getwDay()).max((d1, d2) -> d1.compareTo(d2)).get();
     }
     
+    @Transactional
     private void removeExpiredUsers(){
         List<User> users = ur.getAllUsers();
+        LocalDateTime deadline = LocalDateTime.now().minusHours(48);
         for (User u : users) {
             if(u.getAuthorities().isEmpty() 
-                    && u.getDateOfJoin().isBefore(LocalDateTime.now())){
+                    && u.getDateOfJoin().isBefore(deadline)){
                 System.out.println("Lejárt: "+u.getName());
                 ur.deleteUser(u);
             }

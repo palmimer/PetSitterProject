@@ -5,15 +5,12 @@
  */
 package com.progmatic.petsitterproject.controllers;
 
-import com.progmatic.petsitterproject.dtos.OwnerDTO;
-import com.progmatic.petsitterproject.dtos.RegistrationDTO;
-import com.progmatic.petsitterproject.dtos.UserRegistrationDTO;
-import com.progmatic.petsitterproject.dtos.SitterRegistrationDTO;
+import com.progmatic.petsitterproject.dtos.ProfileEditDTO;
 import com.progmatic.petsitterproject.dtos.UserDTO;
 import com.progmatic.petsitterproject.services.EmailService;
 import com.progmatic.petsitterproject.services.FillerService;
 import com.progmatic.petsitterproject.services.UserService;
-import javax.validation.Valid;
+import javax.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -55,40 +52,34 @@ public class LoginController {
         }
     }
         
-    
-    @PostMapping("/newregistration")
-    public String registerNewUser(@RequestBody RegistrationDTO registration) throws AlreadyExistsException{
-        
-        userService.createUser(registration.getUserData());
-        //System.out.println("user regisztráció sikerült");
-        if (registration.getOwnerData() != null) {
-            userService.registerNewOwner(registration.getUserData().getEmail(), registration.getOwnerData().getPets());
-            //System.out.println("owner regisztráció sikerült");
-        }
-        if (registration.getSitterData() != null) {
-            userService.registerNewSitter(registration.getUserData().getEmail(), registration.getSitterData());
-            //System.out.println("sitter regisztráció sikerült");
-        }
-        emailService.sendSimpleActivatorMessage(registration.getUserData().getEmail());
-        return "Sikeres regisztráció! A belépéshez kérjük aktiváld fiókodat a címedre érkező üzenettel!";
-    }
-        
     @GetMapping("/verify")
-    public String activateUser(@RequestParam("ver") String valid){
+    public String activateUser(@RequestParam("ver") String valid) throws AlreadyExistsException{
         emailService.activateUser(valid);
-        return "Sikeres érvényesítés!";
+        return "Sikeres hitelesítés!";
     }
     
     @GetMapping("/suspendaccount")
     public String removeSelf(){
         userService.suspendAccount();
-        return "Fiókját felfüggesztettük.";
+        return "Fiókodat felfüggesztettük. Ha meggondolod magad, 48 órán belül visszaállíthatod!";
+    }
+    
+    @PostMapping("/restoreaccount")
+    public String restoreSelf(@RequestBody ProfileEditDTO req) throws AlreadyExistsException, MessagingException{
+        emailService.sendReactivator(req.getEmail());
+        return "Fiókodat visszaállítottuk!";
     }
     
     @GetMapping("/filler")
     public String fillers(){
         fillerService.fixDatabase();
         return "Megtöltve!";
+    }
+    
+    @PostMapping("/resetpassword")
+    public String resetPassword(@RequestBody ProfileEditDTO req) throws AlreadyExistsException, MessagingException{
+        emailService.passwordReset(req.getEmail());
+        return "A pótjelszót elküldtük a megadott címre!";
     }
     
 }

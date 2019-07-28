@@ -13,7 +13,6 @@ import com.progmatic.petsitterproject.entities.ImageModel;
  */
 public class ProfileEditDTO {
     private String username, password, email;
-    private int postalCode;
     private SitterViewDTO sitterData;
     private OwnerDTO ownerData;
 
@@ -40,17 +39,7 @@ public class ProfileEditDTO {
     public void setOwnerData(OwnerDTO ownerData) {
         this.ownerData = ownerData;
     }
-
     
-
-    public int getPostalCode() {
-        return postalCode;
-    }
-
-    public void setPostalCode(int postalCode) {
-        this.postalCode = postalCode;
-    }
-
     public String getPassword() {
         return password;
     }
