@@ -49,10 +49,6 @@ public class UserRepo implements UserDetailsService {
         return em.createQuery("select u from User u").getResultList().isEmpty();
     }
 
-    public void newService(SitterService srv) {
-        em.persist(srv);
-    }
-
     @Transactional
     public void newPet(Pet p) {
         em.persist(p);

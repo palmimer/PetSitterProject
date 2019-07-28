@@ -23,7 +23,7 @@ import javax.validation.constraints.NotNull;
 
 public class SitterViewDTO {
 //    private ImageModel profilePhoto;
-    private String UserName;
+    private String userName;
     private String city;
     private String address;
     private int postalCode;
@@ -93,11 +93,11 @@ public class SitterViewDTO {
     }
 
     public String getUserName() {
-        return UserName;
+        return userName;
     }
 
-    public void setUserName(String UserName) {
-        this.UserName = UserName;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public int getId() {

@@ -92,9 +92,11 @@ public class UserService {
     public User getUser(int userId) {
         return ur.findUser(userId);
     }
-
+    
+    @Transactional
     public UserDTO getUserDTO() {
-        User user = getCurrentUser();
+        //User user = getCurrentUser();
+        User user = getUser(getCurrentUser().getId());
         UserDTO userDTO = new UserDTO(user);
         if (user.getOwner() != null) {
             userDTO.setOwnerData(new OwnerDTO(user.getOwner()));
@@ -126,7 +128,7 @@ public class UserService {
             SitterService ss = new SitterService(dto.getPlace(), dto.getPetType(),
                     dto.getPricePerHour(), dto.getPricePerDay());
             ss.setSitter(s);
-            ur.newService(ss);
+            ur.newSitterService(ss);
             listOfServices.add(ss);
         }
         return listOfServices;
@@ -168,14 +170,15 @@ public class UserService {
     public void editProfile(ProfileEditDTO editedProfile){
         User u = (User) ur.findUser(getCurrentUser().getId());
         modifyBasicUserData(editedProfile);
-        // ha a usernek eddig volt owner objektuma de a beérkezett adatokban most már nincs owner adat
-        // vagy a beérkező adatokban az owner adatban nincs állat, akkor törli a User Owner objektumát
-        if(ur.isOwner(u.getId()) && (editedProfile.getOwnerData() == null || editedProfile.getOwnerData().getPets().isEmpty())){
+        // ha a usernek eddig volt owner objektuma, de a beérkezett adatokban most már nincs owner adat
+        if(ur.isOwner(u.getId()) && editedProfile.getOwnerData() == null){
             ur.deleteOwner(u.getOwner());
-            // ha érkezik adat az Owner objektumban
-        } else {
+            // volt owner és érkezik adat az Owner objektumban
+        } else if(ur.isOwner(u.getId()) && editedProfile.getOwnerData() != null){
             // elküldjük az új állatlistát és a userId-t szerkesztésre
             editPets(editedProfile.getOwnerData().getPets(), u.getId());
+        } else {
+            registerNewOwner(u.getEmail(), editedProfile.getOwnerData().getPets());
         }
         // ha a usernek eddig volt sitter objektuma, de a beérkezett adatokban most már nincs sitter adat
         if(ur.isSitter(u.getId()) && editedProfile.getSitterData() == null){
@@ -190,6 +193,7 @@ public class UserService {
             Sitter s = ur.findSitter(u.getSitter().getId());
             modifySitterData(s, editedProfile.getSitterData());
         }
+        
     }
     
     @Transactional
@@ -204,15 +208,21 @@ public class UserService {
     private void modifySitterData(Sitter s, SitterViewDTO newSitterData){
         s.setIntro(newSitterData.getIntro());
         setNewAddress(s, newSitterData);
-        // services beállítása, ha van benne változás
-        // eredeti sitterservices átalakítása
-        Set<SitterServiceDTO> originalServices = DTOConversion.convertSetToSitterServiceDTO(s.getServices());
-        // ha az új nem egyezik a régivel
-        if ( !newSitterData.getServices().equals(originalServices) ) {
-            Set<SitterService> editedServices = DTOConversion.convertDTOToSitterService(newSitterData.getServices());
-            // beállítjuk az új service-eket a sitternek
-            s.setServices(editedServices);
+        
+        // eredeti sitterservices kitörlése
+        for (SitterService originalService : s.getServices()) {
+            ur.deleteSitterService(originalService);
         }
+        Set<SitterService> editedServices = DTOConversion.convertDTOToSitterService(newSitterData.getServices());
+        // beírjuk az új serviceket az adatbázisba
+        for (SitterService editedService : editedServices) {
+            editedService.setSitter(s);
+            ur.newSitterService(editedService);
+        }
+        // beállítjuk az új service-eket a sitternek
+        s.setServices(editedServices);
+        
+        // TODO itt kéne a naptármódosítás még
     }
     
     @Transactional
@@ -226,7 +236,7 @@ public class UserService {
     @Transactional
     private void editPets(Set<PetDTO> pets, int userId) {
         Set<PetDTO> newSetOfPetDTOs = new HashSet<>();
-        // elővesszük az eddigi állatlistát és átalakítjuk DTO-kká
+        Owner owner = getUser(userId).getOwner();
         Set<PetDTO> oldPetDTOs = findOldPetsAndConvertToDTO(userId);
         // kikeressük az új állatokat a régivel összehasonlítva
         Set<PetDTO> newPets = findNewPets(pets, oldPetDTOs);
@@ -234,6 +244,9 @@ public class UserService {
         newSetOfPetDTOs.addAll(newPets);
         Set<Pet> newSetOfPets = DTOConversion.convertPetDTOsToPets(newSetOfPetDTOs);
         // létrehozzuk az új állatokat az adatbázisban
+        for (Pet newPet : newSetOfPets) {
+            newPet.setOwner(owner);
+        }
         ur.newPets(newSetOfPets);
         // kikeressük a régi állatokat, ami már nincs az új listában
         Set<PetDTO> oldPetsToDelete = findObsoletePets(pets, oldPetDTOs);
@@ -243,30 +256,33 @@ public class UserService {
             ur.deletePet(petToDelete);
         }
         // az ownernek beállítjuk ezeket az új állatokat
-        Owner owner = ur.findOwner(userId);
         owner.setPets(newSetOfPets);
-        // az új lista elemeiből új állatobjektumokat hoz létre
-        // előveszi az eddigi listát, és hozzáadja az új lista elemeit
-        
     }
     
     private Set<PetDTO> findNewPets(Set<PetDTO> pets, Set<PetDTO> oldPets) {
         Set<PetDTO> newPets = new HashSet<>();
         // végignézzük az új listát, megnézzük benne van-e a régiben
         for (PetDTO pet : pets) {
-            if(!oldPets.contains(pet)){
-                newPets.add(pet);
+            for (PetDTO oldPet : oldPets) {
+                if ( ( oldPet.getName().equals(pet.getName()) && !(oldPet.getPetType().equals(pet.getPetType())))
+                     || !( oldPet.getName().equals(pet.getName())) && oldPet.getPetType().equals(pet.getPetType())
+                     || !( oldPet.getName().equals(pet.getName())) && !(oldPet.getPetType().equals(pet.getPetType()))) {
+                    newPets.add(pet);
+                }
             }
         }
         return newPets;
     }
     
     // megtalálni az új listában nem szereplő, de a régiben meglévő állatokat
+    // össze kéne hasonlítani a nevet-fajtát, mert az id-juk nem fog egyezni
     private Set<PetDTO> findObsoletePets(Set<PetDTO> pets, Set<PetDTO> oldPets) {
         Set<PetDTO> oldPetsToDelete = new HashSet<>();
         for (PetDTO oldPet : oldPets) {
-            if(!pets.contains(oldPet)){
-                oldPetsToDelete.add(oldPet);
+            for (PetDTO pet : pets) {
+                if ( !(oldPet.getName().equals(pet.getName()) && oldPet.getPetType().equals(pet.getPetType())) ) {
+                    oldPetsToDelete.add(oldPet);
+                }
             }
         }
         return oldPetsToDelete;

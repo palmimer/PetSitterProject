@@ -5,6 +5,7 @@
  */
 package com.progmatic.petsitterproject.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.progmatic.petsitterproject.dtos.ProfileEditDTO;
 import com.progmatic.petsitterproject.dtos.SearchCriteriaDTO;
 import com.progmatic.petsitterproject.dtos.SitterViewDTO;
@@ -18,7 +19,10 @@ import com.progmatic.petsitterproject.services.EmailService;
 import com.progmatic.petsitterproject.services.FillerService;
 import com.progmatic.petsitterproject.services.UserService;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -69,9 +73,14 @@ public class UserController {
     }
 
     @PostMapping("/modifyprofile")
-    public String editProfile(@RequestBody ProfileEditDTO editedProfile) {
+    public Map<String, Object> editProfile(@RequestBody ProfileEditDTO editedProfile) {
         us.editProfile(editedProfile);
-        return "A profil módosult!";
+        
+        Map<String, Object> responseMap = new HashMap<>();
+        responseMap.put("message", "A profil módosult!");
+        responseMap.put("user", us.getUserDTO());
+        
+        return responseMap;
     }
 
 //    @PostMapping("/removepet")
