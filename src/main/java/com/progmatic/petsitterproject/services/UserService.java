@@ -218,7 +218,8 @@ public class UserService {
     private void modifySitterData(Sitter s, SitterViewDTO newSitterData){
         s.setIntro(newSitterData.getIntro());
         setNewAddress(s, newSitterData);
-        
+        // editServices(s, newSitterData)
+        // 
         // eredeti sitterservices kitörlése
         for (SitterService originalService : s.getServices()) {
             ur.deleteSitterService(originalService);
@@ -241,6 +242,11 @@ public class UserService {
         a.setAddress(newSitterData.getAddress());
         a.setCity(newSitterData.getCity());
         a.setPostalCode(newSitterData.getPostalCode());
+    }
+    
+    private void editServices(Sitter s, SitterViewDTO newSitterData){
+        // eddigi service-ek kigyűjtése és átalakítása
+        Set<SitterServiceDTO> oldServiceDTOs = DTOConversion.convertSetToSitterServiceDTO(s.getServices());
     }
     
     @Transactional
@@ -287,14 +293,19 @@ public class UserService {
     // megtalálni az új listában nem szereplő, de a régiben meglévő állatokat
     // össze kéne hasonlítani a nevet-fajtát, mert az id-juk nem fog egyezni
     private Set<PetDTO> findObsoletePets(Set<PetDTO> pets, Set<PetDTO> oldPets) {
-        Set<PetDTO> oldPetsToDelete = new HashSet<>();
+        Set<PetDTO> oldPetsToDelete = oldPets;
+        Set<PetDTO> oldPetsToKeep = new HashSet<>();
         for (PetDTO oldPet : oldPets) {
             for (PetDTO pet : pets) {
-                if ( !(oldPet.getName().equals(pet.getName()) && oldPet.getPetType().equals(pet.getPetType())) ) {
-                    oldPetsToDelete.add(oldPet);
+                if (oldPet.equals(pet)) {
+                    oldPetsToKeep.add(oldPet);
                 }
+//                if ( !(oldPet.getName().equals(pet.getName()) && oldPet.getPetType().equals(pet.getPetType())) ) {
+//                    oldPetsToDelete.add(oldPet);
+//                }
             }
         }
+        oldPetsToDelete.removeAll(oldPetsToKeep);
         return oldPetsToDelete;
     }
     

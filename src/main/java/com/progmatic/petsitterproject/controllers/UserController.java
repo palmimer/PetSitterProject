@@ -20,7 +20,6 @@ import com.progmatic.petsitterproject.services.DTOConversion;
 import com.progmatic.petsitterproject.services.EmailService;
 import com.progmatic.petsitterproject.services.UserService;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

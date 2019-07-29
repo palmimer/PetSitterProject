@@ -55,6 +55,10 @@ public class PetDTO {
     public void setId(int id) {
         this.id = id;
     }
+
+    public boolean equals(PetDTO otherPetDTO) {
+        return this.name.equals(otherPetDTO.getName()) && this.petType.equals(otherPetDTO.getPetType());
+    }
     
     
      
