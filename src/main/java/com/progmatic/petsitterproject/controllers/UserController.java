@@ -5,14 +5,11 @@
  */
 package com.progmatic.petsitterproject.controllers;
 
-import com.progmatic.petsitterproject.dtos.PetDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.progmatic.petsitterproject.dtos.ProfileEditDTO;
-import com.progmatic.petsitterproject.dtos.RegistrationDTO;
 import com.progmatic.petsitterproject.dtos.SearchCriteriaDTO;
-import com.progmatic.petsitterproject.dtos.SitterRegistrationDTO;
 import com.progmatic.petsitterproject.dtos.SitterViewDTO;
 import com.progmatic.petsitterproject.entities.ImageModel;
-import com.progmatic.petsitterproject.dtos.UserDTO;
 import com.progmatic.petsitterproject.entities.PetType;
 import com.progmatic.petsitterproject.entities.Sitter;
 import com.progmatic.petsitterproject.entities.User;
@@ -21,6 +18,8 @@ import com.progmatic.petsitterproject.services.DTOConversion;
 import com.progmatic.petsitterproject.services.EmailService;
 import com.progmatic.petsitterproject.services.UserService;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import javax.mail.MessagingException;
@@ -31,8 +30,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,7 +50,7 @@ public class UserController {
         this.es = es;
     }
 
-    @GetMapping(value = "/{userId}")
+    @GetMapping(value = "sitter/{userId}")
     public SitterViewDTO singleSitter(@PathVariable("userId") int userId) {
         User user = us.getUser(userId);
         Sitter sitter = user.getSitter();
@@ -84,7 +81,7 @@ public class UserController {
     }
      
 
-    @GetMapping(value = "/search/sitters")
+    @GetMapping(value = "/sitters/search")
     public List<SitterViewDTO> listSitters(
             @RequestParam(value = "name", defaultValue = "") String sitterName,
             @RequestParam(value = "placeOfService", required = false) PlaceOfService placeOfService,
@@ -96,10 +93,15 @@ public class UserController {
         return selectedSitters;
     }
 
-    @PostMapping("/editprofile")
-    public String editProfile(@RequestBody ProfileEditDTO edit) {
-        us.editProfile(edit);
-        return "A profil módosult!";
+    @PostMapping("/modifyprofile")
+    public Map<String, Object> editProfile(@RequestBody ProfileEditDTO editedProfile) {
+        us.editProfile(editedProfile);
+        
+        Map<String, Object> responseMap = new HashMap<>();
+        responseMap.put("message", "A profil módosult!");
+        responseMap.put("user", us.getUserDTO());
+        
+        return responseMap;
     }
 
 //    @PostMapping("/removepet")

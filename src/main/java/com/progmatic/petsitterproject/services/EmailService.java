@@ -26,7 +26,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class EmailService {
-    
+
     private JavaMailSender sender;
     private UserRepo ur;
     private PasswordEncoder pwd;
@@ -38,8 +38,8 @@ public class EmailService {
         this.ur = ur;
         this.pwd = pwd;
     }
-    
-    public void sendSimpleTestMessage(){
+
+    public void sendSimpleTestMessage() {
         SimpleMailMessage smm = new SimpleMailMessage();
         smm.setFrom("kividrotposta@gmail.com");
         smm.setTo("povazsonk@gmail.com");
@@ -67,8 +67,8 @@ public class EmailService {
         smm.setTo(userEmail);
         smm.setSubject("Üdvözöl a KiVi közösség!");
         smm.setText("A felhasználói fiókod hitelesítéséhez kérjük, "
-                + "kövesd a következő hivatkozást: "+
-                "http://localhost:8080/verify?ver="+activator);
+                + "kövesd a következő hivatkozást: "
+                + "http://localhost:8080/verify?ver=" + activator);
         sender.send(smm);
     }*/
     
@@ -91,21 +91,21 @@ public class EmailService {
         int chaff = r.nextInt(9000)+1000;
         StringBuilder sb = new StringBuilder();
         sb.append(chaff).append(ident);
-        int kvant = Integer.parseInt(sb.toString())*17;
+        int kvant = Integer.parseInt(sb.toString()) * 17;
         return String.valueOf(kvant);
     }
-    
-    private int disentangleActivator(String valid){
-        int q = Integer.parseInt(valid)/17;
+
+    private int disentangleActivator(String valid) {
+        int q = Integer.parseInt(valid) / 17;
         String s = String.valueOf(q).substring(4);
-        //System.out.println("érték: "+s);
+        //System.out.println("érték: " + s);
         return Integer.parseInt(s);
     }
-    
+
     @Transactional
     public void activateUser(String val) throws AlreadyExistsException{
         User u;
-        try{
+        try {
             u = ur.findUser(disentangleActivator(val));
         }catch(EntityNotFoundException e){
            throw new AlreadyExistsException("Ilyen fiók nem létezik!");

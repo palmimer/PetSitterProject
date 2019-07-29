@@ -5,7 +5,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 public class SitterRegistrationDTO {
-
     @NotNull
     private String city;
     @NotNull
@@ -24,7 +23,7 @@ public class SitterRegistrationDTO {
 
     public SitterRegistrationDTO() {
     }
-
+    
     public String getCity() {
         return city;
     }
@@ -46,6 +45,7 @@ public class SitterRegistrationDTO {
 //        petTypes.add(petType);
 //        return petTypes;
 //    }
+
     public void setAddress(String address) {
         this.address = address;
     }

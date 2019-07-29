@@ -37,38 +37,73 @@ public class DTOConversion {
         response.setPostalCode(sitter.getAddress().getPostalCode());
         response.setIntro(sitter.getIntro());
 //        response.setPetTypes(sitter.getPetTypes());
-        response.setServices(convertToSitterServiceDTO(sitter.getServices()));
+        response.setServices(convertSetToSitterServiceDTO(sitter.getServices()));
         response.setAvailabilities(convertCalendar(sitter.getAvailabilities()));
 
         return response;
     }
-
-    public static List<WorkDayViewDTO> convertCalendar(Set<WorkingDay> list) {
+    
+    public static SitterRegistrationDTO convertToSitterRegistrationDTO(SitterViewDTO sitterData){
+        SitterRegistrationDTO newSitterData = new SitterRegistrationDTO();
+        newSitterData.setIntro(sitterData.getIntro());
+        newSitterData.setCity(sitterData.getCity());
+        newSitterData.setAddress(sitterData.getAddress());
+        newSitterData.setPostalCode(sitterData.getPostalCode());
+        newSitterData.setServices(sitterData.getServices());
+        return newSitterData;
+    }
+    
+    public static TreeMap<LocalDate, Availability> convertCalendarToTreeMap(Set<WorkingDay> list){
+        TreeMap<LocalDate, Availability> calendarView = new TreeMap<>();
+        for (WorkingDay workingDay : list) {
+            calendarView.put(workingDay.getwDay(), workingDay.getAvailability());
+        }
+//      /Comparator<WorkDayViewDTO> c = ((w1, w2) -> w1.getDate().compareTo(w2.getDate()));
+//        calendarView.sort((w1, w2) -> w1.getDate().compareTo(w2.getDate()));
+        return calendarView;
+    }
+    
+    public static List<WorkDayViewDTO> convertCalendar(Set<WorkingDay> list){
+        
         List<WorkDayViewDTO> calendarView = new ArrayList<>();
         for (WorkingDay wd : list) {
             calendarView.add(new WorkDayViewDTO(wd.getId(),
                      wd.getAvailability(),
                      wd.getwDay().format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))));
         }
-        //Comparator<WorkDayViewDTO> c = ((w1, w2) -> w1.getDate().compareTo(w2.getDate()));
+//        Comparator<WorkDayViewDTO> c = ((w1, w2) -> w1.getDate().compareTo(w2.getDate()));
         calendarView.sort((w1, w2) -> w1.getDate().compareTo(w2.getDate()));
         return calendarView;
     }
-
-    public static Set<SitterServiceDTO> convertToSitterServiceDTO(Set<SitterService> list) {
-        Set<SitterServiceDTO> serviceView = new HashSet<>();
-        for (SitterService s : list) {
-            SitterServiceDTO sv = new SitterServiceDTO();
-            sv.setPetType(s.getPetType());
-            sv.setPlace(s.getPlace());
-            sv.setPricePerDay(s.getPricePerDay());
-            sv.setPricePerHour(s.getPricePerHour());
-            serviceView.add(sv);
+    
+    public static Set<SitterService> convertDTOToSitterService(Set<SitterServiceDTO> serviceDTOs){
+        Set<SitterService> services = new HashSet<>();
+        for (SitterServiceDTO sdto : serviceDTOs) {
+            SitterService sv = new SitterService();
+            sv.setPetType(sdto.getPetType());
+            sv.setPlace(sdto.getPlace());
+            sv.setPricePerDay(sdto.getPricePerDay());
+            sv.setPricePerHour(sdto.getPricePerHour());
+            services.add(sv);
         }
-        return serviceView;
+        return services;
     }
-
-    public static HashMap<String, PetType> convertToHashMap(List<Pet> pets) {
+    
+    
+    public static Set<SitterServiceDTO> convertSetToSitterServiceDTO(Set<SitterService> sitterServices){
+        Set<SitterServiceDTO> services = new HashSet<>();
+        for (SitterService s : sitterServices) {
+            SitterServiceDTO serv = new SitterServiceDTO();
+            serv.setPetType(s.getPetType());
+            serv.setPlace(s.getPlace());
+            serv.setPricePerDay(s.getPricePerDay());
+            serv.setPricePerHour(s.getPricePerHour());
+            services.add(serv);
+        }
+        return services;
+    }
+    
+    public static HashMap<String, PetType> convertToHashMap(List<Pet> pets){
         HashMap<String, PetType> petsInMap = new HashMap<>();
         for (Pet pet : pets) {
             petsInMap.put(pet.getName(), pet.getPetType());
@@ -82,4 +117,35 @@ public class DTOConversion {
         return view;
     }
 
+
+    private static List<SitterServiceDTO> convertSetToListSitterServiceDTO(Set<SitterService> services) {
+        List<SitterServiceDTO> serviceDTOs = new ArrayList<>();
+        for (SitterService service : services) {
+            SitterServiceDTO ssdto = new SitterServiceDTO();
+            ssdto.setPetType(service.getPetType());
+            ssdto.setPlace(service.getPlace());
+            ssdto.setPricePerDay(service.getPricePerDay());
+            ssdto.setPricePerHour(service.getPricePerHour());
+        }
+        return serviceDTOs;
+    }
+    
+    public static Set<Pet> convertPetDTOsToPets(Set<PetDTO> petDTOs){
+        Set<Pet> pets = new HashSet<>();
+        for (PetDTO petDTO : petDTOs) {
+            Pet pet = new Pet(petDTO.getPetType(), petDTO.getName());
+            pets.add(pet);
+        }
+        return pets;
+    }
+    
+    public static Set<PetDTO> convertPetsToPetDTOs(Set<Pet> pets){
+        Set<PetDTO> petDTOs = new HashSet<>();
+        for (Pet pet : pets) {
+            PetDTO petDTO = new PetDTO(pet.getName(), pet.getPetType());
+            petDTOs.add(petDTO);
+        }
+        return petDTOs;
+    }
+    
 }
