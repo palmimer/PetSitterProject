@@ -37,9 +37,9 @@ public class FillerService {
     public FillerService(UserRepo ur, PasswordEncoder pwd) {
         this.ur = ur;
         this.pwd = pwd;
-        makeAuthorities();
-        makeDefaultUsers();
-        makeDefaultAdmin();
+//        makeAuthorities();
+//        makeDefaultUsers();
+//        makeDefaultAdmin();
     }
     
     @Transactional

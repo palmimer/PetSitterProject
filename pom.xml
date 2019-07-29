@@ -18,7 +18,7 @@
         <!-- lookup parent from repository -->
     </parent>
     <dependencies>
-         <dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
         </dependency>
@@ -45,14 +45,14 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-             <groupId>org.springframework</groupId>
-             <artifactId>spring-test</artifactId>
-             <scope>test</scope>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
-             <artifactId>spring-security-test</artifactId>
-             <scope>test</scope>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
@@ -70,11 +70,37 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-        </dependency>
+        
     </dependencies>
+    <profiles>
+        <profile>
+            <id>mysql</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>mysql</groupId>
+                    <artifactId>mysql-connector-java</artifactId>
+                </dependency>
+            </dependencies>  
+        </profile>
+        <profile>
+            <id>heroku</id>
+            <activation>
+                <property>
+                    <name>env.SPRING_PROFILES_ACTIVE</name>
+                    <value>heroku</value>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.postgresql</groupId>
+                    <artifactId>postgresql</artifactId>
+                </dependency>
+            </dependencies>  
+        </profile>
+    </profiles>
     <build>
         <plugins>
             <plugin>
@@ -82,7 +108,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <fork>true</fork>
-                    <mainClass>com.progmatic.messagesb.springconfig.Application</mainClass>
+                    <mainClass>com.progmatic.petsitterproject.Main</mainClass>
                 </configuration>
                 <executions>
                     <execution>
