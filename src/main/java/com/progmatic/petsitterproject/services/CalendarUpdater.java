@@ -86,6 +86,10 @@ public class CalendarUpdater{
                 System.out.println("Lejárt: "+u.getName());
                 ur.deleteUser(u);
             }
+            if(u.getName().contains("Válts jelszót") 
+                    && u.getDateOfJoin().isBefore(deadline)){
+                u.getAuthorities().clear();
+            }
         }
     }
     

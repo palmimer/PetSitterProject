@@ -75,5 +75,11 @@ public class DTOConversion {
         }
         return petsInMap;
     }
+    
+    public static AccountViewDTO convertToAccountViewDTO(){
+        AccountViewDTO view = new AccountViewDTO();
+        
+        return view;
+    }
 
 }

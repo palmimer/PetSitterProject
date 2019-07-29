@@ -169,9 +169,13 @@ public class UserService {
     @Transactional
     public void editProfile(ProfileEditDTO edit) {
         User u = (User) ur.findUser(getCurrentUser().getId());
-        u.setName(edit.getUsername());
-        u.setPassword(pwd.encode(edit.getPassword()));
-        u.setEmail(edit.getEmail());
+        if(u.getName().contains("Válts jelszót") 
+                && pwd.matches(u.getPassword(), edit.getPassword())){
+            u.setName("Válts jelszót" + edit.getUsername()+"!");
+        } else {
+            u.setName(edit.getUsername());
+            u.setPassword(pwd.encode(edit.getPassword()));
+        }
         if (ur.isOwner(u.getId()) && (edit.getOwnerData() == null || edit.getOwnerData().getPets().isEmpty())) {
             ur.deleteOwner(u.getOwner());
         } else {
@@ -230,6 +234,17 @@ public class UserService {
 
     private void editSitter() {
 
+    }
+    
+    private void editCalendar(int id, List<WorkDayViewDTO> list){
+        Set<WorkingDay> current = ur.findUser(id).getSitter().getAvailabilities();
+        for (WorkingDay wd : current) {
+            for (WorkDayViewDTO dto : list) {
+                if(wd.getId() == dto.getId()){
+                    wd.setAvailability(dto.getAvailability());
+                }
+            }
+        }
     }
 
     @Transactional

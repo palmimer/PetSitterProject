@@ -5,23 +5,39 @@
  */
 package com.progmatic.petsitterproject.dtos;
 
-import com.progmatic.petsitterproject.entities.ImageModel;
-
 /**
  *
  * @author imaginifer
  */
-public class ProfileEditDTO {
-    private String username, password;
+public class AccountViewDTO {
+    private int id;
+    private String name, email;
+    private boolean isActivated;
     private SitterViewDTO sitterData;
     private OwnerDTO ownerData;
 
-    public String getUsername() {
-        return username;
+    public int getId() {
+        return id;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public SitterViewDTO getSitterData() {
@@ -39,15 +55,15 @@ public class ProfileEditDTO {
     public void setOwnerData(OwnerDTO ownerData) {
         this.ownerData = ownerData;
     }
+
+    public boolean isIsActivated() {
+        return isActivated;
+    }
+
+    public void setIsActivated(boolean isActivated) {
+        this.isActivated = isActivated;
+    }
     
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     
     
     
