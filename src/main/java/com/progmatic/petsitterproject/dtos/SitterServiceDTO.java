@@ -53,5 +53,11 @@ public class SitterServiceDTO {
         this.pricePerDay = pricePerDay;
     }
     
+    public boolean equals(SitterServiceDTO otherService){
+        return this.place.equals(otherService.getPlace()) &&
+                this.petType.equals(otherService.getPetType()) &&
+                this.pricePerDay == otherService.getPricePerDay() &&
+                this.pricePerHour == otherService.getPricePerDay();
+    }
     
 }
