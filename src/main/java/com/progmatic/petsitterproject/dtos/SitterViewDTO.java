@@ -14,7 +14,7 @@ import java.util.Set;
  */
 public class SitterViewDTO {
 
-    private String username;
+    private String userName;
     private String city;
     private String address;
     private int postalCode;

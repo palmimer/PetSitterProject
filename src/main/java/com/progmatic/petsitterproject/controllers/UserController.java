@@ -7,8 +7,10 @@ package com.progmatic.petsitterproject.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.progmatic.petsitterproject.dtos.ProfileEditDTO;
+import com.progmatic.petsitterproject.dtos.RegistrationDTO;
 import com.progmatic.petsitterproject.dtos.SearchCriteriaDTO;
 import com.progmatic.petsitterproject.dtos.SitterViewDTO;
+import com.progmatic.petsitterproject.dtos.UserDTO;
 import com.progmatic.petsitterproject.entities.ImageModel;
 import com.progmatic.petsitterproject.entities.PetType;
 import com.progmatic.petsitterproject.entities.Sitter;
@@ -21,6 +23,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +59,7 @@ public class UserController {
         Sitter sitter = user.getSitter();
         SitterViewDTO response = DTOConversion.convertToSitterViewDTO(user, sitter);
         return response;
+        //return us.getUserDTO();
     }
     
     @PostMapping("/newregistration")
@@ -131,6 +135,7 @@ public class UserController {
                         .getProfilePhoto()
                         .getPic());
     }
+    
 //    private SitterViewDTO convertToDTO(User user, Sitter sitter) {
 //        SitterViewDTO response = new SitterViewDTO();
 //        response.setProfilePhoto(sitter.getProfilePhoto());

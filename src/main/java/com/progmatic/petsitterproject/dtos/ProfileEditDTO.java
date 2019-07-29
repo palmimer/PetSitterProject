@@ -16,14 +16,6 @@ public class ProfileEditDTO {
     private SitterViewDTO sitterData;
     private OwnerDTO ownerData;
 
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
-    }
-    
     public String getUsername() {
         return username;
     }

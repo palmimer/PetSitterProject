@@ -37,9 +37,7 @@ public class FillerService {
     public FillerService(UserRepo ur, PasswordEncoder pwd) {
         this.ur = ur;
         this.pwd = pwd;
-        makeAuthorities();
-        makeDefaultUsers();
-        makeDefaultAdmin();
+        
     }
     
     @Transactional
@@ -69,6 +67,8 @@ public class FillerService {
             s1.setAddress(createAddress("Pocsajd", "Beton út 1.", 5555, s1));
             s1.setServices(newServiceList(PlaceOfService.OWNERS_HOME,PetType.CAT
                     ,1500, 6000, s1));
+            s1.getServices().addAll(newServiceList(PlaceOfService.OWNERS_HOME,PetType.RODENT
+                    ,1000, 4500, s1));
             s1.setAvailabilities(newCalendar(s1));
             ur.newSitter(s1);
             
@@ -93,6 +93,7 @@ public class FillerService {
             s4.setAddress(createAddress("Pocsajd", "Beton út 16.", 5555, s4));
             s4.setServices(newServiceList(PlaceOfService.OWNERS_HOME,PetType.BIRD
                     ,800, 4500, s4));
+            s4.getServices().addAll(newServiceList(PlaceOfService.SITTERS_HOME,PetType.RODENT, 900, 0, s4));
             s4.setAvailabilities(newCalendar(s4));
             ur.newSitter(s4);
         }
@@ -126,7 +127,7 @@ public class FillerService {
         Set<SitterService> listOfServices = new HashSet<>();
         SitterService ss = new SitterService(place,petType,pricePerHour, pricePerDay);
         ss.setSitter(s);
-        ur.newService(ss);
+        ur.newSitterService(ss);
         listOfServices.add(ss);
         return listOfServices;
     }
@@ -144,7 +145,9 @@ public class FillerService {
         LocalDate d = LocalDate.now();
         Set<WorkingDay> cal = new HashSet<>();
         for (int i = 0; i < 30; i++) {
-            WorkingDay w = new WorkingDay(d, Availability.FREE);
+            Random r = new Random();
+            int q = r.nextInt(3);
+            WorkingDay w = new WorkingDay(d, q==0?Availability.FREE:(q==1?Availability.LIMITED:Availability.BUSY));
             w.setSitter(s);
             cal.add(w);
             ur.newDay(w);
