@@ -16,23 +16,23 @@ import com.progmatic.petsitterproject.entities.SitterService;
  */
 public class SearchCriteriaDTO {
     private String name;
-    private int postCode;
+    private int postalCode;
     private PlaceOfService placeOfService;
     private PetType petType;
 
     public SearchCriteriaDTO(String name, int postCode, PlaceOfService placeOfService, PetType petType) {
         this.name = name;
-        this.postCode = postCode;
+        this.postalCode = postCode;
         this.placeOfService = placeOfService;
         this.petType = petType;
     }
 
-    public int getPostCode() {
-        return postCode;
+    public int getPostalCode() {
+        return postalCode;
     }
 
-    public void setPostCode(int postCode) {
-        this.postCode = postCode;
+    public void setPostalCode(int postalCode) {
+        this.postalCode = postalCode;
     }
 
     public String getName() {

@@ -91,7 +91,7 @@ public class UserController {
             @RequestParam(value = "name", defaultValue = "") String sitterName,
             @RequestParam(value = "placeOfService", required = false) PlaceOfService placeOfService,
             @RequestParam(value = "petType", required = false) PetType petType,
-            @RequestParam(value = "postCode", defaultValue = "0") int postCode
+            @RequestParam(value = "postalCode", defaultValue = "0") int postCode
     ) {
         SearchCriteriaDTO criteria = new SearchCriteriaDTO(sitterName, postCode, placeOfService, petType);
         List<SitterViewDTO> selectedSitters = us.filterSitters(criteria);

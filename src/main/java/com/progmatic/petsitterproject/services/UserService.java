@@ -350,7 +350,7 @@ public class UserService {
     }
     
     public List<SitterViewDTO> filterSitters(SearchCriteriaDTO criteria){
-        List<Sitter> sitterUsers = sr.searchSitters(criteria.getName(), criteria.getPetType(), criteria.getPlaceOfService(), criteria.getPostCode());
+        List<Sitter> sitterUsers = sr.searchSitters(criteria.getName(), criteria.getPetType(), criteria.getPlaceOfService(), criteria.getPostalCode());
         List<SitterViewDTO> petSitters = new ArrayList<>();
         for (Sitter sitterUser : sitterUsers) {
             SitterViewDTO sitter = DTOConversion.convertToSitterViewDTO(sitterUser.getUser(), sitterUser);

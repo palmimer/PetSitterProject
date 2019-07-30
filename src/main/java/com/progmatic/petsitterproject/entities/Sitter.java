@@ -30,7 +30,7 @@ public class Sitter implements Serializable {
     @OneToMany(mappedBy = "sitter", fetch = FetchType.EAGER)
     private Set<WorkingDay> availabilities;
     private int[] ratings;
-    private double averageRating;
+    
     @OneToOne
     private User user;
 
@@ -40,7 +40,6 @@ public class Sitter implements Serializable {
     public Sitter(String intro, User user) {
         this.intro = intro;
         this.user = user;
-        this.averageRating = calculateAverageRating();
     }
 
     public int getId() {
@@ -120,11 +119,7 @@ public class Sitter implements Serializable {
     }
 
     public double getAverageRating() {
-        return averageRating;
-    }
-
-    public void setAverageRating(double averageRating) {
-        this.averageRating = calculateAverageRating();
+        return calculateAverageRating();
     }
     
     public int getNumberOfRatings(){
