@@ -31,8 +31,8 @@ public class UserRegistrationDTO {
     }
     
     
-    public UserRegistrationDTO(String userName, String email, String password1) {
-        this.username = userName;
+    public UserRegistrationDTO(String username, String email, String password1) {
+        this.username = username;
         this.password = password1;
         this.email = email;
     }

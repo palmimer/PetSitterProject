@@ -24,6 +24,8 @@ public class Owner implements Serializable {
     @OneToMany(cascade = REMOVE, mappedBy = "owner", fetch = FetchType.EAGER)
 //    private List<Pet> pets;
     private Set<Pet> pets;
+    @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER)
+    private Set<SittingWork> petSittings;
     @OneToOne
     private User user;
 
@@ -58,6 +60,14 @@ public class Owner implements Serializable {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Set<SittingWork> getPetSittings() {
+        return petSittings;
+    }
+
+    public void setPetSittings(Set<SittingWork> petSittings) {
+        this.petSittings = petSittings;
     }
     
     public Set<PetDTO> getPetDTOs(){

@@ -81,6 +81,7 @@ public class UserService {
         if (user.getOwner() == null) {
             Owner owner = new Owner();
             owner.setUser(user);
+            owner.setPetSittings(new HashSet<>());
             user.setOwner(owner);
             ur.newOwner(owner);
         }
@@ -118,6 +119,7 @@ public class UserService {
         s.setAddress(createAddress(sd.getCity(), sd.getAddress(), sd.getPostalCode(), s));
         s.setServices(registerNewServiceSet(sd.getServices(), s));
         s.setAvailabilities(newCalendar(s));
+        s.setPetSittings(new HashSet<>());
         user.setSitter(s);
         ur.newSitter(s);
     }

@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
+import static javax.persistence.CascadeType.REMOVE;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -25,10 +26,12 @@ public class Sitter implements Serializable {
     @OneToOne
     private Address address;
     private String intro;
-    @OneToMany(mappedBy = "sitter", fetch = FetchType.EAGER)
+    @OneToMany(cascade = REMOVE, mappedBy = "sitter", fetch = FetchType.EAGER)
     private Set<SitterService> services;
-    @OneToMany(mappedBy = "sitter", fetch = FetchType.EAGER)
+    @OneToMany(cascade = REMOVE, mappedBy = "sitter", fetch = FetchType.EAGER)
     private Set<WorkingDay> availabilities;
+    @OneToMany(mappedBy = "sitter", fetch = FetchType.EAGER)
+    private Set<SittingWork> petSittings;
     @OneToOne
     private User user;
 
@@ -98,5 +101,15 @@ public class Sitter implements Serializable {
     public void setUser(User user) {
         this.user = user;
     }
+
+    public Set<SittingWork> getPetSittings() {
+        return petSittings;
+    }
+
+    public void setPetSittings(Set<SittingWork> works) {
+        this.petSittings = works;
+    }
+    
+    
 
 }
