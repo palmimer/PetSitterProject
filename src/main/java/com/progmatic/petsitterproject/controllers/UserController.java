@@ -91,12 +91,12 @@ public class UserController {
 
     @GetMapping(value = "/sitters/search")
     public List<SitterViewDTO> listSitters(
-            @RequestParam(value = "name", defaultValue = "") String sitterName,
-            @RequestParam(value = "placeOfService", required = false) PlaceOfService placeOfService,
-            @RequestParam(value = "petType", required = false) PetType petType,
-            @RequestParam(value = "postalCode", defaultValue = "0") int postCode
+            @RequestParam(value = "name", defaultValue="") String sitterName,
+            @RequestParam(value = "placeOfService", defaultValue="") String placeOfService,
+            @RequestParam(value = "petType", defaultValue="") String petType,
+            @RequestParam(value = "postCode", defaultValue="") String postCode
     ) {
-        SearchCriteriaDTO criteria = new SearchCriteriaDTO(sitterName, postCode, placeOfService, petType);
+        SearchCriteriaDTO criteria = new SearchCriteriaDTO(sitterName, decipherPostcode(postCode), decipherPlace(placeOfService), decipherPetType(petType));
         List<SitterViewDTO> selectedSitters = us.filterSitters(criteria);
         return selectedSitters;
     }
@@ -201,6 +201,26 @@ public class UserController {
         return imageInByte;
     }
 
+    private PlaceOfService decipherPlace(String place){
+        if(place.isEmpty()){
+            return null;
+        }
+        return PlaceOfService.valueOf(place);
+    }
+    private PetType decipherPetType(String petType){
+        if(petType.isEmpty()){
+            return null;
+        }
+        return PetType.valueOf(petType);
+    }
+    
+    private int decipherPostcode(String code){
+        if(code.isEmpty()){
+            return 0;
+        }
+        return Integer.parseInt(code);
+    }
+    
 //    private SitterViewDTO convertToDTO(User user, Sitter sitter) {
 //        SitterViewDTO response = new SitterViewDTO();
 //        response.setProfilePhoto(sitter.getProfilePhoto());

@@ -7,6 +7,7 @@ package com.progmatic.petsitterproject.repositories;
 
 import com.progmatic.petsitterproject.entities.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import javax.persistence.EntityManager;
@@ -202,6 +203,36 @@ public class UserRepo implements UserDetailsService {
 
     public void newAuthority(Authority a) {
         em.persist(a);
+    }
+    
+    public void newSittingWork(SittingWork work){
+        em.persist(work);
+    }
+    
+    public SittingWork findSittingWork(int id){
+        return em.find(SittingWork.class, id);
+    }
+    
+    public boolean isRequestExpired(int id){
+        return em.createQuery("select w from SittingWork w where w.id = : i")
+                .setParameter("i", id).getResultList().isEmpty();
+    }
+    
+    public List<SittingWork> getAllUnacceptedSittingWorks(){
+        return em.createQuery("select w from SittingWork w where w.agreedOn = false")
+                .getResultList();
+    }
+    
+    public List<SittingWork> findSittingWorksByOwnerAndDate(int ownerId
+            , int sitterId ){
+        return em.createQuery("select w from SittingWork w where w.owner.id = : o"
+                + " and w.sitter.id = : s")
+                .setParameter("o", ownerId).setParameter("s", sitterId).getResultList();
+                
+    }
+    
+    public void deleteSittingWork(SittingWork w){
+        em.remove(findSittingWork(w.getId()));
     }
 
 //    public Sitter findSitterById(int id){

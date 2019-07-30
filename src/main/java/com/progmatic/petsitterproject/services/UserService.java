@@ -80,6 +80,7 @@ public class UserService {
         if (user.getOwner() == null) {
             Owner owner = new Owner();
             owner.setUser(user);
+            owner.setPetSittings(new HashSet<>());
             user.setOwner(owner);
             ur.newOwner(owner);
         }
@@ -117,6 +118,7 @@ public class UserService {
         s.setAddress(createAddress(sd.getCity(), sd.getAddress(), sd.getPostalCode(), s));
         s.setServices(registerNewServiceSet(sd.getServices(), s));
         s.setAvailabilities(newCalendar(s));
+        s.setPetSittings(new HashSet<>());
         user.setSitter(s);
         ur.newSitter(s);
     }
@@ -364,7 +366,7 @@ public class UserService {
         if (ur.userAlreadyExists(userData.getEmail())) {
             throw new AlreadyExistsException("Ilyen e-mail cím már létezik az adatbázisban!");
         }
-        User newUser = new User(userData.getName(), userData.getEmail(), pwd.encode(userData.getPassword()));
+        User newUser = new User(userData.getUsername(), userData.getEmail(), pwd.encode(userData.getPassword()));
         ur.newUser(newUser);
     }
 

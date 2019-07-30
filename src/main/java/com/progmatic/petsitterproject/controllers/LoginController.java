@@ -98,4 +98,17 @@ public class LoginController {
         return "Felhasználó visszaállítva";
     }
     
+    @PostMapping("/requestsitting")
+    public String requestSitting(@RequestBody PetDTO target) throws AlreadyExistsException, MessagingException{
+        es.sittingRequest(target.getId());
+        return "A kérést elküldtük a választott KiVinek!";
+    }
+    
+    @GetMapping("/acceptwork")
+    public String acceptWork(@RequestParam("n") String nr) throws MessagingException, AlreadyExistsException{
+        es.acceptRequest(nr);
+        return "Köszönjük, hogy elvállaltad a munkát!";
+    }
+    
+    
 }

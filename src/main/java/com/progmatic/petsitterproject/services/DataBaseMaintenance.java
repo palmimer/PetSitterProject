@@ -7,6 +7,7 @@ package com.progmatic.petsitterproject.services;
 
 import com.progmatic.petsitterproject.entities.Availability;
 import com.progmatic.petsitterproject.entities.Sitter;
+import com.progmatic.petsitterproject.entities.SittingWork;
 import com.progmatic.petsitterproject.entities.User;
 import com.progmatic.petsitterproject.entities.WorkingDay;
 import com.progmatic.petsitterproject.repositories.UserRepo;
@@ -49,6 +50,7 @@ public class DataBaseMaintenance{
             reference = present;
             updateCalendars(present);
             removeExpiredUsers();
+            removeExpiredRequests();
         }
     }
     
@@ -94,6 +96,18 @@ public class DataBaseMaintenance{
             if(u.getName().contains("Válts jelszót") 
                     && u.getDateOfJoin().isBefore(deadline)){
                 u.getAuthorities().clear();
+            }
+        }
+    }
+    
+    private void removeExpiredRequests(){
+        List<SittingWork> works = ur.getAllUnacceptedSittingWorks();
+        LocalDateTime deadline = LocalDateTime.now().minusHours(48);
+        if (!works.isEmpty()){
+            for (SittingWork work : works) {
+                if(work.getCreationDate().isBefore(deadline)){
+                    ur.deleteSittingWork(work);
+                }
             }
         }
     }

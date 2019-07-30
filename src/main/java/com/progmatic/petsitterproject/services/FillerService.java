@@ -70,6 +70,7 @@ public class FillerService {
             s1.getServices().addAll(newServiceList(PlaceOfService.OWNERS_HOME,PetType.RODENT
                     ,1000, 4500, s1));
             s1.setAvailabilities(newCalendar(s1));
+            s1.setPetSittings(new HashSet<>());
             ur.newSitter(s1);
             
             User u2 = new User("Tank Aranka", "tankari@citromail.com", pwd.encode("password"));
@@ -80,6 +81,7 @@ public class FillerService {
             s2.setServices(newServiceList(PlaceOfService.SITTERS_HOME,PetType.DOG
                     ,900, 7000, s2));
             s2.setAvailabilities(newCalendar(s2));
+            s2.setPetSittings(new HashSet<>());
             ur.newSitter(s2);
             
             User u3 = new User("Feles Elek", "feleselek@hotmail.com", pwd.encode("password"));
@@ -95,6 +97,7 @@ public class FillerService {
                     ,800, 4500, s4));
             s4.getServices().addAll(newServiceList(PlaceOfService.SITTERS_HOME,PetType.RODENT, 900, 0, s4));
             s4.setAvailabilities(newCalendar(s4));
+            s4.setPetSittings(new HashSet<>());
             ur.newSitter(s4);
         }
     }

@@ -8,7 +8,7 @@ public class UserDTO {
     @NotNull
     private int userId;
     @NotNull
-    private String username;
+    private String userName;
     @NotNull
     private String email;
     private OwnerDTO ownerData;
@@ -16,7 +16,7 @@ public class UserDTO {
 
     public UserDTO(User user) {
         this.userId = user.getId();
-        this.username = user.getName();
+        this.userName = user.getName();
         this.email = user.getEmail();
         // mi van, ha null?
 //        this.ownerData = new OwnerDTO(user.getOwner());
@@ -32,7 +32,7 @@ public class UserDTO {
     }
 
     public String getUsername() {
-        return username;
+        return userName;
     }
 
     public String getEmail() {
@@ -40,7 +40,7 @@ public class UserDTO {
     }
 
     public void setUsername(String username) {
-        this.username = username;
+        this.userName = username;
     }
 
     public void setEmail(String email) {
