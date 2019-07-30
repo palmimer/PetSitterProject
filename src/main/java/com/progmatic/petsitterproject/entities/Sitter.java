@@ -32,7 +32,6 @@ public class Sitter implements Serializable {
     private Set<WorkingDay> availabilities;
     @OneToMany(mappedBy = "sitter", fetch = FetchType.EAGER)
     private Set<SittingWork> petSittings;
-    private Set<WorkingDay> availabilities;
     private int[] ratings;
     
     @OneToOne
