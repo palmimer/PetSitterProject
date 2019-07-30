@@ -5,12 +5,10 @@
  */
 package com.progmatic.petsitterproject.controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.progmatic.petsitterproject.dtos.ProfileEditDTO;
 import com.progmatic.petsitterproject.dtos.RegistrationDTO;
 import com.progmatic.petsitterproject.dtos.SearchCriteriaDTO;
 import com.progmatic.petsitterproject.dtos.SitterViewDTO;
-import com.progmatic.petsitterproject.dtos.UserDTO;
 import com.progmatic.petsitterproject.entities.ImageModel;
 import com.progmatic.petsitterproject.entities.PetType;
 import com.progmatic.petsitterproject.entities.Sitter;
@@ -19,11 +17,17 @@ import com.progmatic.petsitterproject.entities.PlaceOfService;
 import com.progmatic.petsitterproject.services.DTOConversion;
 import com.progmatic.petsitterproject.services.EmailService;
 import com.progmatic.petsitterproject.services.UserService;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import javax.imageio.ImageIO;
 import javax.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -60,10 +64,10 @@ public class UserController {
         return response;
         //return us.getUserDTO();
     }
-    
+
     @PostMapping("/newregistration")
-    public String registerNewUser(@RequestBody RegistrationDTO registration) throws AlreadyExistsException{
-        
+    public String registerNewUser(@RequestBody RegistrationDTO registration) throws AlreadyExistsException {
+
         us.createUser(registration.getUserData());
         System.out.println("user regisztráció sikerült");
         if (registration.getOwnerData() != null) {
@@ -82,7 +86,6 @@ public class UserController {
         }
         return "Sikeres regisztráció! A belépéshez kérjük aktiváld fiókodat a címedre érkező üzenettel!";
     }
-     
 
     @GetMapping(value = "/sitters/search")
     public List<SitterViewDTO> listSitters(
@@ -99,11 +102,11 @@ public class UserController {
     @PostMapping("/modifyprofile")
     public Map<String, Object> editProfile(@RequestBody ProfileEditDTO editedProfile) {
         us.editProfile(editedProfile);
-        
+
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("message", "A profil módosult!");
         responseMap.put("user", us.getUserDTO());
-        
+
         return responseMap;
     }
 
@@ -119,7 +122,11 @@ public class UserController {
 //    }
     @PostMapping(value = "/user/{userId}/image")
     public String uploadImage(@PathVariable("userId") int userId, @RequestParam("image") MultipartFile image) throws IOException {
-        ImageModel pic = new ImageModel(userId, image.getName(), image.getContentType(), image.getBytes());
+        //creates a cropped BufferedImage from the byte[]
+        BufferedImage bufferedImage = cropImage(image.getBytes());
+        byte[] imageInByte = convertsBufferedImageToByteArray(bufferedImage);
+        //creates the ImageModel
+        ImageModel pic = new ImageModel(userId, image.getName(), image.getContentType(), imageInByte);
         us.saveUserImage(userId, pic);
         return "Image upload successful!";
     }
@@ -134,7 +141,58 @@ public class UserController {
                         .getProfilePhoto()
                         .getPic());
     }
-    
+
+    public BufferedImage cropImage(byte[] image) throws IOException {
+
+        final int targetSize = 500;
+        InputStream in = new ByteArrayInputStream(image);
+        BufferedImage originalImage = ImageIO.read(in);
+        int height = originalImage.getHeight();
+        int width = originalImage.getWidth();
+
+        int newWidth;
+        int newHeight;
+        int cropStartPosX = 0;
+        int cropStartPosY = 0;
+
+        if (width > height) {   //landscape rectangle
+            newWidth = (int) (targetSize / (double) height * width);
+            newHeight = targetSize;
+            cropStartPosX = newWidth / 2 - targetSize / 2;
+            cropStartPosY = 0;
+
+        } else if (width == height) {   //squere
+            newWidth = targetSize;
+            newHeight = targetSize;
+
+        } else {   //portrait rectangle
+            newWidth = targetSize;
+            newHeight = (int) (targetSize / (double) width * height);
+            cropStartPosX = 0;
+            cropStartPosY = newHeight / 2 - targetSize / 2;
+        }
+
+        Image scaledInstance = originalImage.getScaledInstance(newWidth, newHeight, Image.SCALE_DEFAULT);
+        BufferedImage scaledImage = new BufferedImage(newWidth, newHeight, BufferedImage.SCALE_DEFAULT);
+        Graphics2D g2d = scaledImage.createGraphics();
+        g2d.drawImage(scaledInstance, 0, 0, null);
+        g2d.dispose();
+        BufferedImage croppedImage = scaledImage.getSubimage(cropStartPosX, cropStartPosY, targetSize, targetSize);
+        return croppedImage;
+    }
+
+    public byte[] convertsBufferedImageToByteArray(BufferedImage bufferedImage) throws IOException {
+
+        byte[] imageInByte;
+        try (
+                ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            ImageIO.write(bufferedImage, "jpg", baos);
+            baos.flush();
+            imageInByte = baos.toByteArray();
+        }
+        return imageInByte;
+    }
+
 //    private SitterViewDTO convertToDTO(User user, Sitter sitter) {
 //        SitterViewDTO response = new SitterViewDTO();
 //        response.setProfilePhoto(sitter.getProfilePhoto());
