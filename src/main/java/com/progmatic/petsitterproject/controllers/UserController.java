@@ -7,6 +7,8 @@ package com.progmatic.petsitterproject.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.progmatic.petsitterproject.dtos.ProfileEditDTO;
+import com.progmatic.petsitterproject.dtos.RatingIncomingDTO;
+import com.progmatic.petsitterproject.dtos.RatingResponseDTO;
 import com.progmatic.petsitterproject.dtos.RegistrationDTO;
 import com.progmatic.petsitterproject.dtos.SearchCriteriaDTO;
 import com.progmatic.petsitterproject.dtos.SitterViewDTO;
@@ -135,21 +137,9 @@ public class UserController {
                         .getPic());
     }
     
-//    private SitterViewDTO convertToDTO(User user, Sitter sitter) {
-//        SitterViewDTO response = new SitterViewDTO();
-//        response.setProfilePhoto(sitter.getProfilePhoto());
-//        response.setUserName(user.getName());
-//        response.setCity(sitter.getAddress().getCity());
-//        response.setAddress(sitter.getAddress().getAddress());
-//        response.setPostalCode(sitter.getAddress().getPostalCode());
-//        response.setIntro(sitter.getIntro());
-//        response.setPetTypes(sitter.getPetTypes());
-//        response.setServices(sitter.getServices());
-//        response.setAvailabilities(sitter.getAvailabilities());
-//        
-//        return response;
-//    }
-//    
-//        
-//    }
+    @PostMapping(value = "/sitter/rating")
+    public RatingResponseDTO rateSitter(@RequestBody RatingIncomingDTO newRating){
+        us.addSitterRating(newRating);
+        return us.sendBackAverageRating(newRating.getUserId());
+    }
 }

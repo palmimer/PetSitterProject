@@ -22,6 +22,8 @@ public class SitterViewDTO {
     //private List<PetType> petTypes;
     private Set<SitterServiceDTO> services;
     private List<WorkDayViewDTO> availabilities;
+    private double averageRating;
+    private int numberOfRatings;
     private int id;
 
     public SitterViewDTO() {
@@ -90,4 +92,21 @@ public class SitterViewDTO {
     public void setId(int id) {
         this.id = id;
     }
+
+    public double getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(double averageRating) {
+        this.averageRating = averageRating;
+    }
+
+    public int getNumberOfRatings() {
+        return numberOfRatings;
+    }
+
+    public void setNumberOfRatings(int numberOfRatings) {
+        this.numberOfRatings = numberOfRatings;
+    }
+    
 }
