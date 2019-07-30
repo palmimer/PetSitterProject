@@ -127,7 +127,9 @@ public class EmailService {
         }
         User u = (User)ur.loadUserByUsername(email);
         String ersatz = String.valueOf(u.getDateOfJoin().hashCode());
-        ur.findUser(u.getId()).setPassword(pwd.encode(ersatz));
+        u.setPassword(pwd.encode(ersatz));
+        u.setName("Válts jelszót "+u.getName()+"!");
+        u.resetDateOfJoin();
         //sendSimplePasswordReset(email, ersatz);
         sendPasswordReset(email, ersatz, u.getName());
     }

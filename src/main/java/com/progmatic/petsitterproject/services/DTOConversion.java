@@ -54,16 +54,6 @@ public class DTOConversion {
         return newSitterData;
     }
     
-    public static TreeMap<LocalDate, Availability> convertCalendarToTreeMap(Set<WorkingDay> list){
-        TreeMap<LocalDate, Availability> calendarView = new TreeMap<>();
-        for (WorkingDay workingDay : list) {
-            calendarView.put(workingDay.getwDay(), workingDay.getAvailability());
-        }
-//      /Comparator<WorkDayViewDTO> c = ((w1, w2) -> w1.getDate().compareTo(w2.getDate()));
-//        calendarView.sort((w1, w2) -> w1.getDate().compareTo(w2.getDate()));
-        return calendarView;
-    }
-    
     public static List<WorkDayViewDTO> convertCalendar(Set<WorkingDay> list){
         
         List<WorkDayViewDTO> calendarView = new ArrayList<>();
@@ -110,6 +100,12 @@ public class DTOConversion {
             petsInMap.put(pet.getName(), pet.getPetType());
         }
         return petsInMap;
+    }
+    
+    public static AccountViewDTO convertToAccountViewDTO(){
+        AccountViewDTO view = new AccountViewDTO();
+        
+        return view;
     }
 
 

@@ -10,6 +10,7 @@ import com.progmatic.petsitterproject.dtos.ProfileEditDTO;
 import com.progmatic.petsitterproject.dtos.RegistrationDTO;
 import com.progmatic.petsitterproject.dtos.SearchCriteriaDTO;
 import com.progmatic.petsitterproject.dtos.SitterViewDTO;
+import com.progmatic.petsitterproject.dtos.UserDTO;
 import com.progmatic.petsitterproject.entities.ImageModel;
 import com.progmatic.petsitterproject.entities.PetType;
 import com.progmatic.petsitterproject.entities.Sitter;
@@ -57,6 +58,7 @@ public class UserController {
         Sitter sitter = user.getSitter();
         SitterViewDTO response = DTOConversion.convertToSitterViewDTO(user, sitter);
         return response;
+        //return us.getUserDTO();
     }
     
     @PostMapping("/newregistration")
@@ -132,6 +134,7 @@ public class UserController {
                         .getProfilePhoto()
                         .getPic());
     }
+    
 //    private SitterViewDTO convertToDTO(User user, Sitter sitter) {
 //        SitterViewDTO response = new SitterViewDTO();
 //        response.setProfilePhoto(sitter.getProfilePhoto());

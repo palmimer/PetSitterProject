@@ -32,17 +32,17 @@ public class UserService {
 
     private UserRepo ur;
     private PasswordEncoder pwd;
-    private CalendarUpdater cu;
+    private DataBaseMaintenance dm;
     private ImageRepository imageRepository;
     private SearchRepo sr;
     EmailService es;
     
     @Autowired
-    public UserService(UserRepo ur, PasswordEncoder pwd, CalendarUpdater cu
+    public UserService(UserRepo ur, PasswordEncoder pwd, DataBaseMaintenance dm
             , ImageRepository imageRepository, SearchRepo sr, EmailService es) {
         this.ur = ur;
         this.pwd = pwd;
-        this.cu = cu;
+        this.dm = dm;
         this.imageRepository = imageRepository;
         this.sr = sr;
         this.es = es;
@@ -172,9 +172,15 @@ public class UserService {
     @Transactional
     public void editProfile(ProfileEditDTO editedProfile){
         User u = (User) ur.findUser(getCurrentUser().getId());
-        modifyBasicUserData(editedProfile);
         // ha a usernek eddig volt owner objektuma, de a beérkezett adatokban most már nincs owner adat
-        if(ur.isOwner(u.getId()) && editedProfile.getOwnerData() == null){
+        if(u.getName().contains("Válts jelszót") 
+                && pwd.matches(u.getPassword(), editedProfile.getPassword())){
+            u.setName("Válts jelszót" + editedProfile.getUsername()+"!");
+        } else {
+            modifyBasicUserData(editedProfile);
+        }
+        if (ur.isOwner(u.getId()) && (editedProfile.getOwnerData() == null 
+                || editedProfile.getOwnerData().getPets().isEmpty())) {
             ur.deleteOwner(u.getOwner());
             // volt owner és érkezik adat az Owner objektumban
         } else if(ur.isOwner(u.getId()) && editedProfile.getOwnerData() != null){
@@ -204,8 +210,7 @@ public class UserService {
         User u = (User) ur.findUser(getCurrentUser().getId());
         u.setName(editedProfile.getUsername());
         u.setPassword(pwd.encode(editedProfile.getPassword()));
-        // ha az e-mailcíme nem a régi
-        u.setEmail(editedProfile.getEmail());
+        
     }
     
     @Transactional
@@ -226,8 +231,8 @@ public class UserService {
         }
         // beállítjuk az új service-eket a sitternek
         s.setServices(editedServices);
-        
-        // TODO itt kéne a naptármódosítás még
+        // beállítja a változott elérhetőségeket
+        editCalendar(newSitterData.getId(), newSitterData.getAvailabilities());
     }
     
     @Transactional
@@ -306,6 +311,18 @@ public class UserService {
     private Set<PetDTO> findOldPetsAndConvertToDTO(int userId){
         Set<Pet> oldPets = ur.findUser(userId).getOwner().getPets();
         return DTOConversion.convertPetsToPetDTOs(oldPets);
+    }
+    
+    @Transactional
+    private void editCalendar(int id, List<WorkDayViewDTO> list){
+        Set<WorkingDay> current = ur.findUser(id).getSitter().getAvailabilities();
+        for (WorkingDay wd : current) {
+            for (WorkDayViewDTO dto : list) {
+                if(wd.getId() == dto.getId()){
+                    ur.setDayAvail(dto.getId(), dto.getAvailability());
+                }
+            }
+        }
     }
 
     @Transactional

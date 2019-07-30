@@ -25,14 +25,16 @@ import org.springframework.transaction.annotation.Transactional;
  * @author imaginifer
  */
 @Service
-public class CalendarUpdater{
+public class DataBaseMaintenance{
     
     private LocalDate reference;
     private UserRepo ur;
+    private FillerService fs;
     
     @Autowired
-    public CalendarUpdater(UserRepo ur){
+    public DataBaseMaintenance(UserRepo ur, FillerService fs){
         this.ur = ur;
+        this.fs = fs;
         reference = LocalDate.of(1970, 1, 1);
     }
     
@@ -40,6 +42,9 @@ public class CalendarUpdater{
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public void runTask() {
         LocalDate present = LocalDate.now();
+        if(reference.getYear() == 1970){
+            fs.fixDatabase();
+        }
         if(reference.isBefore(present)){
             reference = present;
             updateCalendars(present);
@@ -85,6 +90,10 @@ public class CalendarUpdater{
                     && u.getDateOfJoin().isBefore(deadline)){
                 System.out.println("Lejárt: "+u.getName());
                 ur.deleteUser(u);
+            }
+            if(u.getName().contains("Válts jelszót") 
+                    && u.getDateOfJoin().isBefore(deadline)){
+                u.getAuthorities().clear();
             }
         }
     }

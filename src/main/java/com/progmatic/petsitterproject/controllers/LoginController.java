@@ -5,8 +5,10 @@
  */
 package com.progmatic.petsitterproject.controllers;
 
-import com.progmatic.petsitterproject.dtos.ProfileEditDTO;
+import com.progmatic.petsitterproject.dtos.PetDTO;
+import com.progmatic.petsitterproject.dtos.ResetDTO;
 import com.progmatic.petsitterproject.dtos.UserDTO;
+import com.progmatic.petsitterproject.services.AdminService;
 import com.progmatic.petsitterproject.services.EmailService;
 import com.progmatic.petsitterproject.services.FillerService;
 import com.progmatic.petsitterproject.services.UserService;
@@ -26,16 +28,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class LoginController {
     
-    private UserService userService;
-    private FillerService fillerService;
-    private EmailService emailService;
+    private UserService us;
+    private FillerService fs;
+    private EmailService es;
+    private AdminService as;
     
     @Autowired
-    public LoginController(UserService userService, FillerService fillerService, EmailService emailService) {
+    public LoginController(UserService userService, FillerService fillerService
+            , EmailService emailService, AdminService adminService) {
         
-        this.userService = userService;
-        this.fillerService = fillerService;
-        this.emailService = emailService;
+        this.us = userService;
+        this.fs = fillerService;
+        this.es = emailService;
+        this.as = adminService;
     }
 
     
@@ -44,41 +49,53 @@ public class LoginController {
     
     @PostMapping("/checkuser")
     public UserDTO checkIfUserIsLoggedIn() throws NoUserLoggedInException{
-        if (userService.getCurrentUser() == null) {
+        if (us.getCurrentUser() == null) {
             throw new NoUserLoggedInException("Nincs bejelentkezett felhasználó!");
         } else {
-            return userService.getUserDTO();
+            return us.getUserDTO();
         }
     }
         
     @GetMapping("/verify")
     public String activateUser(@RequestParam("ver") String valid) throws AlreadyExistsException{
-        emailService.activateUser(valid);
+        es.activateUser(valid);
         return "Sikeres hitelesítés!";
     }
     
     @GetMapping("/suspendaccount")
     public String removeSelf(){
-        userService.suspendAccount();
+        us.suspendAccount();
         return "Fiókodat felfüggesztettük. Ha meggondolod magad, 48 órán belül visszaállíthatod!";
     }
     
     @PostMapping("/restoreaccount")
-    public String restoreSelf(@RequestBody ProfileEditDTO req) throws AlreadyExistsException, MessagingException{
-        emailService.sendReactivator(req.getEmail());
+    public String restoreSelf(@RequestBody ResetDTO req) throws AlreadyExistsException, MessagingException{
+        es.sendReactivator(req.getEmail());
         return "Fiókodat visszaállítottuk!";
     }
     
     @GetMapping("/filler")
     public String fillers(){
-        fillerService.fixDatabase();
+        fs.fixDatabase();
         return "Megtöltve!";
     }
     
     @PostMapping("/resetpassword")
-    public String resetPassword(@RequestBody ProfileEditDTO req) throws AlreadyExistsException, MessagingException{
-        emailService.passwordReset(req.getEmail());
+    public String resetPassword(@RequestBody ResetDTO req) throws AlreadyExistsException, MessagingException{
+        es.passwordReset(req.getEmail());
         return "A pótjelszót elküldtük a megadott címre!";
+    }
+    
+    @PostMapping("/suspenduser")
+    public String suspendUser(@RequestBody PetDTO target){
+        as.suspendUser(target.getId());
+        return "Felhasználó felfüggesztve";
+    }
+    
+    @PostMapping("/restoreuser")
+    public String restoreUser(@RequestBody PetDTO target){
+        as.restoreUser(target.getId());
+        return "Felhasználó visszaállítva";
     }
     
 }
