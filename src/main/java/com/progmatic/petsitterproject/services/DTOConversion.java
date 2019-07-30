@@ -27,7 +27,8 @@ public class DTOConversion {
         response.setServices(convertSetToSitterServiceDTO(sitter.getServices()));
         response.setAvailabilities(convertCalendar(sitter.getAvailabilities()));
         response.setId(user.getId());
-
+        response.setAverageRating(sitter.getAverageRating());
+        response.setNumberOfRatings(sitter.getNumberOfRatings());
         return response;
     }
 

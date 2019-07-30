@@ -12,11 +12,11 @@ import java.util.List;
 import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -29,6 +29,7 @@ public class UserRepo implements UserDetailsService {
     EntityManager em;
 
     @Override
+    @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 //        return em.createQuery("select u from User u where u.name =:nm", User.class)
 //                .setParameter("nm", username).getSingleResult();
@@ -54,7 +55,7 @@ public class UserRepo implements UserDetailsService {
     public void newPet(Pet p) {
         em.persist(p);
     }
-    
+
     @Transactional
     public void newPets(Set<Pet> pets) {
         for (Pet pet : pets) {
@@ -70,7 +71,7 @@ public class UserRepo implements UserDetailsService {
     public void newOwner(Owner o) {
         em.persist(o);
     }
-    
+
     public boolean isSitter(int userId) {
         return findUser(userId).getSitter() != null;
     }
@@ -113,7 +114,7 @@ public class UserRepo implements UserDetailsService {
     public void deletePet(Pet p) {
         em.remove(findPet(p.getId()));
     }
-    
+
     public void deleteSitterService(SitterService ss) {
         em.remove(findSitterService(ss.getId()));
     }
@@ -137,7 +138,7 @@ public class UserRepo implements UserDetailsService {
     public Pet findPet(int id) {
         return em.find(Pet.class, id);
     }
-    
+
     public Pet findPet(String name, PetType petType) {
         return em.createQuery("SELECT p FROM Pet p WHERE p.name = :petName AND p.petType = :petType", Pet.class)
                 .setParameter("petName", name)
@@ -148,7 +149,7 @@ public class UserRepo implements UserDetailsService {
     public Owner findOwner(int id) {
         return em.find(Owner.class, id);
     }
-    
+
     public Owner findOwnerByUserId(int userId) {
         User user = findUser(userId);
         return user.getOwner();

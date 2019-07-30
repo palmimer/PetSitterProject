@@ -16,19 +16,18 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
-import javax.mail.MessagingException;
-import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
  * @author progmatic
  */
 @Service
+@Transactional(readOnly = true)
 public class UserService {
 
     private UserRepo ur;
@@ -175,13 +174,14 @@ public class UserService {
     @Transactional
     public void editProfile(ProfileEditDTO editedProfile){
         User u = (User) ur.findUser(getCurrentUser().getId());
-        // ha a usernek eddig volt owner objektuma, de a beérkezett adatokban most már nincs owner adat
+        
         if(u.getName().contains("Válts jelszót") 
                 && pwd.matches(u.getPassword(), editedProfile.getPassword())){
             u.setName("Válts jelszót" + editedProfile.getUsername()+"!");
         } else {
             modifyBasicUserData(editedProfile);
         }
+        // ha a usernek eddig volt owner objektuma, de a beérkezett adatokban most már nincs owner adat
         if (ur.isOwner(u.getId()) && (editedProfile.getOwnerData() == null 
                 || editedProfile.getOwnerData().getPets().isEmpty())) {
             ur.deleteOwner(u.getOwner());
@@ -189,9 +189,10 @@ public class UserService {
         } else if(ur.isOwner(u.getId()) && editedProfile.getOwnerData() != null){
             // elküldjük az új állatlistát és a userId-t szerkesztésre
             editPets(editedProfile.getOwnerData().getPets(), u.getId());
-        } else {
+            // ha a usernek nem volt owner-e és most van adat
+        } else if(!ur.isOwner(u.getId()) && editedProfile.getOwnerData() != null){
             registerNewOwner(u.getEmail(), editedProfile.getOwnerData().getPets());
-        }
+        } 
         // ha a usernek eddig volt sitter objektuma, de a beérkezett adatokban most már nincs sitter adat
         if(ur.isSitter(u.getId()) && editedProfile.getSitterData() == null){
             ur.deleteSitter(u.getSitter());
@@ -199,20 +200,27 @@ public class UserService {
         } else if (!ur.isSitter(u.getId()) && editedProfile.getSitterData() != null) {
             SitterRegistrationDTO sitterData = DTOConversion.convertToSitterRegistrationDTO(editedProfile.getSitterData());
             registerNewSitter(u.getEmail(), sitterData);
-        // ha volt sittere és most is van sitter adat, 
-        } else {
-            // elővesszük a régi sitterét
+        // ha volt sittere és most is van sitter adat,
+        } else if(ur.isSitter(u.getId()) && editedProfile.getSitterData() != null){
+            // elővesszük a régi sitterét, és módosítjuk
             Sitter s = ur.findSitter(u.getSitter().getId());
             modifySitterData(s, editedProfile.getSitterData());
         }
+        // ha volt sittere és most sincs sitter adat, akkor nem csinál a sitterrel semmit.
+        
         
     }
     
     @Transactional
     private void modifyBasicUserData(ProfileEditDTO editedProfile){
         User u = (User) ur.findUser(getCurrentUser().getId());
-        u.setName(editedProfile.getUsername());
-        u.setPassword(pwd.encode(editedProfile.getPassword()));
+        if (editedProfile.getUsername() != null) {
+            u.setName(editedProfile.getUsername());
+        }
+        if (editedProfile.getPassword() != null) {
+            u.setPassword(pwd.encode(editedProfile.getPassword()));
+        }
+        
         
     }
     
@@ -344,7 +352,7 @@ public class UserService {
     }
     
     public List<SitterViewDTO> filterSitters(SearchCriteriaDTO criteria){
-        List<Sitter> sitterUsers = sr.searchSitters(criteria.getName(), criteria.getPetType(), criteria.getPlaceOfService(), criteria.getPostCode());
+        List<Sitter> sitterUsers = sr.searchSitters(criteria.getName(), criteria.getPetType(), criteria.getPlaceOfService(), criteria.getPostalCode());
         List<SitterViewDTO> petSitters = new ArrayList<>();
         for (Sitter sitterUser : sitterUsers) {
             SitterViewDTO sitter = DTOConversion.convertToSitterViewDTO(sitterUser.getUser(), sitterUser);
@@ -358,7 +366,7 @@ public class UserService {
         if (ur.userAlreadyExists(userData.getEmail())) {
             throw new AlreadyExistsException("Ilyen e-mail cím már létezik az adatbázisban!");
         }
-        User newUser = new User(userData.getUsername(), userData.getEmail(), pwd.encode(userData.getPassword()));
+        User newUser = new User(userData.getName(), userData.getEmail(), pwd.encode(userData.getPassword()));
         ur.newUser(newUser);
     }
 
@@ -387,5 +395,19 @@ public class UserService {
     public int findSitterIdByUserId(int userId) {
         User user = ur.findUser(userId);
         return user.getSitter().getId();
+    }
+    
+    @Transactional
+    public void addSitterRating(RatingIncomingDTO newRating){
+        User user = ur.findUser(newRating.getUserId());
+        Sitter sitter = ur.findSitter(user.getSitter().getId());
+        sitter.setRating(newRating.getNewRating());
+    }
+    
+    @Transactional
+    public RatingResponseDTO sendBackAverageRating(int userId){
+        User user = ur.findUser(userId);
+        Sitter sitter = ur.findSitter(user.getSitter().getId());
+        return new RatingResponseDTO(userId, sitter.getAverageRating(), sitter.getNumberOfRatings());
     }
 }
