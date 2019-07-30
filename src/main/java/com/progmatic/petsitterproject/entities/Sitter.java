@@ -29,6 +29,8 @@ public class Sitter implements Serializable {
     private Set<SitterService> services;
     @OneToMany(mappedBy = "sitter", fetch = FetchType.EAGER)
     private Set<WorkingDay> availabilities;
+    private int[] ratings;
+    private double averageRating;
     @OneToOne
     private User user;
 
@@ -38,6 +40,7 @@ public class Sitter implements Serializable {
     public Sitter(String intro, User user) {
         this.intro = intro;
         this.user = user;
+        this.averageRating = calculateAverageRating();
     }
 
     public int getId() {
@@ -98,5 +101,46 @@ public class Sitter implements Serializable {
     public void setUser(User user) {
         this.user = user;
     }
+
+    public int[] getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(int[] ratings) {
+        this.ratings = ratings;
+    }
+    
+    public void setRating(int rating){
+        int[] newRatings = new int[this.ratings.length + 1];
+        for (int i = 0; i < this.ratings.length; i++) {
+            newRatings[i] = this.ratings[i];
+        }
+        newRatings[newRatings.length - 1] = rating;
+        this.ratings = newRatings;
+    }
+
+    public double getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(double averageRating) {
+        this.averageRating = calculateAverageRating();
+    }
+    
+    public int getNumberOfRatings(){
+        return this.ratings.length;
+    }
+
+    private double calculateAverageRating() {
+        int average = 0;
+        int sum = 0;
+        if (this.ratings.length != 0) {
+            for (int i = 0; i < this.ratings.length; i++) {
+                sum += ratings[i];
+            }
+        }
+        return (double) sum / ratings.length;
+    }
+    
 
 }

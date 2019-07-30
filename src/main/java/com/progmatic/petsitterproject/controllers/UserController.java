@@ -6,6 +6,8 @@
 package com.progmatic.petsitterproject.controllers;
 
 import com.progmatic.petsitterproject.dtos.ProfileEditDTO;
+import com.progmatic.petsitterproject.dtos.RatingIncomingDTO;
+import com.progmatic.petsitterproject.dtos.RatingResponseDTO;
 import com.progmatic.petsitterproject.dtos.RegistrationDTO;
 import com.progmatic.petsitterproject.dtos.SearchCriteriaDTO;
 import com.progmatic.petsitterproject.dtos.SitterViewDTO;
@@ -140,6 +142,12 @@ public class UserController {
                         .getUser(userId)
                         .getProfilePhoto()
                         .getPic());
+    }
+    
+    @PostMapping(value = "/sitter/rating")
+    public RatingResponseDTO rateSitter(@RequestBody RatingIncomingDTO newRating){
+        us.addSitterRating(newRating);
+        return us.sendBackAverageRating(newRating.getUserId());
     }
 
     public BufferedImage cropImage(byte[] image) throws IOException {
