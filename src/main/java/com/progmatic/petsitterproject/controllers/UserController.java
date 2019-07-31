@@ -92,11 +92,11 @@ public class UserController {
     @GetMapping(value = "/sitters/search")
     public List<SitterViewDTO> listSitters(
             @RequestParam(value = "name", defaultValue="") String sitterName,
-            @RequestParam(value = "placeOfService", defaultValue="") String placeOfService,
-            @RequestParam(value = "petType", defaultValue="") String petType,
-            @RequestParam(value = "postCode", defaultValue="") String postCode
+            @RequestParam(value = "placeOfService", required = false) PlaceOfService placeOfService,
+            @RequestParam(value = "petType", required = false) PetType petType,
+            @RequestParam(value = "postalCode", defaultValue="0") int postCode
     ) {
-        SearchCriteriaDTO criteria = new SearchCriteriaDTO(sitterName, decipherPostcode(postCode), decipherPlace(placeOfService), decipherPetType(petType));
+        SearchCriteriaDTO criteria = new SearchCriteriaDTO(sitterName, postCode, placeOfService, petType);
         List<SitterViewDTO> selectedSitters = us.filterSitters(criteria);
         return selectedSitters;
     }
