@@ -145,7 +145,7 @@ public class Sitter implements Serializable {
 
     private double calculateAverageRating() {
         int sum = 0;
-        if (this.ratings != null || this.ratings.length != 0) {
+        if (this.ratings.length != 0) {
             for (int i = 0; i < this.ratings.length; i++) {
                 sum += ratings[i];
             }
