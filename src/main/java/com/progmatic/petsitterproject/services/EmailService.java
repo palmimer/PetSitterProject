@@ -236,7 +236,7 @@ public class EmailService {
     private String makeActivatorMsg(String name, String activator){
         String ms = "<p>Kedves "+name+"!</p><p>Szeretettel üdvözlünk a "
                 + "kisállatvigyázó közösségben! Fiókod hitelesítéséhez "
-                + "<a href=\"http://localhost:8080/verify?ver="+activator
+                + "<a href=\"https://petsitter-backend.herokuapp.com/verify?ver="+activator
                 +"\">kattints ide!</a></p>";
         return ms;        
     }
@@ -256,7 +256,7 @@ public class EmailService {
                 +") megkért, hogy "+date+" időpontban"
                 +" vigyázz kedvencére vagy kedvenceire, adatbázisunk szerint:</p>"
                 +"<p style=\"margin-top:15px;margin-left:40px;margin-bottom:15px\">"
-                +pets+"</p><p><a href=\"http://localhost:8080/acceptwork?n="+workId
+                +pets+"</p><p><a href=\"https://petsitter-backend.herokuapp.com/acceptwork?n="+workId
                 +"\">Kattints ide a kérés elfogadásához!</a></p>"
                 + "<p>Elfogadni az üzenet érkezésétől számítva 48 órán belül "
                 + "van lehetőséged.<br>További részletek tisztázására írj vissza "

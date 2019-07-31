@@ -31,7 +31,7 @@ public class UserDTO {
         this.userId = userId;
     }
 
-    public String getUsername() {
+    public String getUserName() {
         return userName;
     }
 
@@ -39,7 +39,7 @@ public class UserDTO {
         return email;
     }
 
-    public void setUsername(String username) {
+    public void setUserName(String username) {
         this.userName = username;
     }
 
