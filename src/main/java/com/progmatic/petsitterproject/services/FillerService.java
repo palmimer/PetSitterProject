@@ -101,10 +101,7 @@ public class FillerService {
             Pet p2 = new Pet(PetType.DOG, "Vahúr");
             p2.setOwner(o1);
             ur.newPet(p2);
-            Set<Pet> pets = new HashSet<>();
-            pets.add(p2);
-            pets.add(p1);
-            o1.setPets(pets);
+            
             
             User u4 = new User("Citad Ella", "citad.ella@yandex.com", pwd.encode("password"));
             u4.setAuthorities(ur.findAuthority("ROLE_USER"));

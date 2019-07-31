@@ -77,11 +77,11 @@ public class SitterViewDTO {
         this.availabilities = availabilities;
     }
 
-    public String getUsername() {
+    public String getUserName() {
         return userName;
     }
 
-    public void setUsername(String userName) {
+    public void setUserName(String userName) {
         this.userName = userName;
     }
 
