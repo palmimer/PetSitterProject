@@ -136,7 +136,11 @@ public class Sitter implements Serializable {
     }
     
     public int getNumberOfRatings(){
-        return 0;
+        if (ratings.length != 0) {
+            return ratings.length;
+        } else {
+            return 0;
+        }
     }
 
     private double calculateAverageRating() {
