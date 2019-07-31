@@ -32,7 +32,7 @@ public class Sitter implements Serializable {
     private Set<WorkingDay> availabilities;
     @OneToMany(mappedBy = "sitter", fetch = FetchType.EAGER)
     private Set<SittingWork> petSittings;
-    private int[] ratings;
+    private int[] ratings = new int[0];
     
     @OneToOne
     private User user;
@@ -43,7 +43,6 @@ public class Sitter implements Serializable {
     public Sitter(String intro, User user) {
         this.intro = intro;
         this.user = user;
-        this.ratings = new int[0];
     }
 
     public int getId() {
@@ -137,18 +136,18 @@ public class Sitter implements Serializable {
     }
     
     public int getNumberOfRatings(){
-        return this.ratings.length;
+        return 0;
     }
 
     private double calculateAverageRating() {
-        int average = 0;
         int sum = 0;
-        if (this.ratings.length != 0) {
+        if (this.ratings != null || this.ratings.length != 0) {
             for (int i = 0; i < this.ratings.length; i++) {
                 sum += ratings[i];
             }
+            return (double) sum / ratings.length;
         }
-        return (double) sum / ratings.length;
+        return 0;
     }
     
 
