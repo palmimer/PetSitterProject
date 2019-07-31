@@ -112,29 +112,24 @@ public class UserController {
         return responseMap;
     }
 
-//    @PostMapping("/removepet")
-//    public String removePet(@RequestBody PetDTO pet){
-//        us.removePet(pet);
-//        return "Az állatot eltávolítottuk a nyilvántartásból.";
-//    }
-//    @GetMapping(value = "/sitter/image/{sitterId}")
-//    public ResponseEntity<byte[]> testImage(@PathVariable("sitterId") int sitterId){
-////        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(us.getUser(sitterId).getSitter().getProfilePhoto().getPic());
-//        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(us.image(1).getPic());
-//    }
     @PostMapping(value = "/user/{userId}/image")
-    public String uploadImage(@PathVariable("userId") int userId, @RequestParam("image") MultipartFile image) throws IOException {
+    public Map<String, Object> uploadImage(@PathVariable("userId") int userId, @RequestParam("image") MultipartFile image) throws IOException {
+        
         //creates a cropped BufferedImage from the byte[]
         BufferedImage bufferedImage = cropImage(image.getBytes());
         byte[] imageInByte = convertsBufferedImageToByteArray(bufferedImage);
         //creates the ImageModel
         ImageModel pic = new ImageModel(userId, image.getName(), image.getContentType(), imageInByte);
         us.saveUserImage(userId, pic);
-        return "Image upload successful!";
-    }
+        Map<String, Object> responseMap = new HashMap<>();
+        responseMap.put("message", "Image upload successful!");
 
+        return responseMap;
+    }
+    
     @GetMapping(value = "/user/{userId}/image")
     public ResponseEntity<byte[]> showImage(@PathVariable("userId") int userId) {
+        
         return ResponseEntity
                 .ok()
                 .contentType(MediaType.IMAGE_JPEG)
@@ -220,22 +215,4 @@ public class UserController {
         }
         return Integer.parseInt(code);
     }
-    
-//    private SitterViewDTO convertToDTO(User user, Sitter sitter) {
-//        SitterViewDTO response = new SitterViewDTO();
-//        response.setProfilePhoto(sitter.getProfilePhoto());
-//        response.setUserName(user.getName());
-//        response.setCity(sitter.getAddress().getCity());
-//        response.setAddress(sitter.getAddress().getAddress());
-//        response.setPostalCode(sitter.getAddress().getPostalCode());
-//        response.setIntro(sitter.getIntro());
-//        response.setPetTypes(sitter.getPetTypes());
-//        response.setServices(sitter.getServices());
-//        response.setAvailabilities(sitter.getAvailabilities());
-//        
-//        return response;
-//    }
-//    
-//        
-//    }
 }
