@@ -20,7 +20,7 @@ public class UserRegistrationDTO {
     @NotNull
     @NotEmpty
     @Size(min = 4, message=("Legalább 4 karaktert írj!"))
-    private String username;
+    private String userName;
     @NotNull
     private String email;
     @NotNull
@@ -32,13 +32,13 @@ public class UserRegistrationDTO {
     
     
     public UserRegistrationDTO(String userName, String email, String password1) {
-        this.username = userName;
+        this.userName = userName;
         this.password = password1;
         this.email = email;
     }
 
-    public String getUsername() {
-        return username;
+    public String getUserName() {
+        return userName;
     }
 
     public String getEmail() {
@@ -49,8 +49,8 @@ public class UserRegistrationDTO {
         return password;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUserName(String username) {
+        this.userName = username;
     }
 
     
