@@ -43,7 +43,7 @@ public class Sitter implements Serializable {
     public Sitter(String intro, User user) {
         this.intro = intro;
         this.user = user;
-        ratings = new int[0];
+        this.ratings = new int[0];
     }
 
     public int getId() {
