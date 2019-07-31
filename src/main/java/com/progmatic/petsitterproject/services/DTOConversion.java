@@ -19,7 +19,7 @@ public class DTOConversion {
 
     public static SitterViewDTO convertToSitterViewDTO(User user, Sitter sitter) {
         SitterViewDTO response = new SitterViewDTO();
-        response.setUsername(user.getName());
+        response.setUserName(user.getName());
         response.setCity(sitter.getAddress().getCity());
         response.setAddress(sitter.getAddress().getAddress());
         response.setPostalCode(sitter.getAddress().getPostalCode());
