@@ -16,6 +16,7 @@ import com.progmatic.petsitterproject.entities.PetType;
 import com.progmatic.petsitterproject.entities.Sitter;
 import com.progmatic.petsitterproject.entities.User;
 import com.progmatic.petsitterproject.entities.PlaceOfService;
+import com.progmatic.petsitterproject.exceptions.NoSuchUserException;
 import com.progmatic.petsitterproject.services.DTOConversion;
 import com.progmatic.petsitterproject.services.EmailService;
 import com.progmatic.petsitterproject.services.UserService;
@@ -113,23 +114,27 @@ public class UserController {
     }
 
     @PostMapping(value = "/user/{userId}/image")
-    public Map<String, Object> uploadImage(@PathVariable("userId") int userId, @RequestParam("image") MultipartFile image) throws IOException {
-        
+    public Map<String, Object> uploadImage(@PathVariable("userId") int userId, @RequestParam("image") MultipartFile image) throws IOException, NoSuchUserException {
+
         //creates a cropped BufferedImage from the byte[]
         BufferedImage bufferedImage = cropImage(image.getBytes());
         byte[] imageInByte = convertsBufferedImageToByteArray(bufferedImage);
         //creates the ImageModel
-        ImageModel pic = new ImageModel(userId, image.getName(), image.getContentType(), imageInByte);
-        us.saveUserImage(userId, pic);
-        Map<String, Object> responseMap = new HashMap<>();
-        responseMap.put("message", "Image upload successful!");
+        try {
+            ImageModel pic = new ImageModel(userId, image.getName(), image.getContentType(), imageInByte);
+            us.saveUserImage(userId, pic);
+            Map<String, Object> responseMap = new HashMap<>();
+            responseMap.put("message", "Image upload successful!");
 
-        return responseMap;
+            return responseMap;
+        }catch(Exception e){
+            throw new NoSuchUserException("The user whith this id does not exists!!!)");
+        }
     }
-    
+
     @GetMapping(value = "/user/{userId}/image")
     public ResponseEntity<byte[]> showImage(@PathVariable("userId") int userId) {
-        
+
         return ResponseEntity
                 .ok()
                 .contentType(MediaType.IMAGE_JPEG)
@@ -138,9 +143,9 @@ public class UserController {
                         .getProfilePhoto()
                         .getPic());
     }
-    
+
     @PostMapping(value = "/sitter/rating")
-    public RatingResponseDTO rateSitter(@RequestBody RatingIncomingDTO newRating){
+    public RatingResponseDTO rateSitter(@RequestBody RatingIncomingDTO newRating) {
         us.addSitterRating(newRating);
         return us.sendBackAverageRating(newRating.getUserId());
     }
@@ -196,21 +201,22 @@ public class UserController {
         return imageInByte;
     }
 
-    private PlaceOfService decipherPlace(String place){
-        if(place.isEmpty()){
+    private PlaceOfService decipherPlace(String place) {
+        if (place.isEmpty()) {
             return null;
         }
         return PlaceOfService.valueOf(place);
     }
-    private PetType decipherPetType(String petType){
-        if(petType.isEmpty()){
+
+    private PetType decipherPetType(String petType) {
+        if (petType.isEmpty()) {
             return null;
         }
         return PetType.valueOf(petType);
     }
-    
-    private int decipherPostcode(String code){
-        if(code.isEmpty()){
+
+    private int decipherPostcode(String code) {
+        if (code.isEmpty()) {
             return 0;
         }
         return Integer.parseInt(code);
