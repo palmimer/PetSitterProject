@@ -366,7 +366,7 @@ public class UserService {
         if (ur.userAlreadyExists(userData.getEmail())) {
             throw new AlreadyExistsException("Ilyen e-mail cím már létezik az adatbázisban!");
         }
-        User newUser = new User(userData.getUsername(), userData.getEmail(), pwd.encode(userData.getPassword()));
+        User newUser = new User(userData.getUserName(), userData.getEmail(), pwd.encode(userData.getPassword()));
         ur.newUser(newUser);
     }
 

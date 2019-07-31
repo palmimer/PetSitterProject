@@ -8,6 +8,8 @@ package com.progmatic.petsitterproject.services;
 import com.progmatic.petsitterproject.entities.Address;
 import com.progmatic.petsitterproject.entities.Authority;
 import com.progmatic.petsitterproject.entities.Availability;
+import com.progmatic.petsitterproject.entities.Owner;
+import com.progmatic.petsitterproject.entities.Pet;
 import com.progmatic.petsitterproject.entities.PetType;
 import com.progmatic.petsitterproject.entities.PlaceOfService;
 import com.progmatic.petsitterproject.entities.Sitter;
@@ -84,9 +86,25 @@ public class FillerService {
             s2.setPetSittings(new HashSet<>());
             ur.newSitter(s2);
             
+            
+            
             User u3 = new User("Feles Elek", "feleselek@hotmail.com", pwd.encode("password"));
             u3.setAuthorities(ur.findAuthority("ROLE_USER"));
             ur.newUser(u3);
+            Owner o1 = new Owner();
+            o1.setUser(u3);
+            o1.setPetSittings(new HashSet<>());
+            ur.newOwner(o1);
+            Pet p1 =new Pet(PetType.CAT,"Don Gatto");
+            p1.setOwner(o1);
+            ur.newPet(p1);
+            Pet p2 = new Pet(PetType.DOG, "Vahúr");
+            p2.setOwner(o1);
+            ur.newPet(p2);
+            Set<Pet> pets = new HashSet<>();
+            pets.add(p2);
+            pets.add(p1);
+            o1.setPets(pets);
             
             User u4 = new User("Citad Ella", "citad.ella@yandex.com", pwd.encode("password"));
             u4.setAuthorities(ur.findAuthority("ROLE_USER"));

@@ -14,7 +14,7 @@ import java.util.Set;
  */
 public class SitterViewDTO {
 
-    private String username;
+    private String userName;
     private String city;
     private String address;
     private int postalCode;
@@ -78,11 +78,11 @@ public class SitterViewDTO {
     }
 
     public String getUsername() {
-        return username;
+        return userName;
     }
 
     public void setUsername(String userName) {
-        this.username = userName;
+        this.userName = userName;
     }
 
     public int getId() {
