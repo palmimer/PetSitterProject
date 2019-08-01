@@ -6,6 +6,7 @@
 package com.progmatic.petsitterproject.dtos;
 
 import com.progmatic.petsitterproject.entities.PetType;
+import java.util.Objects;
 
 /**
  *
@@ -56,9 +57,41 @@ public class PetDTO {
         this.id = id;
     }
 
-    public boolean equals(PetDTO otherPetDTO) {
-        return this.name.equals(otherPetDTO.getName()) && this.petType.equals(otherPetDTO.getPetType());
+//    public boolean equals(PetDTO otherPetDTO) {
+//        return this.name.equals(otherPetDTO.getName()) && this.petType.equals(otherPetDTO.getPetType());
+//    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 67 * hash + Objects.hashCode(this.name);
+        hash = 67 * hash + Objects.hashCode(this.petType);
+        return hash;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final PetDTO other = (PetDTO) obj;
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        if (this.petType != other.petType) {
+            return false;
+        }
+        return true;
+    }
+    
+    
+
     
     
      

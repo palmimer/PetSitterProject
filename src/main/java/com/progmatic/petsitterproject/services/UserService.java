@@ -283,8 +283,8 @@ public class UserService {
         owner.setPets(newSetOfPets);
     }
     
-    private Set<PetDTO> findNewPets(Set<PetDTO> newPets, Set<PetDTO> oldPets) {
-//        Set<PetDTO> alreadyExistingPets = new HashSet<>();
+    private Set<PetDTO> findNewPets(Set<PetDTO> pets, Set<PetDTO> oldPets) {
+        Set<PetDTO> newPets = new HashSet<>(pets);
 //        // végignézzük az új listát, megnézzük benne van-e a régiben
 //        for (PetDTO newPet : newPets) {
 //            // ha nem üres a régi állatok listája
