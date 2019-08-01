@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.*;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -223,7 +224,7 @@ public class UserRepo implements UserDetailsService {
                 .getResultList();
     }
     
-    public List<SittingWork> findSittingWorksByOwnerAndDate(int ownerId
+    public List<SittingWork> findSittingWorksByOwnerAndSitterId(int ownerId
             , int sitterId ){
         return em.createQuery("select w from SittingWork w where w.owner.id = : o"
                 + " and w.sitter.id = : s")
