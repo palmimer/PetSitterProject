@@ -69,7 +69,7 @@ public class UserController {
     }
 
     @PostMapping("/newregistration")
-    public String registerNewUser(@RequestBody RegistrationDTO registration) throws AlreadyExistsException {
+    public Map<String, Object> registerNewUser(@RequestBody RegistrationDTO registration) throws AlreadyExistsException {
 
         us.createUser(registration.getUserData());
         System.out.println("user regisztráció sikerült");
@@ -87,7 +87,9 @@ public class UserController {
             throw new AlreadyExistsException("Az érvényesítő üzenet elküldése "
                     + "sajnos meghiúsult! Kérj fiók-visszaállítást az érvényesítéshez!");
         }
-        return "Sikeres regisztráció! A belépéshez kérjük aktiváld fiókodat a címedre érkező üzenettel!";
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "Sikeres regisztráció! A belépéshez kérjük aktiváld fiókodat a címedre érkező üzenettel!");
+        return response;
     }
 
     @GetMapping(value = "/sitters/search")
@@ -145,7 +147,7 @@ public class UserController {
     }
 
     @PostMapping(value = "/sitter/rating")
-    public RatingResponseDTO rateSitter(@RequestBody RatingIncomingDTO newRating) {
+    public RatingResponseDTO rateSitter(@RequestBody RatingIncomingDTO newRating) throws AlreadyExistsException {
         us.addSitterRating(newRating);
         return us.sendBackAverageRating(newRating.getUserId());
     }
@@ -201,24 +203,5 @@ public class UserController {
         return imageInByte;
     }
 
-    private PlaceOfService decipherPlace(String place) {
-        if (place.isEmpty()) {
-            return null;
-        }
-        return PlaceOfService.valueOf(place);
-    }
-
-    private PetType decipherPetType(String petType) {
-        if (petType.isEmpty()) {
-            return null;
-        }
-        return PetType.valueOf(petType);
-    }
-
-    private int decipherPostcode(String code) {
-        if (code.isEmpty()) {
-            return 0;
-        }
-        return Integer.parseInt(code);
-    }
+    
 }
