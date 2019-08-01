@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -174,7 +175,7 @@ public class UserService {
     @Transactional
     public void editProfile(ProfileEditDTO editedProfile){
         User u = (User) ur.findUser(getCurrentUser().getId());
-        
+        //Ha a jelszavát gyárira cserélte, addig nem változtathat nevet, amíg új jelszót nem csinál
         if(u.getName().contains("Válts jelszót") 
                 && pwd.matches(u.getPassword(), editedProfile.getPassword())){
             u.setName("Válts jelszót" + editedProfile.getUsername()+"!");
@@ -243,7 +244,9 @@ public class UserService {
         // beállítjuk az új service-eket a sitternek
         s.setServices(editedServices);
         // beállítja a változott elérhetőségeket
-        editCalendar(newSitterData.getId(), newSitterData.getAvailabilities());
+        if(newSitterData.getAvailabilities() != null || !newSitterData.getAvailabilities().isEmpty()){
+            editCalendar(newSitterData.getAvailabilities());
+        }
     }
     
     @Transactional
@@ -252,11 +255,6 @@ public class UserService {
         a.setAddress(newSitterData.getAddress());
         a.setCity(newSitterData.getCity());
         a.setPostalCode(newSitterData.getPostalCode());
-    }
-    
-    private void editServices(Sitter s, SitterViewDTO newSitterData){
-        // eddigi service-ek kigyűjtése és átalakítása
-        Set<SitterServiceDTO> oldServiceDTOs = DTOConversion.convertSetToSitterServiceDTO(s.getServices());
     }
     
     @Transactional
@@ -333,15 +331,9 @@ public class UserService {
     }
     
     @Transactional
-    private void editCalendar(int id, List<WorkDayViewDTO> list){
-        //Set<WorkingDay> current = ur.findUser(id).getSitter().getAvailabilities();
+    private void editCalendar(List<WorkDayViewDTO> list){
         for (WorkDayViewDTO wd : list) {
             ur.findDay(wd.getId()).setAvailability(wd.getAvailability());
-//            for (WorkDayViewDTO dto : list) {
-//                if(wd.getId() == dto.getId()){
-//                    ur.setDayAvail(dto.getId(), dto.getAvailability());
-//                }
-//            }
         }
     }
 

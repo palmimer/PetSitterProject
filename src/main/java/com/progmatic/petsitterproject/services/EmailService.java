@@ -175,7 +175,7 @@ public class EmailService {
         }
         LocalDateTime time = LocalDateTime.now();
         newSittingWork(customer.getOwner(),provider,day, time);
-        int workId = ur.findSittingWorksByOwnerAndDate(customer.getOwner().getId()
+        int workId = ur.findSittingWorksByOwnerAndSitterId(customer.getOwner().getId()
                 , provider.getId()).stream().filter(w -> w.getCreationDate()
                         .equals(time)).collect(Collectors.toList()).get(0).getId();
         sendSittingRequest(customer, provider.getUser(), eligiblePets, day, workId);
