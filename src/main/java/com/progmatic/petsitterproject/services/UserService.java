@@ -283,26 +283,26 @@ public class UserService {
         owner.setPets(newSetOfPets);
     }
     
-    private Set<PetDTO> findNewPets(Set<PetDTO> pets, Set<PetDTO> oldPets) {
-        Set<PetDTO> newPets = pets;
-        Set<PetDTO> alreadyExistingPets = new HashSet<>();
-        // végignézzük az új listát, megnézzük benne van-e a régiben
-        for (PetDTO newPet : newPets) {
-            // ha nem üres a régi állatok listája
-            if (!oldPets.isEmpty()) {
-                for (PetDTO oldPet : oldPets) {
-                    if (!oldPet.equals(newPet)) {
-                        alreadyExistingPets.add(newPet);
-                    }
+    private Set<PetDTO> findNewPets(Set<PetDTO> newPets, Set<PetDTO> oldPets) {
+//        Set<PetDTO> alreadyExistingPets = new HashSet<>();
+//        // végignézzük az új listát, megnézzük benne van-e a régiben
+//        for (PetDTO newPet : newPets) {
+//            // ha nem üres a régi állatok listája
+//            if (!oldPets.isEmpty()) {
+//                for (PetDTO oldPet : oldPets) {
+//                    if (!oldPet.equals(newPet)) {
+//                        alreadyExistingPets.add(newPet);
+//                    }
 //                    if ( ( oldPet.getName().equals(pet.getName()) && !(oldPet.getPetType().equals(pet.getPetType())))
 //                         || !( oldPet.getName().equals(pet.getName())) && oldPet.getPetType().equals(pet.getPetType())
 //                         || !( oldPet.getName().equals(pet.getName())) && !(oldPet.getPetType().equals(pet.getPetType()))) {
 //                        newPets.add(pet);
 //                    }
-                }
-            } 
-        }
-        newPets.removeAll(alreadyExistingPets);
+//                }
+//            } 
+//        }
+        newPets.removeAll(oldPets);
+//        newPets.removeAll(alreadyExistingPets);
         return newPets;
     }
     
