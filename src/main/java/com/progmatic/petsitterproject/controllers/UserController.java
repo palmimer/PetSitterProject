@@ -99,7 +99,8 @@ public class UserController {
             @RequestParam(value = "petType", required = false) PetType petType,
             @RequestParam(value = "postalCode", defaultValue="0") int postCode
     ) {
-        SearchCriteriaDTO criteria = new SearchCriteriaDTO(sitterName, postCode, placeOfService, petType);
+        String sName = sitterName.toLowerCase();
+        SearchCriteriaDTO criteria = new SearchCriteriaDTO(sName, postCode, placeOfService, petType);
         List<SitterViewDTO> selectedSitters = us.filterSitters(criteria);
         return selectedSitters;
     }

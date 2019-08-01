@@ -334,13 +334,14 @@ public class UserService {
     
     @Transactional
     private void editCalendar(int id, List<WorkDayViewDTO> list){
-        Set<WorkingDay> current = ur.findUser(id).getSitter().getAvailabilities();
-        for (WorkingDay wd : current) {
-            for (WorkDayViewDTO dto : list) {
-                if(wd.getId() == dto.getId()){
-                    ur.setDayAvail(dto.getId(), dto.getAvailability());
-                }
-            }
+        //Set<WorkingDay> current = ur.findUser(id).getSitter().getAvailabilities();
+        for (WorkDayViewDTO wd : list) {
+            ur.findDay(wd.getId()).setAvailability(wd.getAvailability());
+//            for (WorkDayViewDTO dto : list) {
+//                if(wd.getId() == dto.getId()){
+//                    ur.setDayAvail(dto.getId(), dto.getAvailability());
+//                }
+//            }
         }
     }
 
