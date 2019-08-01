@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import javax.persistence.CascadeType;
 import static javax.persistence.CascadeType.REMOVE;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -22,9 +23,9 @@ public class Owner implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     @OneToMany(cascade = REMOVE, mappedBy = "owner", fetch = FetchType.EAGER)
-//    private List<Pet> pets;
     private Set<Pet> pets;
-    @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER)
+//    private List<Pet> pets;
+    @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER, cascade = REMOVE)
     private Set<SittingWork> petSittings;
     @OneToOne
     private User user;

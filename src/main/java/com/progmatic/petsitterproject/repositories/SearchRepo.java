@@ -35,7 +35,7 @@ public class SearchRepo {
         Predicate def = cb.isNotEmpty(sitter.get(Sitter_.user).get(User_.authorities));
         predicates.add(def);
         if(!name.isEmpty()){
-            Predicate p = cb.equal(sitter.get(Sitter_.user).get(User_.name), name);
+            Predicate p = cb.equal(cb.lower(sitter.get(Sitter_.user).get(User_.name)), name.toLowerCase());
             predicates.add(p);
         }
         if (pet != null){
