@@ -5,7 +5,7 @@
  */
 package com.progmatic.petsitterproject.services;
 
-import com.progmatic.petsitterproject.controllers.AlreadyExistsException;
+import com.progmatic.petsitterproject.exceptions.AlreadyExistsException;
 import com.progmatic.petsitterproject.dtos.*;
 import com.progmatic.petsitterproject.entities.*;
 import com.progmatic.petsitterproject.repositories.ImageRepository;
@@ -178,7 +178,7 @@ public class UserService {
         //Ha a jelszavát gyárira cserélte, addig nem változtathat nevet, amíg új jelszót nem csinál
         if(u.getName().contains("Válts jelszót") 
                 && pwd.matches(u.getPassword(), editedProfile.getPassword())){
-            u.setName("Válts jelszót" + editedProfile.getUsername()+"!");
+            u.setName("Válts jelszót" + editedProfile.getUserName()+"!");
         } else {
             modifyBasicUserData(editedProfile);
         }
@@ -215,8 +215,8 @@ public class UserService {
     @Transactional
     private void modifyBasicUserData(ProfileEditDTO editedProfile){
         User u = (User) ur.findUser(getCurrentUser().getId());
-        if (editedProfile.getUsername() != null) {
-            u.setName(editedProfile.getUsername());
+        if (editedProfile.getUserName() != null) {
+            u.setName(editedProfile.getUserName());
         }
         if (editedProfile.getPassword() != null) {
             u.setPassword(pwd.encode(editedProfile.getPassword()));

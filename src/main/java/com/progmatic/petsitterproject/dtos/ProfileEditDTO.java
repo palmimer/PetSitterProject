@@ -12,15 +12,16 @@ import com.progmatic.petsitterproject.entities.ImageModel;
  * @author imaginifer
  */
 public class ProfileEditDTO {
-    private String userName, password;
+    private String userName; 
+    private String password;
     private SitterViewDTO sitterData;
     private OwnerDTO ownerData;
 
-    public String getUsername() {
+    public String getUserName() {
         return userName;
     }
 
-    public void setUsername(String username) {
+    public void setUserName(String username) {
         this.userName = username;
     }
 

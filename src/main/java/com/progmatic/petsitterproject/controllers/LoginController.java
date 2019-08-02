@@ -5,6 +5,8 @@
  */
 package com.progmatic.petsitterproject.controllers;
 
+import com.progmatic.petsitterproject.exceptions.NoUserLoggedInException;
+import com.progmatic.petsitterproject.exceptions.AlreadyExistsException;
 import com.progmatic.petsitterproject.dtos.PetDTO;
 import com.progmatic.petsitterproject.dtos.ResetDTO;
 import com.progmatic.petsitterproject.dtos.UserDTO;

@@ -5,7 +5,7 @@
  */
 package com.progmatic.petsitterproject.services;
 
-import com.progmatic.petsitterproject.controllers.AlreadyExistsException;
+import com.progmatic.petsitterproject.exceptions.AlreadyExistsException;
 import com.progmatic.petsitterproject.entities.*;
 import com.progmatic.petsitterproject.repositories.UserRepo;
 import java.time.LocalDate;

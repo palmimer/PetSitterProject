@@ -5,6 +5,7 @@
  */
 package com.progmatic.petsitterproject.controllers;
 
+import com.progmatic.petsitterproject.exceptions.AlreadyExistsException;
 import com.progmatic.petsitterproject.dtos.ProfileEditDTO;
 import com.progmatic.petsitterproject.dtos.RatingIncomingDTO;
 import com.progmatic.petsitterproject.dtos.RatingResponseDTO;

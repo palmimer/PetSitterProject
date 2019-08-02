@@ -3,17 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.progmatic.petsitterproject.controllers;
+package com.progmatic.petsitterproject.exceptions;
 
 /**
  *
  * @author progmatic
  */
-public class AlreadyExistsException extends Exception {
+public class NoUserLoggedInException extends Exception {
 
-    public AlreadyExistsException(String message) {
+    public NoUserLoggedInException(String message) {
         super(message);
     }
-    
+
+   
     
 }
