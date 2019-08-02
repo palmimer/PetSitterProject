@@ -215,8 +215,8 @@ public class UserService {
     @Transactional
     private void modifyBasicUserData(ProfileEditDTO editedProfile){
         //User u = (User) ur.findUser(getCurrentUser().getId());
-        if (editedProfile.getUsername() != null) {
-            ur.findUser(getCurrentUser().getId()).setName(editedProfile.getUsername());
+        if (editedProfile.getUserName() != null) {
+            ur.findUser(getCurrentUser().getId()).setName(editedProfile.getUserName());
             //u.setName(editedProfile.getUsername());
         }
         if (editedProfile.getPassword() != null) {
