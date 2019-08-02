@@ -96,7 +96,7 @@ public class UserController {
     @GetMapping(value = "/sitters/search")
     public List<SitterViewDTO> listSitters(
             @RequestParam(value = "name", defaultValue="") String sitterName,
-            @RequestParam(value = "placeOfService", required = false) PlaceOfService placeOfService,
+            @RequestParam(value = "place", required = false) PlaceOfService placeOfService,
             @RequestParam(value = "petType", required = false) PetType petType,
             @RequestParam(value = "postalCode", defaultValue="0") int postCode
     ) {
