@@ -54,7 +54,7 @@ public class SearchRepo {
             predicates.add(p);
         }
         
-        cq.select(sitter).where(predicates.toArray(new Predicate[predicates.size()]));
+        cq.select(sitter).distinct(true).where(predicates.toArray(new Predicate[predicates.size()]));
         return em.createQuery(cq).getResultList();
     }
     
