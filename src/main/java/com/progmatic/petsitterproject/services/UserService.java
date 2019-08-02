@@ -353,6 +353,7 @@ public class UserService {
     }
     
     public List<SitterViewDTO> filterSitters(SearchCriteriaDTO criteria){
+        dm.runTask();
         List<Sitter> sitterUsers = sr.searchSitters(criteria.getName(), criteria.getPetType(), criteria.getPlaceOfService(), criteria.getPostalCode());
         List<SitterViewDTO> petSitters = new ArrayList<>();
         for (Sitter sitterUser : sitterUsers) {
