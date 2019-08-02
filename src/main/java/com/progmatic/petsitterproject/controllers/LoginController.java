@@ -59,11 +59,9 @@ public class LoginController {
     }
         
     @GetMapping("/verify")
-    public Map<String, Object> activateUser(@RequestParam("ver") String valid) throws AlreadyExistsException{
+    public String activateUser(@RequestParam("ver") String valid) throws AlreadyExistsException{
         es.activateUser(valid);
-        Map<String, Object> response = new HashMap<>();
-        response.put("message", "Sikeres hitelesítés!");
-        return response;
+        return "Sikeres hitelesítés!";
     }
     
     @GetMapping("/suspendaccount")

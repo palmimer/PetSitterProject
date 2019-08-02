@@ -367,7 +367,8 @@ public class UserService {
         if (ur.userAlreadyExists(userData.getEmail())) {
             throw new AlreadyExistsException("Ilyen e-mail cím már létezik az adatbázisban!");
         }
-        User newUser = new User(userData.getUserName(), userData.getEmail(), pwd.encode(userData.getPassword()));
+        String name = userData.getUserName() == null ? "" : userData.getUserName();
+        User newUser = new User(name, userData.getEmail(), pwd.encode(userData.getPassword()));
         ur.newUser(newUser);
     }
 
@@ -399,9 +400,12 @@ public class UserService {
     }
     
     @Transactional
-    public void addSitterRating(RatingIncomingDTO newRating){
+    public void addSitterRating(RatingIncomingDTO newRating) throws AlreadyExistsException{
         User user = ur.findUser(newRating.getUserId());
         Sitter sitter = ur.findSitter(user.getSitter().getId());
+        /*if(forbiddenToRate(sitter.getId())){
+            throw new AlreadyExistsException("Nem vagy jogosult értékelni ezt a KiVit!");
+        }*/
         sitter.setRating(newRating.getNewRating());
     }
     
@@ -410,5 +414,28 @@ public class UserService {
         User user = ur.findUser(userId);
         Sitter sitter = ur.findSitter(user.getSitter().getId());
         return new RatingResponseDTO(userId, sitter.getAverageRating(), sitter.getNumberOfRatings());
+    }
+    
+    private boolean forbiddenToRate(int sitterId){
+        User current = getCurrentUser();
+        if(!ur.isOwner(current.getId()) || noCommonBusiness(current.getOwner().getId(), sitterId)){
+            return true;
+        }
+        return false;
+    }
+    
+    private boolean noCommonBusiness(int ownerId, int sitterId){
+        List<SittingWork> works = ur.findSittingWorksByOwnerAndSitterId(ownerId, sitterId);
+        if(works.isEmpty()){
+            return true;
+        }
+        if(works.stream().filter(w -> w.isAgreedOn() 
+                && (w.getDayOfWork().isBefore(LocalDate.now()) 
+                        || w.getDayOfWork().equals(LocalDate.now())) 
+                && ur.findOwner(ownerId).getUser().getId() != ur.findSitter(sitterId).getUser().getId())
+                .collect(Collectors.toSet()).isEmpty()){
+            return true;
+        }
+        return false;
     }
 }
